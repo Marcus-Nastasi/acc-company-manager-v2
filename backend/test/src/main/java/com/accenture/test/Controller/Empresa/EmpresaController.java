@@ -25,7 +25,8 @@ public class EmpresaController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         if (size < 1) size = 10;
-        List<EmpresaFornResponseDTO> empresas = empresaService.buscar_tudo(page, size);
+        List<EmpresaFornResponseDTO> empresas = empresaService
+            .buscar_tudo(page, size);
         return ResponseEntity.ok(empresas);
     }
 
@@ -45,17 +46,22 @@ public class EmpresaController {
     }
 
     @DeleteMapping(value = "/deletar/{id}")
-    public ResponseEntity<EmpresaFornResponseDTO> deletar(@PathVariable("id") UUID id) {
+    public ResponseEntity<EmpresaFornResponseDTO> deletar(
+            @PathVariable("id") UUID id
+    ) {
         EmpresaFornResponseDTO empresa = empresaService.deletar(id);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }
 
     @PatchMapping(value = "/associar/{id}/{id_fornecedor}")
     public ResponseEntity<EmpresaFornResponseDTO> atualizar(
-            @PathVariable("id") UUID id,
+            @PathVariable("id_empresa") UUID id_empresa,
             @PathVariable("id_fornecedor") UUID id_fornecedor
     ) {
-        EmpresaFornResponseDTO empresa = empresaService.associarFornecedor(id_fornecedor, id);
-        return ResponseEntity.status(HttpStatus.OK).body(empresa);
+        EmpresaFornResponseDTO empresa = empresaService
+            .associarFornecedor(id_fornecedor, id_empresa);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(empresa);
     }
 }

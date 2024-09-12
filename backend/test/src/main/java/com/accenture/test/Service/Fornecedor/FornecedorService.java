@@ -4,6 +4,7 @@ import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorResponseDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
+import com.accenture.test.Exception.AppException;
 import com.accenture.test.Repository.Fornecedor.FornecedorRepo;
 import com.accenture.test.Service.Empresa.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,9 @@ public class FornecedorService {
     public List<FornecedorEmpResponseDTO> buscar_tudo(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Fornecedor> fornecedorPage = fornecedorRepo.findAll(pageable);
-        return fornecedorPage.map(this::mapToFornecedorEmpResponseDTO).toList();
+        return fornecedorPage
+            .map(this::mapToFornecedorEmpResponseDTO)
+            .toList();
     }
 
     public FornecedorEmpResponseDTO registrar(RegistrarFornecedorDTO data) {
@@ -41,7 +44,8 @@ public class FornecedorService {
         fornecedor.setEmpresas(List.of());
         if (fornecedor.isE_pf()) {
             if (data.rg() == null || data.nascimento() == null)
-                throw new RuntimeException();
+                throw new AppException("É necessário informar um RG e data de " +
+                        "nascimento para cadastro de fornecedor pessoa física");
             fornecedor.setRg(data.rg());
             fornecedor.setNascimento(data.nascimento());
         }
@@ -52,7 +56,7 @@ public class FornecedorService {
     public FornecedorEmpResponseDTO atualizar(UUID id, RegistrarFornecedorDTO data) {
         Fornecedor fornecedor = fornecedorRepo
             .findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Id não encontrado"));
+            .orElseThrow(() -> new AppException("Erro ao encontrar fornecedor"));
         fornecedor.setCnpj_cpf(data.cnpj_cpf());
         fornecedor.setNome(data.nome());
         fornecedor.setEmail(data.email());
@@ -67,13 +71,15 @@ public class FornecedorService {
     }
 
     public FornecedorEmpResponseDTO deletar(UUID id) {
-        Fornecedor fornecedor = fornecedorRepo.findById(id).orElseThrow();
+        Fornecedor fornecedor = fornecedorRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("Erro ao encontrar fornecedor"));
         fornecedorRepo.deleteById(id);
         return this.mapToFornecedorEmpResponseDTO(fornecedor);
     }
 
     public boolean validaFornecedorMenor(LocalDate nascimento) {
-        return Period.between(nascimento, LocalDate.now()).getYears() >= 18;
+        return Period.between(nascimento, LocalDate.now()).getYears() <= 18;
     }
 
     public FornecedorResponseDTO mapToFornecedorResponseDTO(Fornecedor fornecedor) {

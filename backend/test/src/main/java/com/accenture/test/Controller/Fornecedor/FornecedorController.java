@@ -2,6 +2,7 @@ package com.accenture.test.Controller.Fornecedor;
 
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
+import com.accenture.test.Exception.AppException;
 import com.accenture.test.Service.Fornecedor.FornecedorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,11 @@ public class FornecedorController {
     }
 
     @PostMapping(value = "/registrar")
-    public ResponseEntity<FornecedorEmpResponseDTO> registrar(@RequestBody @Valid RegistrarFornecedorDTO data) {
-        try {
-            FornecedorEmpResponseDTO fornecedor = fornecedorService.registrar(data);
-            return ResponseEntity.status(HttpStatus.CREATED).body(fornecedor);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<FornecedorEmpResponseDTO> registrar(
+            @RequestBody @Valid RegistrarFornecedorDTO data
+    ) {
+        FornecedorEmpResponseDTO fornecedor = fornecedorService.registrar(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fornecedor);
     }
 
     @PatchMapping(value = "/atualizar/{id}")

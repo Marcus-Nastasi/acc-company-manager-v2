@@ -1,6 +1,7 @@
 package com.accenture.test.Service.Cep;
 
 import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
+import com.accenture.test.Exception.AppException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,16 +14,16 @@ public class CepService {
 
     public Mono<ResponseEntity<CepResponseDTO>> buscarCep(String cep) {
         try {
-            if (cep.length() > 8) throw new RuntimeException("Cep inválido");
             cep = cep.replace("-", "");
+            if (cep.length() > 8) throw new AppException("Cep inválido");
             String url = "https://viacep.com.br/ws/" + cep + "/json/";
             return webClient
                 .get()
                 .uri(url)
                 .retrieve()
                 .toEntity(CepResponseDTO.class);
-        } catch (Exception e) {
-            return null;
+        } catch (RuntimeException e) {
+            throw new AppException("Erro ao buscar CEP");
         }
     }
 }

@@ -7,6 +7,7 @@ import com.accenture.test.Domain.Empresa.DTO.EmpresaResponseDTO;
 import com.accenture.test.Domain.Empresa.Empresa;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
+import com.accenture.test.Exception.AppException;
 import com.accenture.test.Repository.Empresa.EmpresaRepo;
 import com.accenture.test.Repository.Fornecedor.FornecedorRepo;
 import com.accenture.test.Service.Cep.CepService;
@@ -52,7 +53,9 @@ public class EmpresaService {
     }
 
     public EmpresaFornResponseDTO atualizar(UUID id, AtualizarEmpresaDTO data) {
-        Empresa empresa = empresaRepo.findById(id).orElseThrow();
+        Empresa empresa = empresaRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("Empresa não encontrada"));
         empresa.setCnpj(data.cnpj());
         empresa.setNome_fantasia(data.nome_fantasia());
         empresa.setCep(data.cep());
@@ -61,7 +64,9 @@ public class EmpresaService {
     }
 
     public EmpresaFornResponseDTO deletar(UUID id) {
-        Empresa empresa = empresaRepo.findById(id).orElseThrow();
+        Empresa empresa = empresaRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("Empresa não encontrada"));
         empresa.getFornecedores().forEach((f) -> {
             f.getEmpresas().remove(empresa);
             fornecedorRepo.save(f);
@@ -71,17 +76,20 @@ public class EmpresaService {
     }
 
     public EmpresaFornResponseDTO associarFornecedor(UUID id_fornecedor, UUID id) {
-        Empresa empresa = empresaRepo.findById(id).orElseThrow();
-        Fornecedor fornecedor = fornecedorRepo.findById(id_fornecedor).orElseThrow();
+        Empresa empresa = empresaRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("Empresa não encontrada"));
+        Fornecedor fornecedor = fornecedorRepo
+            .findById(id_fornecedor)
+            .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
         if (this.isPr(empresa.getCep())) {
             if (this.fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
-                throw new RuntimeException("Não é permitido " +
-                    "cadastrar um fornecedor menor de idade no Paraná"
-                );
+                throw new AppException("Não é permitido " +
+                    "cadastrar um fornecedor menor de idade no Paraná");
             }
+            empresa.getFornecedores().add(fornecedor);
+            fornecedor.getEmpresas().add(empresa);
         }
-        empresa.getFornecedores().add(fornecedor);
-        fornecedor.getEmpresas().add(empresa);
         empresaRepo.save(empresa);
         fornecedorRepo.save(fornecedor);
         return this.mapToEmpresaFornResponseDTO(empresa);
@@ -89,11 +97,8 @@ public class EmpresaService {
 
     public boolean isPr(String cep) {
         Mono<ResponseEntity<CepResponseDTO>> response = cepService.buscarCep(cep);
-        return !Objects
-            .requireNonNull(response.map(ResponseEntity::getBody)
-            .block())
-            .uf()
-            .equals("PR");
+        CepResponseDTO c = Objects.requireNonNull(response.map(ResponseEntity::getBody).block());
+        return c.uf().equalsIgnoreCase("PR");
     }
 
     public EmpresaFornResponseDTO mapToEmpresaFornResponseDTO(Empresa empresa) {

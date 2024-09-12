@@ -23,9 +23,12 @@ public class FornecedorController {
     @GetMapping()
     public ResponseEntity<List<FornecedorEmpResponseDTO>> buscar_tudo(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
-        List<FornecedorEmpResponseDTO> fornecedorList = fornecedorService.buscar_tudo(page, size);
+        List<FornecedorEmpResponseDTO> fornecedorList = fornecedorService
+            .buscar_tudo(page, size, nome, cnpj_cpf);
         return ResponseEntity.ok(fornecedorList);
     }
 

@@ -31,9 +31,13 @@ public class EmpresaController {
     }
 
     @PostMapping(value = "/registrar")
-    public ResponseEntity<EmpresaFornResponseDTO> registrar(@RequestBody RegistrarEmpresaDTO data) {
+    public ResponseEntity<EmpresaFornResponseDTO> registrar(
+            @RequestBody RegistrarEmpresaDTO data
+    ) {
         EmpresaFornResponseDTO empresa = empresaService.registrar(data);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(empresa);
     }
 
     @PatchMapping(value = "/atualizar/{id}")
@@ -42,7 +46,7 @@ public class EmpresaController {
             @RequestBody AtualizarEmpresaDTO data
     ) {
         EmpresaFornResponseDTO empresa = empresaService.atualizar(id, data);
-        return ResponseEntity.status(HttpStatus.OK).body(empresa);
+        return ResponseEntity.ok(empresa);
     }
 
     @DeleteMapping(value = "/deletar/{id}")
@@ -50,18 +54,16 @@ public class EmpresaController {
             @PathVariable("id") UUID id
     ) {
         EmpresaFornResponseDTO empresa = empresaService.deletar(id);
-        return ResponseEntity.status(HttpStatus.OK).body(empresa);
+        return ResponseEntity.ok(empresa);
     }
 
-    @PatchMapping(value = "/associar/{id}/{id_fornecedor}")
+    @PatchMapping(value = "/associar/{id_empresa}/{id_fornecedor}")
     public ResponseEntity<EmpresaFornResponseDTO> atualizar(
             @PathVariable("id_empresa") UUID id_empresa,
             @PathVariable("id_fornecedor") UUID id_fornecedor
     ) {
         EmpresaFornResponseDTO empresa = empresaService
             .associarFornecedor(id_fornecedor, id_empresa);
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(empresa);
+        return ResponseEntity.ok(empresa);
     }
 }

@@ -97,7 +97,9 @@ public class EmpresaService {
 
     public boolean isPr(String cep) {
         Mono<ResponseEntity<CepResponseDTO>> response = cepService.buscarCep(cep);
-        CepResponseDTO c = Objects.requireNonNull(response.map(ResponseEntity::getBody).block());
+        if (response == null) throw new AppException("Erro ao buscar o CEP");
+        CepResponseDTO c = response.map(ResponseEntity::getBody).block();
+        if (c == null) throw new AppException("Erro ao resolver resposta de CEP");
         return c.uf().equalsIgnoreCase("PR");
     }
 

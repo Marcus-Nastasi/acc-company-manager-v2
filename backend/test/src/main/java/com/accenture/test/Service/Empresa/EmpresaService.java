@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EmpresaService {
@@ -34,8 +35,8 @@ public class EmpresaService {
         return empresa;
     }
 
-    public Empresa atualizar(String cnpj, AtualizarEmpresaDTO data) {
-        Empresa empresa = empresaRepo.findById(cnpj).orElseThrow();
+    public Empresa atualizar(UUID id, AtualizarEmpresaDTO data) {
+        Empresa empresa = empresaRepo.findById(id).orElseThrow();
         empresa.setCnpj(data.cnpj());
         empresa.setNome_fantasia(data.nome_fantasia());
         empresa.setCep(data.cep());
@@ -43,9 +44,9 @@ public class EmpresaService {
         return empresa;
     }
 
-    public Empresa deletar(String cnpj) {
-        Empresa empresa = empresaRepo.findById(cnpj).orElseThrow();
-        empresaRepo.deleteById(cnpj);
+    public Empresa deletar(UUID id) {
+        Empresa empresa = empresaRepo.findById(id).orElseThrow();
+        empresaRepo.deleteById(id);
         return empresa;
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "fornecedor")
@@ -19,6 +20,9 @@ import java.util.List;
 public class Fornecedor {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Column(unique = true)
     private String cnpj_cpf;
     @Column
     private String rg;
@@ -32,7 +36,7 @@ public class Fornecedor {
     private String cep;
     @Column
     private boolean e_pf;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "fornecedor_empresa",
         joinColumns = @JoinColumn(name = "fornecedor_id"),

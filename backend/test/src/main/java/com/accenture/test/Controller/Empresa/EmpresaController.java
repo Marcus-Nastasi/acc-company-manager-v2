@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/empresa")
@@ -34,15 +35,15 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
     }
 
-    @PatchMapping(value = "/atualizar/{cnpj}")
-    public ResponseEntity<Empresa> atualizar(@PathVariable("cnpj") String cnpj, @RequestBody AtualizarEmpresaDTO data) {
-        Empresa empresa = empresaService.atualizar(cnpj, data);
+    @PatchMapping(value = "/atualizar/{id}")
+    public ResponseEntity<Empresa> atualizar(@PathVariable("id") UUID id, @RequestBody AtualizarEmpresaDTO data) {
+        Empresa empresa = empresaService.atualizar(id, data);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }
 
-    @DeleteMapping(value = "/deletar/{cnpj}")
-    public ResponseEntity<Empresa> deletar(@PathVariable("cnpj") String cnpj) {
-        Empresa empresa = empresaService.deletar(cnpj);
+    @DeleteMapping(value = "/deletar/{id}")
+    public ResponseEntity<Empresa> deletar(@PathVariable("id") UUID id) {
+        Empresa empresa = empresaService.deletar(id);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }
 }

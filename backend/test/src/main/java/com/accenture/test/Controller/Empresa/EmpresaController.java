@@ -4,6 +4,7 @@ import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,20 @@ public class EmpresaController {
     @GetMapping()
     public ResponseEntity<List<EmpresaFornResponseDTO>> buscar_tudo(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "nome", defaultValue = "", required = false) String nome_fantasia,
+            @RequestParam(name = "cnpj", defaultValue = "", required = false) String cnpj,
+            @RequestParam(name = "cep", defaultValue = "", required = false) String cep
     ) {
         if (size < 1) size = 10;
         List<EmpresaFornResponseDTO> empresas = empresaService
-            .buscar_tudo(page, size);
+            .buscar_tudo(page, size, nome_fantasia, cnpj, cep);
         return ResponseEntity.ok(empresas);
     }
 
     @PostMapping(value = "/registrar")
     public ResponseEntity<EmpresaFornResponseDTO> registrar(
-            @RequestBody RegistrarEmpresaDTO data
+            @RequestBody @Valid RegistrarEmpresaDTO data
     ) {
         EmpresaFornResponseDTO empresa = empresaService.registrar(data);
         return ResponseEntity
@@ -43,7 +47,7 @@ public class EmpresaController {
     @PatchMapping(value = "/atualizar/{id}")
     public ResponseEntity<EmpresaFornResponseDTO> atualizar(
             @PathVariable("id") UUID id,
-            @RequestBody AtualizarEmpresaDTO data
+            @RequestBody @Valid AtualizarEmpresaDTO data
     ) {
         EmpresaFornResponseDTO empresa = empresaService.atualizar(id, data);
         return ResponseEntity.ok(empresa);

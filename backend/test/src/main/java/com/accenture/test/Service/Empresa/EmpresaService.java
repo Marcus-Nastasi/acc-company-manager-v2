@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -36,10 +35,19 @@ public class EmpresaService {
     @Autowired
     private CepService cepService;
 
-    public List<EmpresaFornResponseDTO> buscar_tudo(int page, int size) {
+    public List<EmpresaFornResponseDTO> buscar_tudo(
+            int page,
+            int size,
+            String nome_fantasia,
+            String cnpj,
+            String cep
+    ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Empresa> empresaPage = empresaRepo.findAll(pageable);
-        return empresaPage.map(this::mapToEmpresaFornResponseDTO).toList();
+        Page<Empresa> empresaPage = empresaRepo
+            .filtrarEmpresa(nome_fantasia, cnpj, cep, pageable);
+        return empresaPage
+            .map(this::mapToEmpresaFornResponseDTO)
+            .toList();
     }
 
     public EmpresaFornResponseDTO registrar(RegistrarEmpresaDTO data) {
@@ -60,7 +68,7 @@ public class EmpresaService {
         empresa.setNome_fantasia(data.nome_fantasia());
         empresa.setCep(data.cep());
         empresaRepo.save(empresa);
-        return this.mapToEmpresaFornResponseDTO(empresa);
+        return mapToEmpresaFornResponseDTO(empresa);
     }
 
     public EmpresaFornResponseDTO deletar(UUID id) {
@@ -72,7 +80,7 @@ public class EmpresaService {
             fornecedorRepo.save(f);
         });
         empresaRepo.deleteById(id);
-        return this.mapToEmpresaFornResponseDTO(empresa);
+        return mapToEmpresaFornResponseDTO(empresa);
     }
 
     public EmpresaFornResponseDTO associarFornecedor(UUID id_fornecedor, UUID id) {
@@ -83,7 +91,7 @@ public class EmpresaService {
             .findById(id_fornecedor)
             .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
         if (this.isPr(empresa.getCep())) {
-            if (this.fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
+            if (fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
                 throw new AppException("Não é permitido " +
                     "cadastrar um fornecedor menor de idade no Paraná");
             }
@@ -92,7 +100,7 @@ public class EmpresaService {
         }
         empresaRepo.save(empresa);
         fornecedorRepo.save(fornecedor);
-        return this.mapToEmpresaFornResponseDTO(empresa);
+        return mapToEmpresaFornResponseDTO(empresa);
     }
 
     public boolean isPr(String cep) {

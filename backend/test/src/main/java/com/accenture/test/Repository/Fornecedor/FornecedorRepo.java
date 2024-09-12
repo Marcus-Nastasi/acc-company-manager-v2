@@ -18,8 +18,8 @@ public interface FornecedorRepo extends JpaRepository<Fornecedor, UUID> {
             "WHERE (:nome IS NULL OR f.nome LIKE CONCAT('%', :nome, '%')) " +
             "AND (:cnpj_cpf IS NULL OR f.cnpj_cpf LIKE CONCAT('%', :cnpj_cpf, '%'));")
     Page<Fornecedor> filtrarFornecedores(
-            @Param("nome") String title,
-            @Param("cnpj_cpf") String city,
+            @Param("nome") String nome,
+            @Param("cnpj_cpf") String cnpj_cpf,
             Pageable pageable
     );
 }

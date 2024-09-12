@@ -2,7 +2,6 @@ package com.accenture.test.Controller.Fornecedor;
 
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
-import com.accenture.test.Exception.AppException;
 import com.accenture.test.Service.Fornecedor.FornecedorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ public class FornecedorController {
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
+        if (size < 1) size = 10;
         List<FornecedorEmpResponseDTO> fornecedorList = fornecedorService
             .buscar_tudo(page, size, nome, cnpj_cpf);
         return ResponseEntity.ok(fornecedorList);

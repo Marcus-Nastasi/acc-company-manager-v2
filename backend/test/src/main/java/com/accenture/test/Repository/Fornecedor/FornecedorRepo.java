@@ -8,14 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Repository
 public interface FornecedorRepo extends JpaRepository<Fornecedor, UUID> {
 
     @Query(nativeQuery = true, value = "SELECT f.* FROM fornecedor f " +
-            "WHERE (:nome IS NULL OR f.nome LIKE CONCAT('%', :nome, '%')) " +
+            "WHERE (:nome IS NULL OR LOWER(f.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) " +
             "AND (:cnpj_cpf IS NULL OR f.cnpj_cpf LIKE CONCAT('%', :cnpj_cpf, '%'));")
     Page<Fornecedor> filtrarFornecedores(
             @Param("nome") String nome,

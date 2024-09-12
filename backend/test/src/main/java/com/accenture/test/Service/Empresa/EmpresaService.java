@@ -90,16 +90,16 @@ public class EmpresaService {
         Fornecedor fornecedor = fornecedorRepo
             .findById(id_fornecedor)
             .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
-        if (this.isPr(empresa.getCep())) {
-            if (fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
-                throw new AppException("Não é permitido " +
-                    "cadastrar um fornecedor menor de idade no Paraná");
+        if (fornecedor.isE_pf()) {
+            if (isPr(empresa.getCep())) {
+                if (fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
+                    throw new AppException(
+                        "Não é permitido cadastrar um fornecedor menor de idade no Paraná"
+                    );
+                }
             }
-            empresa.getFornecedores().add(fornecedor);
-            fornecedor.getEmpresas().add(empresa);
         }
-        empresaRepo.save(empresa);
-        fornecedorRepo.save(fornecedor);
+        vinculaEmpresaFornecedor(empresa, fornecedor);
         return mapToEmpresaFornResponseDTO(empresa);
     }
 
@@ -109,6 +109,13 @@ public class EmpresaService {
         CepResponseDTO c = response.map(ResponseEntity::getBody).block();
         if (c == null) throw new AppException("Erro ao resolver resposta de CEP");
         return c.uf().equalsIgnoreCase("PR");
+    }
+
+    private void vinculaEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
+        empresa.getFornecedores().add(fornecedor);
+        fornecedor.getEmpresas().add(empresa);
+        empresaRepo.save(empresa);
+        fornecedorRepo.save(fornecedor);
     }
 
     public EmpresaFornResponseDTO mapToEmpresaFornResponseDTO(Empresa empresa) {

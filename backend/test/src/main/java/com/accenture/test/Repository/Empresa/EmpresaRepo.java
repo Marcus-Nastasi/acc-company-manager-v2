@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface EmpresaRepo extends JpaRepository<Empresa, UUID> {
 
     @Query(nativeQuery = true, value = "SELECT e.* FROM Empresa e " +
-            "WHERE(:nome_fantasia IS NULL OR e.nome_fantasia LIKE CONCAT('%', :nome_fantasia, '%')) " +
+            "WHERE(:nome_fantasia IS NULL OR LOWER(e.nome_fantasia) LIKE LOWER(CONCAT('%', :nome_fantasia, '%'))) " +
             "AND (:cnpj IS NULL OR e.cnpj LIKE CONCAT('%', :cnpj, '%')) " +
             "AND (:cep IS NULL OR e.cep LIKE CONCAT('%', :cep, '%'));")
     Page<Empresa> filtrarEmpresa(

@@ -50,8 +50,8 @@ public class FornecedorService {
         fornecedor.setEmpresas(List.of());
         if (fornecedor.isE_pf()) {
             if (data.rg() == null || data.nascimento() == null) throw new AppException(
-                    "É necessário informar um RG e data de " +
-                    "nascimento para cadastro de fornecedor pessoa física"
+                "É necessário informar um RG e data de " +
+                "nascimento para cadastro de fornecedor pessoa física"
             );
             fornecedor.setRg(data.rg());
             fornecedor.setNascimento(data.nascimento());
@@ -70,6 +70,10 @@ public class FornecedorService {
         fornecedor.setCep(data.cep());
         fornecedor.setE_pf(data.e_pf());
         if (fornecedor.isE_pf()) {
+            if (data.rg() == null || data.nascimento() == null) throw new AppException(
+                "É necessário informar um RG e data de " +
+                "nascimento para cadastro de fornecedor pessoa física"
+            );
             fornecedor.setRg(data.rg());
             fornecedor.setNascimento(data.nascimento());
         }

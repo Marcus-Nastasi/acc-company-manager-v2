@@ -16,4 +16,18 @@ public class GlobalExceptionHandler {
             .badRequest()
             .body(Map.of("error", exception.getMessage()));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleUnknownRuntime(RuntimeException exception, WebRequest request) {
+        return ResponseEntity
+            .internalServerError()
+            .body(Map.of("error", exception.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUnknownError(Exception exception, WebRequest request) {
+        return ResponseEntity
+            .internalServerError()
+            .body(Map.of("error", exception.getMessage()));
+    }
 }

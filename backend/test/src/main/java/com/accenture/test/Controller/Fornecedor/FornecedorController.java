@@ -1,7 +1,6 @@
 package com.accenture.test.Controller.Fornecedor;
 
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
-import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
 import com.accenture.test.Service.Fornecedor.FornecedorService;
 import jakarta.validation.Valid;

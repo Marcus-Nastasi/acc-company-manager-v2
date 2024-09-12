@@ -2,7 +2,6 @@ package com.accenture.test.Controller.Empresa;
 
 import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
-import com.accenture.test.Domain.Empresa.Empresa;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,10 @@ public class EmpresaController {
     }
 
     @PatchMapping(value = "/atualizar/{id}")
-    public ResponseEntity<EmpresaFornResponseDTO> atualizar(@PathVariable("id") UUID id, @RequestBody AtualizarEmpresaDTO data) {
+    public ResponseEntity<EmpresaFornResponseDTO> atualizar(
+            @PathVariable("id") UUID id,
+            @RequestBody AtualizarEmpresaDTO data
+    ) {
         EmpresaFornResponseDTO empresa = empresaService.atualizar(id, data);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }

@@ -17,7 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Empresa {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

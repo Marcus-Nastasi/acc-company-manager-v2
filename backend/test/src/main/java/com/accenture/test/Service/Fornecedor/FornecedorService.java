@@ -72,7 +72,7 @@ public class FornecedorService {
         return this.mapToFornecedorEmpResponseDTO(fornecedor);
     }
 
-    private boolean validaFornecedorMenor(LocalDate nascimento) {
+    public boolean validaFornecedorMenor(LocalDate nascimento) {
         return Period.between(nascimento, LocalDate.now()).getYears() >= 18;
     }
 
@@ -91,17 +91,17 @@ public class FornecedorService {
 
     public FornecedorEmpResponseDTO mapToFornecedorEmpResponseDTO(Fornecedor fornecedor) {
         return new FornecedorEmpResponseDTO(
-                fornecedor.getId(),
-                fornecedor.getCnpj_cpf(),
-                fornecedor.getRg(),
-                fornecedor.getNascimento(),
-                fornecedor.getNome(),
-                fornecedor.getEmail(),
-                fornecedor.getCep(),
-                fornecedor.isE_pf(),
-                fornecedor.getEmpresas()
-                    .stream()
-                    .map((e) -> empresaService.mapToEmpresaResponseDTO(e)).toList()
+            fornecedor.getId(),
+            fornecedor.getCnpj_cpf(),
+            fornecedor.getRg(),
+            fornecedor.getNascimento(),
+            fornecedor.getNome(),
+            fornecedor.getEmail(),
+            fornecedor.getCep(),
+            fornecedor.isE_pf(),
+            fornecedor.getEmpresas()
+                .stream()
+                .map((e) -> empresaService.mapToEmpresaResponseDTO(e)).toList()
         );
     }
 }

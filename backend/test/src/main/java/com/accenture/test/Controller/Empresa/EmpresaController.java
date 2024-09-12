@@ -1,8 +1,9 @@
 package com.accenture.test.Controller.Empresa;
 
-import com.accenture.test.Domain.Empresa.AtualizarEmpresaDTO;
+import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
+import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
 import com.accenture.test.Domain.Empresa.Empresa;
-import com.accenture.test.Domain.Empresa.RegistrarEmpresaDTO;
+import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,30 +21,39 @@ public class EmpresaController {
     private EmpresaService empresaService;
 
     @GetMapping()
-    public ResponseEntity<List<Empresa>> buscar_tudo(
+    public ResponseEntity<List<EmpresaFornResponseDTO>> buscar_tudo(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         if (size < 1) size = 10;
-        List<Empresa> empresas = empresaService.buscar_tudo(page, size);
+        List<EmpresaFornResponseDTO> empresas = empresaService.buscar_tudo(page, size);
         return ResponseEntity.ok(empresas);
     }
 
     @PostMapping(value = "/registrar")
-    public ResponseEntity<Empresa> registrar(@RequestBody RegistrarEmpresaDTO data) {
-        Empresa empresa = empresaService.registrar(data);
+    public ResponseEntity<EmpresaFornResponseDTO> registrar(@RequestBody RegistrarEmpresaDTO data) {
+        EmpresaFornResponseDTO empresa = empresaService.registrar(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
     }
 
     @PatchMapping(value = "/atualizar/{id}")
-    public ResponseEntity<Empresa> atualizar(@PathVariable("id") UUID id, @RequestBody AtualizarEmpresaDTO data) {
-        Empresa empresa = empresaService.atualizar(id, data);
+    public ResponseEntity<EmpresaFornResponseDTO> atualizar(@PathVariable("id") UUID id, @RequestBody AtualizarEmpresaDTO data) {
+        EmpresaFornResponseDTO empresa = empresaService.atualizar(id, data);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }
 
     @DeleteMapping(value = "/deletar/{id}")
-    public ResponseEntity<Empresa> deletar(@PathVariable("id") UUID id) {
-        Empresa empresa = empresaService.deletar(id);
+    public ResponseEntity<EmpresaFornResponseDTO> deletar(@PathVariable("id") UUID id) {
+        EmpresaFornResponseDTO empresa = empresaService.deletar(id);
+        return ResponseEntity.status(HttpStatus.OK).body(empresa);
+    }
+
+    @PatchMapping(value = "/associar/{id}/{id_fornecedor}")
+    public ResponseEntity<EmpresaFornResponseDTO> atualizar(
+            @PathVariable("id") UUID id,
+            @PathVariable("id_fornecedor") UUID id_fornecedor
+    ) {
+        EmpresaFornResponseDTO empresa = empresaService.associarFornecedor(id_fornecedor, id);
         return ResponseEntity.status(HttpStatus.OK).body(empresa);
     }
 }

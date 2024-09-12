@@ -27,6 +27,6 @@ public class Empresa {
     private String nome_fantasia;
     @Column(name = "cep")
     private String cep;
-    @ManyToMany(mappedBy = "empresas", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "empresas", fetch = FetchType.EAGER)
     private List<Fornecedor> fornecedores;
 }

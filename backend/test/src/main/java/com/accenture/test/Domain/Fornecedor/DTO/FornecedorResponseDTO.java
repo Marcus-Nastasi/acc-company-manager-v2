@@ -1,8 +1,10 @@
-package com.accenture.test.Domain.Fornecedor;
+package com.accenture.test.Domain.Fornecedor.DTO;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-public record RegistrarFornecedorDTO(
+public record FornecedorResponseDTO(
+        UUID id,
         String cnpj_cpf,
         String rg,
         LocalDate nascimento,

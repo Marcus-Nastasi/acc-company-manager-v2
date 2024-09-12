@@ -1,4 +1,4 @@
-package com.accenture.test.Domain.Empresa;
+package com.accenture.test.Domain.Empresa.DTO;
 
 public record AtualizarEmpresaDTO(
         String cnpj,

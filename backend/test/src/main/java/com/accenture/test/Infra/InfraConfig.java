@@ -12,7 +12,7 @@ public class InfraConfig extends DelegatingWebMvcConfiguration {
         registry.addMapping("/**")
             .allowCredentials(true)
             .allowedHeaders("Content-Type", "Authorization")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
             .allowedOrigins("http://localhost:3000");
     }
 }

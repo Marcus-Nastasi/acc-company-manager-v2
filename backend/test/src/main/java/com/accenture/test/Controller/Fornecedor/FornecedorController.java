@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/fornecedor")
+@CrossOrigin(origins = "http://localhost:3000")
 public class FornecedorController {
 
     @Autowired

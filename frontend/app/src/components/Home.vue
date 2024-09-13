@@ -2,7 +2,7 @@
    <v-card class=" min-h-screen max-h-fit">
      <v-layout>
       <v-app-bar
-         color="secondary"
+         color=""
          prominent
       >
          <v-list-item prepend-icon="mdi-menu" @click.stop="drawer = !drawer"></v-list-item>

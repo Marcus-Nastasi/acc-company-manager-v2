@@ -1,6 +1,7 @@
 package com.accenture.test.Controller.Fornecedor;
 
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
+import com.accenture.test.Domain.Fornecedor.DTO.FornecedorPagResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
 import com.accenture.test.Service.Fornecedor.FornecedorService;
 import jakarta.validation.Valid;
@@ -9,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,14 +20,14 @@ public class FornecedorController {
     private FornecedorService fornecedorService;
 
     @GetMapping()
-    public ResponseEntity<List<FornecedorEmpResponseDTO>> buscar_tudo(
+    public ResponseEntity<FornecedorPagResponseDTO<FornecedorEmpResponseDTO>> buscar_tudo(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
         if (size < 1) size = 10;
-        List<FornecedorEmpResponseDTO> fornecedorList = fornecedorService
+        FornecedorPagResponseDTO<FornecedorEmpResponseDTO> fornecedorList = fornecedorService
             .buscar_tudo(page, size, nome, cnpj_cpf);
         return ResponseEntity.ok(fornecedorList);
     }

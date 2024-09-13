@@ -1,6 +1,7 @@
 package com.accenture.test.Service.Fornecedor;
 
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
+import com.accenture.test.Domain.Fornecedor.DTO.FornecedorPagResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorResponseDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Domain.Fornecedor.DTO.RegistrarFornecedorDTO;
@@ -26,7 +27,7 @@ public class FornecedorService {
     @Autowired
     private EmpresaService empresaService;
 
-    public List<FornecedorEmpResponseDTO> buscar_tudo(
+    public FornecedorPagResponseDTO<FornecedorEmpResponseDTO> buscar_tudo(
             int page,
             int size,
             String nome,
@@ -35,9 +36,15 @@ public class FornecedorService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Fornecedor> fornecedorPage = fornecedorRepo
             .filtrarFornecedores(nome, cnpj_cpf, pageable);
-        return fornecedorPage
-            .map(this::mapToFornecedorEmpResponseDTO)
-            .toList();
+        List<FornecedorEmpResponseDTO> fornEmpresasList = fornecedorPage
+                .map(this::mapToFornecedorEmpResponseDTO)
+                .toList();
+        return new FornecedorPagResponseDTO<>(
+            fornEmpresasList,
+            fornecedorPage.getNumber(),
+            fornecedorPage.getTotalPages(),
+            fornecedorPage.getNumber() - 1
+        );
     }
 
     public FornecedorEmpResponseDTO registrar(RegistrarFornecedorDTO data) {
@@ -49,10 +56,11 @@ public class FornecedorService {
         fornecedor.setE_pf(data.e_pf());
         fornecedor.setEmpresas(List.of());
         if (fornecedor.isE_pf()) {
-            if (data.rg() == null || data.nascimento() == null) throw new AppException(
-                "É necessário informar um RG e data de " +
-                "nascimento para cadastro de fornecedor pessoa física"
-            );
+            if (data.rg() == null || data.nascimento() == null)
+                throw new AppException(
+                    "É necessário informar um RG e data de " +
+                    "nascimento para cadastro de fornecedor pessoa física"
+                );
             fornecedor.setRg(data.rg());
             fornecedor.setNascimento(data.nascimento());
         }
@@ -70,10 +78,11 @@ public class FornecedorService {
         fornecedor.setCep(data.cep());
         fornecedor.setE_pf(data.e_pf());
         if (fornecedor.isE_pf()) {
-            if (data.rg() == null || data.nascimento() == null) throw new AppException(
-                "É necessário informar um RG e data de " +
-                "nascimento para cadastro de fornecedor pessoa física"
-            );
+            if (data.rg() == null || data.nascimento() == null)
+                throw new AppException(
+                    "É necessário informar um RG e data de " +
+                    "nascimento para cadastro de fornecedor pessoa física"
+                );
             fornecedor.setRg(data.rg());
             fornecedor.setNascimento(data.nascimento());
         }

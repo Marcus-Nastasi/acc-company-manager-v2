@@ -1,6 +1,7 @@
 package com.accenture.test.Controller.Empresa;
 
 import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
+import com.accenture.test.Domain.Empresa.DTO.EmpPagResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
@@ -15,13 +16,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/empresa")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EmpresaController {
 
     @Autowired
     private EmpresaService empresaService;
 
     @GetMapping()
-    public ResponseEntity<List<EmpresaFornResponseDTO>> buscar_tudo(
+    public ResponseEntity<EmpPagResponseDTO<EmpresaFornResponseDTO>> buscar_tudo(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "nome", defaultValue = "", required = false) String nome_fantasia,
@@ -29,7 +31,7 @@ public class EmpresaController {
             @RequestParam(name = "cep", defaultValue = "", required = false) String cep
     ) {
         if (size < 1) size = 10;
-        List<EmpresaFornResponseDTO> empresas = empresaService
+        EmpPagResponseDTO<EmpresaFornResponseDTO> empresas = empresaService
             .buscar_tudo(page, size, nome_fantasia, cnpj, cep);
         return ResponseEntity.ok(empresas);
     }

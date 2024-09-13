@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Empresa: typeof import('./src/components/Empresa/Empresa.vue')['default']
     Fornecedor: typeof import('./src/components/Fornecedor/Fornecedor.vue')['default']
+    FornecedorTable: typeof import('./src/components/Fornecedor/FornecedorTable.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     HomeDash: typeof import('./src/components/HomeDash.vue')['default']
@@ -16,5 +17,6 @@ declare module 'vue' {
     Menu: typeof import('./src/components/Menu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Table: typeof import('./src/components/Empresa/Table.vue')['default']
   }
 }

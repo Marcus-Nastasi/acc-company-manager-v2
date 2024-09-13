@@ -1,11 +1,8 @@
 package com.accenture.test.Service.Empresa;
 
 import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
-import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
-import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
-import com.accenture.test.Domain.Empresa.DTO.EmpresaResponseDTO;
+import com.accenture.test.Domain.Empresa.DTO.*;
 import com.accenture.test.Domain.Empresa.Empresa;
-import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Exception.AppException;
 import com.accenture.test.Repository.Empresa.EmpresaRepo;
@@ -35,7 +32,7 @@ public class EmpresaService {
     @Autowired
     private CepService cepService;
 
-    public List<EmpresaFornResponseDTO> buscar_tudo(
+    public EmpPagResponseDTO<EmpresaFornResponseDTO> buscar_tudo(
             int page,
             int size,
             String nome_fantasia,
@@ -45,9 +42,15 @@ public class EmpresaService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Empresa> empresaPage = empresaRepo
             .filtrarEmpresa(nome_fantasia, cnpj, cep, pageable);
-        return empresaPage
-            .map(this::mapToEmpresaFornResponseDTO)
-            .toList();
+        List<EmpresaFornResponseDTO> empresaFornList = empresaPage
+                .map(this::mapToEmpresaFornResponseDTO)
+                .toList();
+        return new EmpPagResponseDTO<>(
+            empresaFornList,
+            empresaPage.getNumber(),
+            empresaPage.getTotalPages(),
+            empresaPage.getNumber() - 1
+        );
     }
 
     public EmpresaFornResponseDTO registrar(RegistrarEmpresaDTO data) {

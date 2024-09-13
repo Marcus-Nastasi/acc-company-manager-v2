@@ -5,6 +5,7 @@
  */
 
 // Composables
+import Detalhes from '@/components/Empresa/Detalhes.vue'
 import Empresa from '@/components/Empresa/Empresa.vue'
 import Fornecedor from '@/components/Fornecedor/Fornecedor.vue'
 import Home from '@/components/Home.vue'
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/empresas',
       name: 'Empresas',
       component: Empresa
+   },
+   {
+      path: '/empresas/:id',
+      name: 'Empresa',
+      component: Detalhes
    },
    {
       path: '/fornecedores',

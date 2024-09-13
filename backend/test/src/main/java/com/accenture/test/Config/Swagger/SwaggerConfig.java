@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-        title = "Teste técnico Accenture",
+        title = "Company Manager",
         description = "Uma aplicação para relacionar empresas e fornecedores",
         version = "1.0.0"
     )

@@ -7,6 +7,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Detalhes: typeof import('./src/components/Empresa/Detalhes.vue')['default']
+    DetalheTable: typeof import('./src/components/Empresa/DetalheTable.vue')['default']
     Empresa: typeof import('./src/components/Empresa/Empresa.vue')['default']
     Fornecedor: typeof import('./src/components/Fornecedor/Fornecedor.vue')['default']
     FornecedorTable: typeof import('./src/components/Fornecedor/FornecedorTable.vue')['default']

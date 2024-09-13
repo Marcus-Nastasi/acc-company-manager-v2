@@ -5,13 +5,13 @@ import FornecedorTable from './FornecedorTable.vue';
       data: () => ({
          drawer: false,
          group: null
-   }),
+      }),
 
-   watch: {
-      group () {
-         this.drawer = false
+      watch: {
+         group () {
+            this.drawer = false
+         },
       },
-   },
    }
 </script>
 

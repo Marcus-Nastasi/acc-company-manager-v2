@@ -3,6 +3,7 @@ package com.accenture.test.Service.Empresa;
 import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.*;
 import com.accenture.test.Domain.Empresa.Empresa;
+import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Exception.AppException;
 import com.accenture.test.Repository.Empresa.EmpresaRepo;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -51,6 +54,13 @@ public class EmpresaService {
             empresaPage.getTotalPages(),
             empresaPage.getNumber() - 1
         );
+    }
+
+    public EmpresaFornResponseDTO buscar_um(UUID id) {
+        Empresa empresa = empresaRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("erro ao encontrar empresa"));
+        return this.mapToEmpresaFornResponseDTO(empresa);
     }
 
     public EmpresaFornResponseDTO registrar(RegistrarEmpresaDTO data) {

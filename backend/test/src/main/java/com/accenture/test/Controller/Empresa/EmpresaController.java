@@ -4,6 +4,7 @@ import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpPagResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
+import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class EmpresaController {
         EmpPagResponseDTO<EmpresaFornResponseDTO> empresas = empresaService
             .buscar_tudo(page, size, nome_fantasia, cnpj, cep);
         return ResponseEntity.ok(empresas);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<EmpresaFornResponseDTO> buscar_um(@PathVariable("id") UUID id) {
+        return ResponseEntity.ok(empresaService.buscar_um(id));
     }
 
     @PostMapping(value = "/registrar")

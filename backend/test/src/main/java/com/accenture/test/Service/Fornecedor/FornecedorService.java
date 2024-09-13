@@ -47,6 +47,13 @@ public class FornecedorService {
         );
     }
 
+    public FornecedorEmpResponseDTO buscar_um(UUID id) {
+        Fornecedor fornecedor = fornecedorRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("erro ao encontrar o fornecedor"));
+        return this.mapToFornecedorEmpResponseDTO(fornecedor);
+    }
+
     public FornecedorEmpResponseDTO registrar(RegistrarFornecedorDTO data) {
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setCnpj_cpf(data.cnpj_cpf());

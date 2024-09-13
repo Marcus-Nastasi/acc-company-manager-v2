@@ -33,6 +33,11 @@ public class FornecedorController {
         return ResponseEntity.ok(fornecedorList);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<FornecedorEmpResponseDTO> buscar_um(@PathVariable("id") UUID id) {
+        return ResponseEntity.ok(fornecedorService.buscar_um(id));
+    }
+
     @PostMapping(value = "/registrar")
     public ResponseEntity<FornecedorEmpResponseDTO> registrar(
             @RequestBody @Valid RegistrarFornecedorDTO data

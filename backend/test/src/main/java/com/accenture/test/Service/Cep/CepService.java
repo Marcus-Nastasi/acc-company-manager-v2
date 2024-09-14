@@ -4,6 +4,7 @@ import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
 import com.accenture.test.Exception.AppException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 

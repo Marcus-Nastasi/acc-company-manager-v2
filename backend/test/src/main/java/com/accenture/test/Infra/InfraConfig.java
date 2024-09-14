@@ -11,7 +11,7 @@ public class InfraConfig extends DelegatingWebMvcConfiguration {
     protected void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowCredentials(true)
-            .allowedHeaders("Content-Type", "Authorization")
+            .allowedHeaders("*")
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
             .allowedOrigins("http://localhost:3000");
     }

@@ -3,7 +3,6 @@ package com.accenture.test.Service.Empresa;
 import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.*;
 import com.accenture.test.Domain.Empresa.Empresa;
-import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.Fornecedor;
 import com.accenture.test.Exception.AppException;
 import com.accenture.test.Repository.Empresa.EmpresaRepo;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -112,7 +109,7 @@ public class EmpresaService {
                 }
             }
         }
-        vinculaEmpresaFornecedor(empresa, fornecedor);
+        vincularEmpresaFornecedor(empresa, fornecedor);
         return mapToEmpresaFornResponseDTO(empresa);
     }
 
@@ -124,7 +121,7 @@ public class EmpresaService {
         return c.uf().equalsIgnoreCase("PR");
     }
 
-    private void vinculaEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
+    private void vincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
         empresa.getFornecedores().add(fornecedor);
         fornecedor.getEmpresas().add(empresa);
         empresaRepo.save(empresa);

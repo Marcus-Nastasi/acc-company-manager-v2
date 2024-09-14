@@ -1,10 +1,17 @@
 <script lang="ts">
 import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import { CepService } from '@/services/cep/CepService';
+import { DateUtil } from '@/util/DateUtil';
+import { emit } from 'process';
 
 export default {
    props: {
       empresa: {
          type: {} as EmpresaFornResponseDTO,
+         required: true
+      },
+      fetchEmpresas: {
+         type: () => {},
          required: true
       }
    },
@@ -38,11 +45,40 @@ export default {
       // this.fetchEmpresa(window.location.href.split('/')[4]);
    },
  
-   methods: { 
+   methods: {
+      async buscaFornecedor(id: string) {
+         const url: string = `http://localhost:8080/api/fornecedor/${id}`;
+         const response: Response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+         });
+         if (response.status != 200) throw new Error("");
+         const data = await response.json();
+         return data;
+      },
       
       async save() {
-         console.log(this.editedItem.id_fornecedor)
-         console.log(window.location.href.split('/')[4])
+         try {
+            const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
+            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep)) {
+               if (DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
+                  alert('Não é permitido cadastrar um fornecedor menor de idade no Paraná');
+                  return;
+               }
+            }
+            const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
+            const response: Response = await fetch(url, {
+               method: 'PATCH',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status != 200) throw new Error("Stat dif 200");
+            const data = await response.json();
+            alert('Sucesso!');
+            this.fetchEmpresas();
+         } catch(e) {
+            alert("Erro");
+         }
+         this.close();
       },
 
       close() {

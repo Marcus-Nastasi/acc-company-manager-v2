@@ -10,7 +10,8 @@ export default {
    data: () => ({
       drawer: false,
       group: null,
-      empresa: {} as EmpresaFornResponseDTO
+      empresa: {} as EmpresaFornResponseDTO,
+      fetchEmpresas: () => {}
    }),
 
    watch: {

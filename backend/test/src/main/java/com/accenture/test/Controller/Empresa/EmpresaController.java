@@ -4,7 +4,6 @@ import com.accenture.test.Domain.Empresa.DTO.AtualizarEmpresaDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpPagResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.EmpresaFornResponseDTO;
 import com.accenture.test.Domain.Empresa.DTO.RegistrarEmpresaDTO;
-import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Service.Empresa.EmpresaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/empresa")
-@CrossOrigin(origins = "http://localhost:3000")
 public class EmpresaController {
 
     @Autowired

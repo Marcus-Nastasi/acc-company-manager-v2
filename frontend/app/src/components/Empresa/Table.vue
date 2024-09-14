@@ -72,7 +72,6 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
      },
  
      async deleteItem(item) {
-      console.log(item);
       if (!item) return;
       try {
          const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
@@ -84,7 +83,6 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
           });
           if (response.ok) {
             this.fetchEmpresas();
-            // Object.assign(this.empresas[this.editedIndex], this.editedItem);
           } else {
             console.error('Erro ao atualizar a empresa');
           }

@@ -4,10 +4,7 @@ import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
 import com.accenture.test.Service.Cep.CepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -18,6 +15,7 @@ public class CepController {
     private CepService cepService;
 
     @GetMapping(value = "/{cep}")
+    @CrossOrigin(origins = "http://localhost:3000/")
     public ResponseEntity<Mono<ResponseEntity<CepResponseDTO>>> buscar_cep(
             @PathVariable("cep") String cep
     ) {

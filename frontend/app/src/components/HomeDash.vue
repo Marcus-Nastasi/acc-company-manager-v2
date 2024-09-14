@@ -7,6 +7,8 @@
        >
          <v-sheet class="ma-2 pa-2">
             <v-card
+               variant="elevated"
+               color="primary"
                class="mx-auto"
                max-width="344"
                style="padding: 10px; text-wrap: wrap;"
@@ -22,6 +24,8 @@
        >
          <v-sheet class="ma-2 pa-2">
             <v-card
+               variant="elevated"
+               color="success"
                class="mx-auto"
                max-width="344"
                style="padding: 10px; text-wrap: wrap;"

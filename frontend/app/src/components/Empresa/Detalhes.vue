@@ -28,7 +28,8 @@ export default {
       async fetchEmpresa(id: string): Promise<void> {
          try {
             const response = await fetch(`http://localhost:8080/api/empresa/${id}`, { 
-               method: 'GET' 
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
             });
             const data: EmpresaFornResponseDTO = await response.json();
             this.empresa = data;
@@ -47,7 +48,15 @@ export default {
          color=""
          prominent
       >
-         <v-list-item prepend-icon="mdi-menu" @click.stop="drawer = !drawer"></v-list-item>
+         <v-btn
+            variant="tonal"
+            size="large"
+            color="primary" 
+            @click.stop="drawer = !drawer" 
+            style="padding: 0; box-sizing: border-box; width: fit-content; margin-left: 1rem; display: flex; justify-content: center;"
+         >
+            <v-list-item prepend-icon="mdi-menu" style="width: 60%;"></v-list-item>
+         </v-btn>
       </v-app-bar>
  
       <v-navigation-drawer
@@ -74,17 +83,18 @@ export default {
                <v-col cols="12" md="4">
                </v-col>
                <v-col cols="12" md="4" style="margin-bottom: 50px;">
-                  <v-card color="success">
+                  <v-card variant="tonal">
                      <template v-slot:title>
                         {{ empresa.nome_fantasia }}
                      </template>
 
                      <template v-slot:subtitle>
-                        CEP: {{  empresa.cep  }}
+                        ID: {{ empresa.id }}
                      </template>
 
                      <template v-slot:text>
-                        CNPJ: {{ empresa.cnpj }}
+                        CNPJ: {{ empresa.cnpj }}<br/>
+                        CEP: {{  empresa.cep  }}
                      </template>
                   </v-card>
                </v-col>

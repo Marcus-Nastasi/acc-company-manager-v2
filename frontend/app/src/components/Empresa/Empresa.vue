@@ -1,5 +1,12 @@
 <script>
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiHome } from '@mdi/js';
+
    export default {
+      components: {
+         SvgIcon
+      },
+
       data: () => ({
          drawer: false,
          group: null
@@ -20,7 +27,15 @@
          color=""
          prominent
       >
-         <v-list-item prepend-icon="mdi-menu" @click.stop="drawer = !drawer"></v-list-item>
+         <v-btn
+            variant="tonal"
+            size="large"
+            color="primary" 
+            @click.stop="drawer = !drawer" 
+            style="padding: 0; box-sizing: border-box; width: fit-content; margin-left: 1rem; display: flex; justify-content: center;"
+         >
+            <v-list-item prepend-icon="mdi-menu" style="width: 60%;"></v-list-item>
+         </v-btn>
       </v-app-bar>
  
       <v-navigation-drawer
@@ -34,7 +49,7 @@
             :items="items"
          >
             <v-list>
-               <v-list-item prepend-icon="mdi-menu" href="/" title="Home"></v-list-item>
+               <v-list-item prepend-icon="mdi-home" href="/" title="Home"></v-list-item>
                <v-list-item prepend-icon="mdi-store-settings" href="/empresas" title="Empresas"></v-list-item>
                <v-list-item prepend-icon="mdi-account"  href="/fornecedores" title="Fornecedores"></v-list-item>
             </v-list>

@@ -6,9 +6,8 @@
          prominent
       >
          <v-btn
-            variant="tonal"
-            size="large"
-            color="primary" 
+            variant="text"
+            size="large" 
             @click.stop="drawer = !drawer" 
             style="padding: 0; box-sizing: border-box; width: fit-content; margin-left: 1rem; display: flex; justify-content: center;"
          >

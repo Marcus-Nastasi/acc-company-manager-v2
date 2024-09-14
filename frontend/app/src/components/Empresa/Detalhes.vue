@@ -49,9 +49,8 @@ export default {
          prominent
       >
          <v-btn
-            variant="tonal"
-            size="large"
-            color="primary" 
+            variant="text"
+            size="large" 
             @click.stop="drawer = !drawer" 
             style="padding: 0; box-sizing: border-box; width: fit-content; margin-left: 1rem; display: flex; justify-content: center;"
          >
@@ -70,7 +69,7 @@ export default {
             :items="items"
          >
             <v-list>
-               <v-list-item prepend-icon="mdi-menu" href="/" title="Home"></v-list-item>
+               <v-list-item prepend-icon="mdi-home" href="/" title="Home"></v-list-item>
                <v-list-item prepend-icon="mdi-store-settings" href="/empresas" title="Empresas"></v-list-item>
                <v-list-item prepend-icon="mdi-account"  href="/fornecedores" title="Fornecedores"></v-list-item>
             </v-list>

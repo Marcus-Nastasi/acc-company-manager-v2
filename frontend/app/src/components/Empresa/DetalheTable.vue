@@ -2,7 +2,6 @@
 import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
 import { CepService } from '@/services/cep/CepService';
 import { DateUtil } from '@/util/DateUtil';
-import { emit } from 'process';
 
 export default {
    props: {
@@ -32,6 +31,8 @@ export default {
          editedItem: {
             id_fornecedor: '',
          },
+         snackbarSuccess: false,
+         snackbarError: false,
       };
    },
 
@@ -41,20 +42,21 @@ export default {
       },
    },
  
-   mounted() {
-      // this.fetchEmpresa(window.location.href.split('/')[4]);
-   },
- 
    methods: {
       async buscaFornecedor(id: string) {
-         const url: string = `http://localhost:8080/api/fornecedor/${id}`;
-         const response: Response = await fetch(url, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-         });
-         if (response.status != 200) throw new Error("");
-         const data = await response.json();
-         return data;
+         try {
+            const url: string = `http://localhost:8080/api/fornecedor/${id}`;
+            const response: Response = await fetch(url, {
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status != 200) throw new Error("Não foi possível buscar os dados");
+            const data = await response.json();
+            return data;
+         } catch(e) {
+            this.snackbarErro = true;
+            console.error(e.message)
+         }
       },
       
       async save() {
@@ -71,14 +73,16 @@ export default {
                method: 'PATCH',
                headers: { 'Content-Type': 'application/json' }
             });
-            if (response.status != 200) throw new Error("Stat dif 200");
+            if (response.status != 200) throw new Error("Status diferente de 200");
             const data = await response.json();
-            alert('Sucesso!');
-            this.fetchEmpresas();
+            this.snackbarSuccess = true;
+            await this.fetchEmpresas();
          } catch(e) {
-            alert("Erro");
+            this.snackbarErro = true;
+            console.error(e.message)
          }
          this.close();
+         await this.fetchEmpresas()
       },
 
       close() {
@@ -94,6 +98,24 @@ export default {
 
 <template>
    <div>
+      <v-snackbar
+         variant="flat"
+         color="success"
+         v-model="snackbarSuccess"
+         :timeout="3000"
+         style="margin-bottom: 5rem;"
+      >
+         Operação concluida com sucesso
+      </v-snackbar>
+      <v-snackbar
+         variant="flat"
+         color="red"
+         v-model="snackbarError"
+         :timeout="3000"
+         style="margin-bottom: 5rem;"
+      >
+         Erro ao realizar operação
+      </v-snackbar>
      <v-data-table
        :headers="headers"
        :items="empresa.fornecedores"
@@ -105,7 +127,7 @@ export default {
            <v-spacer></v-spacer>
            <v-dialog v-model="dialog" max-width="500px">
              <template v-slot:activator="{ props }">
-               <v-btn class="mb-2" color="primary" dark v-bind="props">
+               <v-btn class="mr-5" color="success" variant="tonal" dark v-bind="props">
                  Associar fornecedor
                </v-btn>
              </template>
@@ -130,10 +152,10 @@ export default {
  
                <v-card-actions>
                  <v-spacer></v-spacer>
-                 <v-btn color="blue-darken-1" variant="text" @click="close">
+                 <v-btn color="red" variant="text" @click="close">
                    Cancelar
                  </v-btn>
-                 <v-btn color="blue-darken-1" variant="text" @click="save">
+                 <v-btn color="blue-darken-1" variant="tonal" @click="save">
                    Salvar
                  </v-btn>
                </v-card-actions>

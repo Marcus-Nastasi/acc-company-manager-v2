@@ -197,7 +197,10 @@ export default {
       >
          Erro ao realizar operação
       </v-snackbar>
-      <Search :fetchFornecedores="fetchFornecedores"  style="margin-bottom: 2rem;" />
+      <Search 
+         :fetchFornecedores="fetchFornecedores" 
+         style="margin-bottom: 2rem;" 
+      />
       <v-data-table
          :headers="headers"
          :items="empresas"
@@ -212,7 +215,7 @@ export default {
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
                <template v-slot:activator="{ props }">
-                  <v-btn class="mr-4" color="success" variant="flat" dark v-bind="props">
+                  <v-btn class="mr-4" color="success" variant="tonal" dark v-bind="props">
                      Novo fornecedor
                   </v-btn>
                </template>

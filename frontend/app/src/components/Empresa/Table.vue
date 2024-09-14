@@ -1,7 +1,12 @@
 <script lang="ts">
 import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import SearchEmp from './SearchEmp.vue';
 
  export default {
+   components: {
+      SearchEmp
+   },
+
    data() {
      return {
        dialog: false,
@@ -30,6 +35,11 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
        size: 10,
        totalPaginas: 0,
        totalEmpresas: 0,
+         snackbarSuccess: false,
+         snackbarError: false,
+         name: '',
+         cnpj: '',
+         cep: ''
      };
    },
  
@@ -48,14 +58,16 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
    mounted() {
      this.fetchEmpresas();
    },
- 
+
    methods: {
      async fetchEmpresas() {
        try {
-         const response = await fetch(
-           `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}`,
-           { method: 'GET' }
-         );
+         // if (!this.nome)
+         const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
+         const response = await fetch(url, { 
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' } 
+         });
          const data: EmpresaPagFornResponseDTO = await response.json();
          this.empresas = data.dados;
          this.totalPaginas = data.totalPaginas;
@@ -141,6 +153,31 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
 
 <template>
    <div>
+      <v-snackbar
+         variant="flat"
+         color="success"
+         v-model="snackbarSuccess"
+         :timeout="3000"
+         style="margin-bottom: 5rem;"
+      >
+         Operação concluida com sucesso
+      </v-snackbar>
+      <v-snackbar
+         variant="flat"
+         color="red"
+         v-model="snackbarError"
+         :timeout="3000"
+         style="margin-bottom: 5rem;"
+      >
+         Erro ao realizar operação
+      </v-snackbar>
+      <SearchEmp
+         :fetchEmpresas="fetchEmpresas" 
+         v-model:name="name"
+         v-model:cnpj="cnpj"
+         v-model:cep="cep"
+         style="margin-bottom: 2rem;" 
+      />
      <v-data-table
        :headers="headers"
        :items="empresas"
@@ -155,7 +192,7 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
            <v-spacer></v-spacer>
            <v-dialog v-model="dialog" max-width="500px">
              <template v-slot:activator="{ props }">
-               <v-btn class="mb-2" color="primary" dark v-bind="props">
+               <v-btn class="mr-4" color="success" variant="tonal" dark v-bind="props">
                  Nova Empresa
                </v-btn>
              </template>
@@ -194,10 +231,10 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
  
                <v-card-actions>
                  <v-spacer></v-spacer>
-                 <v-btn color="blue-darken-1" variant="text" @click="close">
+                 <v-btn color="red" variant="text" @click="close">
                    Cancelar
                  </v-btn>
-                 <v-btn color="blue-darken-1" variant="text" @click="save">
+                 <v-btn color="blue-darken-1" variant="tonal" @click="save">
                    Salvar
                  </v-btn>
                </v-card-actions>
@@ -214,7 +251,7 @@ import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/
             <v-icon size="small" @click="deleteItem(item)">
                mdi-delete
             </v-icon>
-            <v-btn size="small" @click="verDetalhes(item)" color="info">
+            <v-btn size="small" @click="verDetalhes(item)" color="info" variant="text">
                Ver Detalhes
             </v-btn>
          </div>

@@ -8,15 +8,15 @@ import { mdiHome } from '@mdi/js';
       },
 
       data: () => ({
-         drawer: false,
-         group: null
-   }),
+            drawer: false,
+            group: null
+      }),
 
-   watch: {
-      group () {
-         this.drawer = false
+      watch: {
+         group () {
+            this.drawer = false
+         },
       },
-   },
    }
 </script>
 
@@ -28,9 +28,8 @@ import { mdiHome } from '@mdi/js';
          prominent
       >
          <v-btn
-            variant="tonal"
+            variant="text"
             size="large"
-            color="primary" 
             @click.stop="drawer = !drawer" 
             style="padding: 0; box-sizing: border-box; width: fit-content; margin-left: 1rem; display: flex; justify-content: center;"
          >
@@ -56,7 +55,7 @@ import { mdiHome } from '@mdi/js';
          </v-list>
       </v-navigation-drawer>
  
-      <v-main class=" min-h-screen max-h-fit mt-20">
+      <v-main class=" min-h-screen max-h-fit mt-5">
          <v-container>
             <Table
                :empresas="empresas"

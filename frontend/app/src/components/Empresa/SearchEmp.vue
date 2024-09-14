@@ -10,7 +10,7 @@
              <v-col class="text-grey" cols="8">
                <v-fade-transition leave-absolute>
                  <span v-if="expanded" key="0">
-                   Filtre por nome ou cnpj/cpf
+                   Filtre por nome, cnpj ou cep
                  </span>
                </v-fade-transition>
              </v-col>

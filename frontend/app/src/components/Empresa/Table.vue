@@ -60,89 +60,94 @@ import SearchEmp from './SearchEmp.vue';
    },
 
    methods: {
-     async fetchEmpresas() {
-       try {
-         // if (!this.nome)
-         const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
-         const response = await fetch(url, { 
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' } 
-         });
-         const data: EmpresaPagFornResponseDTO = await response.json();
-         this.empresas = data.dados;
-         this.totalPaginas = data.totalPaginas;
-         this.totalEmpresas = data.dados.length;
-       } catch (error) {
-         console.error('Erro ao buscar empresas:', error);
-       }
-     },
- 
-     editItem(item) {
-       this.editedIndex = this.empresas.indexOf(item);
-       this.editedItem = Object.assign({}, item);
-       this.dialog = true;
-     },
- 
-     async deleteItem(item) {
-      if (!item) return;
-      try {
-         const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
-          const response = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (response.ok) {
-            this.fetchEmpresas();
-          } else {
-            console.error('Erro ao atualizar a empresa');
-          }
-        } catch (error) {
-          console.error('Erro na requisição de atualização:', error);
-        }
-     },
- 
-     async save() {
-       if (this.editedIndex > -1) {
-         Object.assign(this.empresas[this.editedIndex], this.editedItem);
+      async fetchEmpresas() {
          try {
-            const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
-               method: 'PATCH',
+            const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
+            const response = await fetch(url, { 
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' } 
+            });
+            const data: EmpresaPagFornResponseDTO = await response.json();
+            this.empresas = data.dados;
+            this.totalPaginas = data.totalPaginas;
+            this.totalEmpresas = data.dados.length;
+         } catch (error) {
+            this.snackbarError = true;
+            console.error('Erro ao buscar empresas:', error);
+         }
+      },
+   
+      editItem(item) {
+         this.editedIndex = this.empresas.indexOf(item);
+         this.editedItem = Object.assign({}, item);
+         this.dialog = true;
+      },
+ 
+      async deleteItem(item) {
+         if (!item) return;
+         try {
+            const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
+            const response = await fetch(url, {
+               method: 'DELETE',
                headers: {
                   'Content-Type': 'application/json',
                },
-               body: JSON.stringify(this.editedItem),
             });
-            if (response.ok) {
-               // Object.assign(this.empresas[this.editedIndex], this.editedItem);
-            } else {
-               console.error('Erro ao atualizar a empresa');
-            }
+            if (response.status != 200) throw new Error();
+            this.fetchEmpresas();
+            this.snackbarSuccess = true;
          } catch (error) {
+            this.snackbarErro = true;
             console.error('Erro na requisição de atualização:', error);
          }
+      },
+ 
+      async save(): Promise<void> {
+         if (this.editedIndex > -1) {
+            Object.assign(this.empresas[this.editedIndex], this.editedItem);
+            try {
+               const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(this.editedItem),
+               });
+               if (response.status != 200) throw new Error();
+               this.fetchEmpresas();
+               this.snackbarSuccess = true;
+            } catch (error) {
+               this.snackbarError = true;
+               console.error('Erro na requisição de atualização:', error);
+            }
          } else {
             this.empresas.push(this.editedItem);
-            const response = await fetch('http://localhost:8080/api/empresa/registrar', {
-               method: 'POST',
-               headers: {
-               'Content-Type': 'application/json',
-               },
-               body: JSON.stringify(this.editedItem),
-            });
-            this.fetchEmpresas();
+            try {
+               const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
+                  method: 'POST',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(this.editedItem),
+               });
+               if (response.status != 201) throw new Error();
+               this.fetchEmpresas();
+               this.snackbarSuccess = true;
+            } catch(e) {
+               this.snackbarError = true;
+               console.error(e);
+            }
          }
-      this.close();
-     },
+         this.close();
+      },
  
-     close() {
-       this.dialog = false;
-       this.$nextTick(() => {
-         this.editedItem = Object.assign({}, this.defaultItem);
-         this.editedIndex = -1;
-       });
-     },
+      close() {
+         this.dialog = false;
+         this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem);
+            this.editedIndex = -1;
+         });
+      },
 
       verDetalhes(item): void {
          window.open(`/empresas/${item.id}`, '_self')

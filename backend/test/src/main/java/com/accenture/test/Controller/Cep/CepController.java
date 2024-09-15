@@ -2,7 +2,10 @@ package com.accenture.test.Controller.Cep;
 
 import com.accenture.test.Domain.Cep.DTO.CepResponseDTO;
 import com.accenture.test.Service.Cep.CepService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -15,7 +18,12 @@ public class CepController {
     private CepService cepService;
 
     @GetMapping(value = "/{cep}")
-    @CrossOrigin(origins = "http://localhost:3000/")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+        summary = "Buscar dados de endereço baseado no CEP",
+        description = "Nessa rota você pode consultar dados detalhados de endereço baseado em um CEP"
+    )
+    @ApiResponse(responseCode = "200", description = "Retornando dados da API dos correios")
     public ResponseEntity<Mono<ResponseEntity<CepResponseDTO>>> buscar_cep(
             @PathVariable("cep") String cep
     ) {

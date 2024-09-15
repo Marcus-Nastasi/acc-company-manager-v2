@@ -6,7 +6,7 @@ Sistema de Gerenciamento de Associações entre Empresas e Fornecedores.
 
 Esta é uma aplicação desenvolvida para facilitar o gerenciamento de associações entre empresas e seus fornecedores. 
 
-A aplicação permite a visualização de empresas e fornecedores com paginação e pesquisa por nome, CNPJ e CEP para empresas, e pesquisa por nome e CNPJ/CPF e para fornecedores.
+A aplicação permite a visualização de empresas e fornecedores com paginação e pesquisa por nome, CNPJ e CEP para empresas, e pesquisa por nome e CNPJ/CPF para fornecedores.
 
 A aplicação permite o cadastro, edição e deleção de empresas e fornecedores, assim como a associação entre as empresas e os fornecedores, 
 oferecendo uma interface amigável no front-end e uma API robusta no back-end.
@@ -63,7 +63,7 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
    cd backend/test
    mvn clean install -DskipTests
 
-4. **Executar a aplicação com Docker: Certifique-se de estar na raiz do projeto e rode o Docker Compose para subir todos os serviços:**
+4. **Executar a aplicação com Docker: Certifique-se de estar na raiz do projeto e rode o Docker Compose para subir todos os serviços de forma automatizada:**
    ```bash
     [sudo] docker-compose up --build
 

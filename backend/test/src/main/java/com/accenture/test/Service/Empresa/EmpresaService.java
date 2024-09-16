@@ -121,7 +121,7 @@ public class EmpresaService {
         return c.uf().equalsIgnoreCase("PR");
     }
 
-    private void vincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
+    public void vincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
         empresa.getFornecedores().add(fornecedor);
         fornecedor.getEmpresas().add(empresa);
         empresaRepo.save(empresa);

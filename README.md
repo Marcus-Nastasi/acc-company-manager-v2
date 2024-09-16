@@ -44,7 +44,7 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
 
 - Git
 - Node.js e npm (para o front-end)
-- Maven (para o back-end)
+- java 21 (JDK) e Maven
 - Docker e Docker Compose
 
 ### Passos
@@ -75,3 +75,8 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
    ```bash
     http://localhost:8080/swagger-ui/index.html/
 
+
+## Testes unitários
+
+### Execução e Build sem pular os testes unitários
+- **Para realizar a execução dos testes, ou o build (com o comando "mvn clean install", removendo o "-DskipTests" do exemplo acima), você deve ter em execução um banco de dados postgresql em seu localhost, expondo a porta 5432. Caso tenha um banco de dados postgres fora da máquina local ou em outra porta, será necessário alterar a url do banco no arquivo "application.properties".**

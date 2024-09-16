@@ -8,39 +8,40 @@ import SearchEmp from './SearchEmp.vue';
    },
 
    data() {
-     return {
-       dialog: false,
-       headers: [
-         { text: "ID", value: "id" },
-         { text: "CNPJ", value: "cnpj" },
-         { text: "Nome Fantasia", value: "nome_fantasia" },
-         { text: "CEP", value: "cep" },
-         { text: "Ações", value: "actions", sortable: false },
-       ],
-       empresas: [],
-       editedIndex: -1,
-       editedItem: {
-         id: '',
-         cnpj: '',
-         nome_fantasia: '',
-         cep: '',
-       },
-       defaultItem: {
-         id: '',
-         cnpj: '',
-         nome_fantasia: '',
-         cep: '',
-       },
-       page: 1,
-       size: 10,
-       totalPaginas: 0,
-       totalEmpresas: 0,
+      return {
+         dialog: false,
+         headers: [
+            { text: "ID", value: "id" },
+            { text: "CNPJ", value: "cnpj" },
+            { text: "Nome Fantasia", value: "nome_fantasia" },
+            { text: "CEP", value: "cep" },
+            { text: "Ações", value: "actions", sortable: false },
+         ],
+         empresas: [],
+         editedIndex: -1,
+         editedItem: {
+            id: '',
+            cnpj: '',
+            nome_fantasia: '',
+            cep: '',
+         },
+         defaultItem: {
+            id: '',
+            cnpj: '',
+            nome_fantasia: '',
+            cep: '',
+         },
+         page: 1,
+         size: 10,
+         totalPaginas: 0,
+         totalEmpresas: 0,
          snackbarSuccess: false,
          snackbarError: false,
          name: '',
          cnpj: '',
-         cep: ''
-     };
+         cep: '',
+         errorMessage: ''
+      };
    },
  
    computed: {
@@ -72,6 +73,7 @@ import SearchEmp from './SearchEmp.vue';
             this.totalPaginas = data.totalPaginas;
             this.totalEmpresas = data.dados.length;
          } catch (error) {
+            this.errorMessage = error.message
             this.snackbarError = true;
             console.error('Erro ao buscar empresas:', error);
          }
@@ -97,6 +99,7 @@ import SearchEmp from './SearchEmp.vue';
             this.fetchEmpresas();
             this.snackbarSuccess = true;
          } catch (error) {
+            this.errorMessage = error.message
             this.snackbarErro = true;
             console.error('Erro na requisição de atualização:', error);
          }
@@ -104,8 +107,8 @@ import SearchEmp from './SearchEmp.vue';
  
       async save(): Promise<void> {
          if (this.editedIndex > -1) {
-            Object.assign(this.empresas[this.editedIndex], this.editedItem);
             try {
+               this.validaCamposForm(this.editedItem);
                const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
                   method: 'PATCH',
                   headers: {
@@ -114,31 +117,42 @@ import SearchEmp from './SearchEmp.vue';
                   body: JSON.stringify(this.editedItem),
                });
                if (response.status != 200) throw new Error();
-               this.fetchEmpresas();
                this.snackbarSuccess = true;
+               this.close();
+               this.fetchEmpresas();
             } catch (error) {
+               this.errorMessage = error.message
                this.snackbarError = true;
                console.error('Erro na requisição de atualização:', error);
             }
-         } else {
-            this.empresas.push(this.editedItem);
-            try {
-               const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
-                  method: 'POST',
-                  headers: {
-                     'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(this.editedItem),
-               });
-               if (response.status != 201) throw new Error();
-               this.fetchEmpresas();
-               this.snackbarSuccess = true;
-            } catch(e) {
-               this.snackbarError = true;
-               console.error(e);
-            }
          }
-         this.close();
+
+         try {
+            this.validaCamposForm(this.editedItem);
+            const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+               body: JSON.stringify(this.editedItem),
+            });
+            if (response.status != 201) throw new Error();
+            this.fetchEmpresas();
+            this.snackbarSuccess = true;
+            this.close();
+            return
+         } catch(error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+            console.error(error);
+            return
+         }
+      },
+
+      validaCamposForm(item): void {
+         if (!item.nome_fantasia) throw new Error('Nome é obrigatório');
+         if (!item.cep) throw new Error('CEP é obrigatório');
+         if (!item.cnpj) throw new Error('CNPJ é obrigatório');
       },
  
       close() {
@@ -174,7 +188,7 @@ import SearchEmp from './SearchEmp.vue';
          :timeout="3000"
          style="margin-bottom: 5rem;"
       >
-         Erro ao realizar operação
+         {{ errorMessage }}
       </v-snackbar>
       <SearchEmp
          :fetchEmpresas="fetchEmpresas" 

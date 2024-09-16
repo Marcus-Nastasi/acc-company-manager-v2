@@ -185,43 +185,36 @@ export default {
          totalEmpresas: 0,
          snackbarSuccess: false,
          snackbarError: false,
-         errorMessage: '',
-         dateString: ''
+         errorMessage: ''
       };
    },
 
    computed: {
-      formTitle() {
+      formTitle(): string {
          return this.editedIndex === -1 ? 'Novo Fornecedor' : 'Editar Fornecedor';
       },
   },
 
    watch: {
-      dialog(val) {
+      dialog(val): void {
          val || this.close();
       },
   },
 
-   async mounted() {
+   async mounted(): Promise<void> {
       await this.fetchFornecedores();
-      this.empresas.forEach(element => {
-         if (Array.isArray(element.nascimento)) {
-            const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
-               .toLocaleDateString('pt-BR');
-            element.nascimento = dataFormatada;
-         }
-      });
    },
 
    methods: {
       async fetchFornecedores(name = '', cnpj_cpf = ''): Promise<void> {
          try {
-            const response = await fetch(
+            const response: Response = await fetch(
                `http://localhost:8080/api/fornecedor?page=${this.page - 1}&size=${this.size}&nome=${name}&cnpj_cpf=${cnpj_cpf}`,
                { method: 'GET' }
             );
             const data = await response.json();
             this.empresas = data.dados;
+            this.parseToDateString();
             this.totalPaginas = data.totalPaginas;
             this.totalEmpresas = data.dados.length;
          } catch (error) {
@@ -232,10 +225,11 @@ export default {
 
       async fetchRegister(item): Promise<void> {
          try {
-            const response = await fetch('http://localhost:8080/api/fornecedor/registrar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify(item),
+            this.validaCamposForm(item);
+            const response: Response = await fetch('http://localhost:8080/api/fornecedor/registrar', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json', },
+               body: JSON.stringify(item),
             });
             if (response.status == 201) {
                this.fetchFornecedores();
@@ -255,6 +249,7 @@ export default {
 
       async fetchEdit(id: string): Promise<void> {
          try {
+            this.validaCamposForm(this.editedItem);
             const url: string = `http://localhost:8080/api/fornecedor/atualizar/${id}`;
             const response: Response = await fetch(url, {
                method: 'PATCH',
@@ -279,11 +274,11 @@ export default {
       },
 
       async deleteItem(item): Promise<void> {
-         if (!item) return;
+         if (!item) throw new Error('Item não existe, checar logs');
          if (!confirm('Deseja apagar realmente?')) return;
          try {
             const url: string = `http://localhost:8080/api/fornecedor/deletar/${item.id}`;
-            const response = await fetch(url, {
+            const response: Response = await fetch(url, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json', },
             });
@@ -297,10 +292,11 @@ export default {
          } catch (error) {
             this.errorMessage = error.message
             this.snackbarError = true;
+            console.error(error);
          }
       },
 
-      async save() {
+      async save(): Promise<void> {
          if (this.editedItem.nascimento) {
             this.editedItem.nascimento = new Date(this.editedItem.nascimento);
          }
@@ -313,18 +309,41 @@ export default {
          return
       },
 
-      close() {
+      close(): void {
          this.dialog = false;
          this.$nextTick(() => {
-         this.editedItem = Object.assign({}, this.defaultItem);
-         this.editedIndex = -1;
+            this.editedItem = Object.assign({}, this.defaultItem);
+            this.editedIndex = -1;
          });
       },
 
-      editItem(item) {
+      editItem(item): void {
          this.editedIndex = this.empresas.indexOf(item);
          this.editedItem = Object.assign({}, item);
          this.dialog = true;
+      },
+
+      validaCamposForm(item): void {
+         if (!item.nome) throw new Error('Nome é obrigatório');
+         if (!item.cep) throw new Error('CEP é obrigatório');
+         if (!item.cnpj_cpf) throw new Error('CNPJ/CPF é obrigatório');
+         if (!item.email) throw new Error('Email é obrigatório');
+
+         if (item.e_pf) if (!item.rg || !item.nascimento) {
+            throw new Error(
+               'RG e data de nascimento são obrigatórios para pessoas físicas'
+            );
+         }
+      },
+
+      parseToDateString(): void {
+         this.empresas.forEach(element => {
+            if (Array.isArray(element.nascimento)) {
+               const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
+                  .toLocaleDateString('pt-BR');
+               element.nascimento = dataFormatada;
+            }
+         });
       },
    },
 };

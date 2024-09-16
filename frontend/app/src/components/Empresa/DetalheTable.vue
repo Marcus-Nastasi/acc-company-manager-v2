@@ -1,101 +1,3 @@
-<script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
-import { CepService } from '@/services/cep/CepService';
-import { DateUtil } from '@/util/DateUtil';
-
-export default {
-   props: {
-      empresa: {
-         type: {} as EmpresaFornResponseDTO,
-         required: true
-      },
-      fetchEmpresas: {
-         type: () => {},
-         required: true
-      }
-   },
-
-   data() {
-      return {
-         dialog: false,
-         headers: [
-            { text: "ID", value: "id" },
-            { text: "CNPJ_CPF", value: "cnpj_cpf" },
-            { text: "RG", value: "RG" },
-            { text: "Nascimento", value: "nascimento" },
-            { text: "Nome", value: "nome" },
-            { text: "Email", value: "email" },
-            { text: "CEP", value: "cep" },
-            { text: "Ações", value: "actions", sortable: false },
-         ],
-         editedItem: {
-            id_fornecedor: '',
-         },
-         snackbarSuccess: false,
-         snackbarError: false,
-      };
-   },
-
-   watch: {
-      dialog(val) {
-         val || this.close();
-      },
-   },
- 
-   methods: {
-      async buscaFornecedor(id: string) {
-         try {
-            const url: string = `http://localhost:8080/api/fornecedor/${id}`;
-            const response: Response = await fetch(url, {
-               method: 'GET',
-               headers: { 'Content-Type': 'application/json' }
-            });
-            if (response.status != 200) throw new Error("Não foi possível buscar os dados");
-            const data = await response.json();
-            return data;
-         } catch(e) {
-            this.snackbarErro = true;
-            console.error(e.message)
-         }
-      },
-      
-      async save() {
-         try {
-            const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
-            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep)) {
-               if (DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
-                  alert('Não é permitido cadastrar um fornecedor menor de idade no Paraná');
-                  return;
-               }
-            }
-            const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
-            const response: Response = await fetch(url, {
-               method: 'PATCH',
-               headers: { 'Content-Type': 'application/json' }
-            });
-            if (response.status != 200) throw new Error("Status diferente de 200");
-            const data = await response.json();
-            this.snackbarSuccess = true;
-            await this.fetchEmpresas();
-         } catch(e) {
-            this.snackbarErro = true;
-            console.error(e.message)
-         }
-         this.close();
-         await this.fetchEmpresas()
-      },
-
-      close() {
-         this.dialog = false;
-         this.$nextTick(() => {
-            this.editedItem = Object.assign({}, this.defaultItem);
-            this.editedIndex = -1;
-         });
-      }
-   },
-};
-</script>
-
 <template>
    <div>
       <v-snackbar
@@ -114,7 +16,7 @@ export default {
          :timeout="3000"
          style="margin-bottom: 5rem;"
       >
-         Erro ao realizar operação
+         {{ errorMessage }}
       </v-snackbar>
      <v-data-table
        :headers="headers"
@@ -166,3 +68,125 @@ export default {
      </v-data-table>
    </div>
 </template>
+
+<script lang="ts">
+import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import { CepService } from '@/services/cep/CepService';
+import { DateUtil } from '@/util/DateUtil';
+
+export default {
+   props: {
+      empresa: {
+         type: {} as EmpresaFornResponseDTO,
+         required: true
+      },
+      fetchEmpresas: {
+         type: () => {},
+         required: true
+      }
+   },
+
+   data() {
+      return {
+         dialog: false,
+         headers: [
+            { text: "ID", value: "id" },
+            { text: "CNPJ_CPF", value: "cnpj_cpf" },
+            { text: "RG", value: "RG" },
+            { text: "Nascimento", value: "nascimento" },
+            { text: "Nome", value: "nome" },
+            { text: "Email", value: "email" },
+            { text: "CEP", value: "cep" },
+            { text: "Ações", value: "actions", sortable: false },
+         ],
+         editedItem: {
+            id_fornecedor: '',
+         },
+         snackbarSuccess: false,
+         snackbarError: false,
+         errorMessage: ''
+      };
+   },
+
+   watch: {
+      dialog(val) {
+         val || this.close();
+      },
+   },
+ 
+   methods: {
+      async buscaFornecedor(id: string) {
+         try {
+            const url: string = `http://localhost:8080/api/fornecedor/${id}`;
+            const response: Response = await fetch(url, {
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status != 200) throw new Error("Não foi possível buscar os dados");
+            const data = await response.json();
+            this.parseToDateString();
+            return data;
+         } catch(error) {
+            this.errorMessage = error.message
+            this.snackbarErro = true;
+            console.error(error.message)
+         }
+      },
+      
+      async save() {
+         try {
+            if (!this.editedItem.id_fornecedor || this.editedItem.id_fornecedor.length < 1) {
+               throw new Error('Id do fornecedor é obrigatório');
+            }
+      
+            const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
+
+            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep)) {
+               if (DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
+                  throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná');
+               }
+            }
+            const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
+            const response: Response = await fetch(url, {
+               method: 'PATCH',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status != 200) throw new Error("Status diferente de 200");
+            const data = await response.json();
+            this.snackbarSuccess = true;
+            this.close();
+            this.fetchEmpresas()
+         } catch(error) {
+            this.errorMessage = error.message;
+            this.snackbarError = true;
+            console.error(error.message);
+         }
+      },
+
+      parseToDateString(): void {
+         this.empresa.fornecedores.forEach(fornecedor => {
+            if (fornecedor.nascimento && Array.isArray(fornecedor.nascimento)) {
+               const dataFormatada = new Date(
+                  fornecedor.nascimento[0],
+                  fornecedor.nascimento[1] - 1,
+                  fornecedor.nascimento[2]
+               ).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+               });
+               fornecedor.nascimento = dataFormatada;
+            }
+         });
+      },
+      
+      close() {
+         this.dialog = false;
+         this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem);
+            this.editedIndex = -1;
+         });
+      },
+   },
+};
+</script>

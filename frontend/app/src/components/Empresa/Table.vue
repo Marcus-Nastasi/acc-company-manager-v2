@@ -1,175 +1,3 @@
-<script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
-import SearchEmp from './SearchEmp.vue';
-
- export default {
-   components: {
-      SearchEmp
-   },
-
-   data() {
-      return {
-         dialog: false,
-         headers: [
-            { text: "ID", value: "id" },
-            { text: "CNPJ", value: "cnpj" },
-            { text: "Nome Fantasia", value: "nome_fantasia" },
-            { text: "CEP", value: "cep" },
-            { text: "Ações", value: "actions", sortable: false },
-         ],
-         empresas: [],
-         editedIndex: -1,
-         editedItem: {
-            id: '',
-            cnpj: '',
-            nome_fantasia: '',
-            cep: '',
-         },
-         defaultItem: {
-            id: '',
-            cnpj: '',
-            nome_fantasia: '',
-            cep: '',
-         },
-         page: 1,
-         size: 10,
-         totalPaginas: 0,
-         totalEmpresas: 0,
-         snackbarSuccess: false,
-         snackbarError: false,
-         name: '',
-         cnpj: '',
-         cep: '',
-         errorMessage: ''
-      };
-   },
- 
-   computed: {
-     formTitle() {
-       return this.editedIndex === -1 ? 'Nova Empresa' : 'Editar Empresa';
-     },
-   },
- 
-   watch: {
-     dialog(val) {
-       val || this.close();
-     },
-   },
- 
-   mounted() {
-     this.fetchEmpresas();
-   },
-
-   methods: {
-      async fetchEmpresas() {
-         try {
-            const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
-            const response = await fetch(url, { 
-               method: 'GET',
-               headers: { 'Content-Type': 'application/json' } 
-            });
-            const data: EmpresaPagFornResponseDTO = await response.json();
-            this.empresas = data.dados;
-            this.totalPaginas = data.totalPaginas;
-            this.totalEmpresas = data.dados.length;
-         } catch (error) {
-            this.errorMessage = error.message
-            this.snackbarError = true;
-            console.error('Erro ao buscar empresas:', error);
-         }
-      },
-   
-      editItem(item) {
-         this.editedIndex = this.empresas.indexOf(item);
-         this.editedItem = Object.assign({}, item);
-         this.dialog = true;
-      },
- 
-      async deleteItem(item) {
-         if (!item) return;
-         try {
-            const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
-            const response = await fetch(url, {
-               method: 'DELETE',
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-            });
-            if (response.status != 200) throw new Error();
-            this.fetchEmpresas();
-            this.snackbarSuccess = true;
-         } catch (error) {
-            this.errorMessage = error.message
-            this.snackbarErro = true;
-            console.error('Erro na requisição de atualização:', error);
-         }
-      },
- 
-      async save(): Promise<void> {
-         if (this.editedIndex > -1) {
-            try {
-               this.validaCamposForm(this.editedItem);
-               const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
-                  method: 'PATCH',
-                  headers: {
-                     'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(this.editedItem),
-               });
-               if (response.status != 200) throw new Error();
-               this.snackbarSuccess = true;
-               this.close();
-               this.fetchEmpresas();
-            } catch (error) {
-               this.errorMessage = error.message
-               this.snackbarError = true;
-               console.error('Erro na requisição de atualização:', error);
-            }
-         }
-
-         try {
-            this.validaCamposForm(this.editedItem);
-            const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
-               method: 'POST',
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-               body: JSON.stringify(this.editedItem),
-            });
-            if (response.status != 201) throw new Error();
-            this.fetchEmpresas();
-            this.snackbarSuccess = true;
-            this.close();
-            return
-         } catch(error) {
-            this.errorMessage = error.message
-            this.snackbarError = true;
-            console.error(error);
-            return
-         }
-      },
-
-      validaCamposForm(item): void {
-         if (!item.nome_fantasia) throw new Error('Nome é obrigatório');
-         if (!item.cep) throw new Error('CEP é obrigatório');
-         if (!item.cnpj) throw new Error('CNPJ é obrigatório');
-      },
- 
-      close() {
-         this.dialog = false;
-         this.$nextTick(() => {
-            this.editedItem = Object.assign({}, this.defaultItem);
-            this.editedIndex = -1;
-         });
-      },
-
-      verDetalhes(item): void {
-         window.open(`/empresas/${item.id}`, '_self')
-      },
-   },
- };
-</script>
-
 <template>
    <div>
       <v-snackbar
@@ -284,3 +112,175 @@ import SearchEmp from './SearchEmp.vue';
      ></v-pagination>
    </div>
 </template>
+
+<script lang="ts">
+import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import SearchEmp from './SearchEmp.vue';
+
+ export default {
+   components: {
+      SearchEmp
+   },
+
+   data() {
+      return {
+         dialog: false,
+         headers: [
+            { text: "ID", value: "id" },
+            { text: "CNPJ", value: "cnpj" },
+            { text: "Nome Fantasia", value: "nome_fantasia" },
+            { text: "CEP", value: "cep" },
+            { text: "Ações", value: "actions", sortable: false },
+         ],
+         empresas: [],
+         editedIndex: -1,
+         editedItem: {
+            id: '',
+            cnpj: '',
+            nome_fantasia: '',
+            cep: '',
+         },
+         defaultItem: {
+            id: '',
+            cnpj: '',
+            nome_fantasia: '',
+            cep: '',
+         },
+         page: 1,
+         size: 10,
+         totalPaginas: 0,
+         totalEmpresas: 0,
+         snackbarSuccess: false,
+         snackbarError: false,
+         name: '',
+         cnpj: '',
+         cep: '',
+         errorMessage: ''
+      };
+   },
+ 
+   computed: {
+     formTitle() {
+       return this.editedIndex === -1 ? 'Nova Empresa' : 'Editar Empresa';
+     },
+   },
+ 
+   watch: {
+     dialog(val) {
+       val || this.close();
+     },
+   },
+ 
+   mounted() {
+     this.fetchEmpresas();
+   },
+
+   methods: {
+      async fetchEmpresas() {
+         try {
+            const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
+            const response: Response = await fetch(url, { 
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' } 
+            });
+            const data: EmpresaPagFornResponseDTO = await response.json();
+            this.empresas = data.dados;
+            this.totalPaginas = data.totalPaginas;
+            this.totalEmpresas = data.dados.length;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+            console.error('Erro ao buscar empresas:', error);
+         }
+      },
+   
+      editItem(item) {
+         this.editedIndex = this.empresas.indexOf(item);
+         this.editedItem = Object.assign({}, item);
+         this.dialog = true;
+      },
+ 
+      async deleteItem(item) {
+         if (!item) return;
+         try {
+            const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
+            const response: Response = await fetch(url, {
+               method: 'DELETE',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+            });
+            if (response.status != 200) throw new Error();
+            await this.fetchEmpresas();
+            this.snackbarSuccess = true;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarErro = true;
+            console.error('Erro na requisição de atualização:', error);
+         }
+      },
+ 
+      async save(): Promise<void> {
+         if (this.editedIndex > -1) {
+            try {
+               this.validaCamposForm(this.editedItem);
+               const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(this.editedItem),
+               });
+               if (response.status != 200) throw new Error();
+               await this.fetchEmpresas();
+               this.snackbarSuccess = true;
+               this.close();
+            } catch (error) {
+               this.errorMessage = error.message
+               this.snackbarError = true;
+               console.error('Erro na requisição de atualização:', error);
+            }
+         }
+
+         try {
+            this.validaCamposForm(this.editedItem);
+            const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+               body: JSON.stringify(this.editedItem),
+            });
+            if (response.status != 201) throw new Error();
+            await this.fetchEmpresas();
+            this.snackbarSuccess = true;
+            this.close();
+            return
+         } catch(error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+            console.error(error);
+            return
+         }
+      },
+
+      validaCamposForm(item): void {
+         if (!item.nome_fantasia) throw new Error('Nome é obrigatório');
+         if (!item.cep) throw new Error('CEP é obrigatório');
+         if (!item.cnpj) throw new Error('CNPJ é obrigatório');
+      },
+ 
+      close() {
+         this.dialog = false;
+         this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem);
+            this.editedIndex = -1;
+         });
+      },
+
+      verDetalhes(item): void {
+         window.open(`/empresas/${item.id}`, '_self')
+      },
+   },
+ };
+</script>

@@ -33,9 +33,8 @@ public class FornecedorService {
             String nome,
             String cnpj_cpf
     ) {
-        Pageable pageable = PageRequest.of(page, size);
         Page<Fornecedor> fornecedorPage = fornecedorRepo
-            .filtrarFornecedores(nome, cnpj_cpf, pageable);
+            .filtrarFornecedores(nome, cnpj_cpf, PageRequest.of(page, size));
         List<FornecedorEmpResponseDTO> fornEmpresasList = fornecedorPage
                 .map(this::mapToFornecedorEmpResponseDTO)
                 .toList();

@@ -39,9 +39,8 @@ public class EmpresaService {
             String cnpj,
             String cep
     ) {
-        Pageable pageable = PageRequest.of(page, size);
         Page<Empresa> empresaPage = empresaRepo
-            .filtrarEmpresa(nome_fantasia, cnpj, cep, pageable);
+            .filtrarEmpresa(nome_fantasia, cnpj, cep, PageRequest.of(page, size));
         List<EmpresaFornResponseDTO> empresaFornList = empresaPage
                 .map(this::mapToEmpresaFornResponseDTO)
                 .toList();
@@ -100,14 +99,10 @@ public class EmpresaService {
         Fornecedor fornecedor = fornecedorRepo
             .findById(id_fornecedor)
             .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
-        if (fornecedor.isE_pf()) {
-            if (isPr(empresa.getCep())) {
-                if (fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
-                    throw new AppException(
-                        "Não é permitido cadastrar um fornecedor menor de idade no Paraná"
-                    );
-                }
-            }
+        if (fornecedor.isE_pf()
+                && isPr(empresa.getCep())
+                && fornecedorService.validaFornecedorMenor(fornecedor.getNascimento())) {
+            throw new AppException("Não é permitido cadastrar um fornecedor menor de idade no Paraná");
         }
         vincularEmpresaFornecedor(empresa, fornecedor);
         return mapToEmpresaFornResponseDTO(empresa);

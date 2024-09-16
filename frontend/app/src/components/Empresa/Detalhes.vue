@@ -1,57 +1,3 @@
-<script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
-import DetalheTable from './DetalheTable.vue';
-
-export default {
-   components: {
-      DetalheTable
-   },
-
-   data: () => ({
-      drawer: false,
-      group: null,
-      empresa: {} as EmpresaFornResponseDTO,
-      fetchEmpresas: () => {}
-   }),
-
-   watch: {
-      group () {
-         this.drawer = false
-      },
-   },
-
-   mounted() {
-      this.fetchEmpresa(window.location.href.split('/')[4]);
-   },
-
-   methods: {
-      async fetchEmpresa(id: string): Promise<void> {
-         try {
-            const response = await fetch(`http://localhost:8080/api/empresa/${id}`, { 
-               method: 'GET',
-               headers: { 'Content-Type': 'application/json' }
-            });
-            const data: EmpresaFornResponseDTO = await response.json();
-            this.empresa = data;
-            this.parseToDateString();
-         } catch (error) {
-            alert('Erro ao buscar empresas: ' + error.message);
-         }
-      },
-
-      parseToDateString(): void {
-         this.empresa.fornecedores.forEach(element => {
-            if (Array.isArray(element.nascimento)) {
-               const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
-                  .toLocaleDateString('pt-BR');
-               element.nascimento = dataFormatada;
-            }
-         });
-      },
-   }
-}
-</script>
-
 <template>
    <v-card class=" min-h-screen max-h-fit">
      <v-layout>
@@ -119,3 +65,57 @@ export default {
      </v-layout>
    </v-card>
 </template>
+
+<script lang="ts">
+import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import DetalheTable from './DetalheTable.vue';
+
+export default {
+   components: {
+      DetalheTable
+   },
+
+   data: () => ({
+      drawer: false,
+      group: null,
+      empresa: {} as EmpresaFornResponseDTO,
+      fetchEmpresas: () => {}
+   }),
+
+   watch: {
+      group () {
+         this.drawer = false
+      },
+   },
+
+   mounted() {
+      this.fetchEmpresa(window.location.href.split('/')[4]);
+   },
+
+   methods: {
+      async fetchEmpresa(id: string): Promise<void> {
+         try {
+            const response = await fetch(`http://localhost:8080/api/empresa/${id}`, { 
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            const data: EmpresaFornResponseDTO = await response.json();
+            this.empresa = data;
+            this.parseToDateString();
+         } catch (error) {
+            alert('Erro ao buscar empresas: ' + error.message);
+         }
+      },
+
+      parseToDateString(): void {
+         this.empresa.fornecedores.forEach(element => {
+            if (Array.isArray(element.nascimento)) {
+               const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
+                  .toLocaleDateString('pt-BR');
+               element.nascimento = dataFormatada;
+            }
+         });
+      },
+   }
+}
+</script>

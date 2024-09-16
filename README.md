@@ -15,6 +15,8 @@ Além disso, a API está documentada com Swagger API para facilitar o compreendi
 
 Também foi designada uma rota para fornecer o consumo da API dos correios.
 
+Esse foi um projeto desafiador, onde pude ter contato com o framework Vue.js pela primeira vez.
+
 ## Modelagem das entidades
 ![accenture drawio](https://github.com/user-attachments/assets/cf961050-1a82-48c4-a097-8b1cbdc9e09d)
 

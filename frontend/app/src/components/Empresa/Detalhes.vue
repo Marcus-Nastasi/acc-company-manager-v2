@@ -35,12 +35,12 @@ export default {
             this.empresa = data;
             this.parseToDateString();
          } catch (error) {
-            alert('Erro ao buscar empresas: ' + error.message());
+            alert('Erro ao buscar empresas: ' + error.message);
          }
       },
 
       parseToDateString(): void {
-         this.empresas.fornecedores.forEach(element => {
+         this.empresa.fornecedores.forEach(element => {
             if (Array.isArray(element.nascimento)) {
                const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
                   .toLocaleDateString('pt-BR');

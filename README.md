@@ -14,9 +14,9 @@ oferecendo uma interface amigável no front-end e uma API robusta no back-end.
 Além disso, a API está documentada com Swagger API para facilitar o compreendimento das rotas disponíveis, seus payloads e retornos. 
 
 Também foi designada uma rota para fornecer o consumo da API dos correios.
-![accenture drawio](https://github.com/user-attachments/assets/cf961050-1a82-48c4-a097-8b1cbdc9e09d)
 
 ## Modelagem das entidades
+![accenture drawio](https://github.com/user-attachments/assets/cf961050-1a82-48c4-a097-8b1cbdc9e09d)
 
 ## Tecnologias Utilizadas
 

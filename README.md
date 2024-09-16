@@ -82,4 +82,4 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
 ## Testes unitários
 
 ### Execução e Build sem pular os testes unitários
-- **Para realizar a execução dos testes, ou o build (com o comando "mvn clean install", removendo o "-DskipTests" do exemplo acima), você deve ter em execução um banco de dados postgresql em seu localhost, expondo a porta 5432. Caso tenha um banco de dados postgres fora da máquina local ou em outra porta, será necessário alterar a url do banco no arquivo "application.properties".**
+- **Para realizar a execução dos testes, ou o build (com o comando "mvn clean install", removendo o "-DskipTests" do exemplo acima), você deve ter em execução um banco de dados postgresql em seu localhost, expondo a porta 5432. Caso tenha um banco de dados postgres fora da máquina local ou em outra porta, será necessário alterar a url do banco no arquivo "application.properties". Apesar das chamadas para o banco nos testes estarem mockadas, o Spring testará a conexão com o banco de dados.** 

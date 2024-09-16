@@ -1,182 +1,3 @@
-<script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
-import Search from './Search.vue';
-
-export default {
-   components: {
-      Search
-   },
-
-   data() {
-      return {
-         dialog: false,
-         headers: [
-            { text: "ID", value: "id" },
-            { text: "CNPJ_CPF", value: "cnpj_cpf" },
-            { text: "RG", value: "RG" },
-            { text: "Nascimento", value: "nascimento" },
-            { text: "Nome", value: "nome" },
-            { text: "Email", value: "email" },
-            { text: "CEP", value: "cep" },
-            { text: "Ações", value: "actions", sortable: false },
-         ],
-         empresas: [],
-         editedIndex: -1,
-         editedItem: {
-            id: '',
-            cnpj_cpf: '',
-            rg: '',
-            nascimento: '',
-            nome: '',
-            email: '',
-            cep: '',
-            e_pf: false,
-         },
-         defaultItem: {
-            id: '',
-            cnpj_cpf: '',
-            rg: '',
-            nascimento: '',
-            nome: '',
-            email: '',
-            cep: '',
-            e_pf: false,
-         },
-         page: 1,
-         size: 10,
-         totalPaginas: 0,
-         totalEmpresas: 0,
-         snackbarSuccess: false,
-         snackbarError: false
-      };
-   },
-
-   computed: {
-      formTitle() {
-         return this.editedIndex === -1 ? 'Novo Fornecedor' : 'Editar Fornecedor';
-      },
-  },
-
-   watch: {
-      dialog(val) {
-         val || this.close();
-      },
-  },
-
-   mounted() {
-      this.fetchFornecedores();
-   },
-
-   methods: {
-      async fetchFornecedores(name = '', cnpj_cpf = ''): Promise<void> {
-         try {
-            const response = await fetch(
-               `http://localhost:8080/api/fornecedor?page=${this.page - 1}&size=${this.size}&nome=${name}&cnpj_cpf=${cnpj_cpf}`,
-               { method: 'GET' }
-            );
-            const data = await response.json();
-            this.empresas = data.dados;
-            this.totalPaginas = data.totalPaginas;
-            this.totalEmpresas = data.dados.length;
-         } catch (error) {
-            this.snackbarError = true;
-         }
-      },
-
-      async fetchRegister(item): Promise<void> {
-         try {
-            const response = await fetch('http://localhost:8080/api/fornecedor/registrar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify(item),
-            });
-            if (response.status == 201) {
-               this.fetchFornecedores();
-               this.close();
-               this.snackbarSuccess = true;
-               return;
-            }
-            this.snackbarError = true;
-            return;
-         } catch (error) {
-            this.snackbarError = true;
-            return;
-         }
-      },
-
-      async fetchEdit(id: string): Promise<void> {
-         try {
-            const url: string = `http://localhost:8080/api/fornecedor/atualizar/${id}`;
-            const response: Response = await fetch(url, {
-               method: 'PATCH',
-               headers: { 'Content-Type': 'application/json', },
-               body: JSON.stringify(this.editedItem)
-            });
-            if (response.ok) {
-               this.fetchFornecedores();
-               this.close();
-               this.snackbarSuccess = true;
-               return;
-            }
-            this.snackbarError = true;
-            this.close();
-            return;
-         } catch (error) {
-            this.snackbarError = true;
-            return;
-         }
-      },
-
-      async deleteItem(item): Promise<void> {
-         if (!item) return;
-         if (!confirm('Deseja apagar realmente?')) return;
-         try {
-            const url: string = `http://localhost:8080/api/fornecedor/deletar/${item.id}`;
-            const response = await fetch(url, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json', },
-            });
-            if (response.status === 200) {
-               this.fetchFornecedores();
-               this.snackbarSuccess = true;
-               return
-            } 
-            this.snackbarError = true;
-         } catch (error) {
-            this.snackbarError = true;
-         }
-      },
-
-      async save() {
-         if (this.editedItem.nascimento) {
-            this.editedItem.nascimento = new Date(this.editedItem.nascimento);
-         }
-         this.editedItem.e_pf = Boolean(this.editedItem.e_pf);
-         if (this.editedIndex > -1) {
-            this.fetchEdit(this.editedItem.id);
-            return
-         }
-         this.fetchRegister(this.editedItem);
-         return
-      },
-
-      close() {
-         this.dialog = false;
-         this.$nextTick(() => {
-         this.editedItem = Object.assign({}, this.defaultItem);
-         this.editedIndex = -1;
-         });
-      },
-
-      editItem(item) {
-         this.editedIndex = this.empresas.indexOf(item);
-         this.editedItem = Object.assign({}, item);
-         this.dialog = true;
-      },
-   },
-};
-</script>
-
 <template>
    <div>
       <v-snackbar
@@ -195,7 +16,7 @@ export default {
          :timeout="3000"
          style="margin-bottom: 5rem;"
       >
-         Erro ao realizar operação
+         {{ errorMessage }}
       </v-snackbar>
       <Search 
          :fetchFornecedores="fetchFornecedores" 
@@ -313,3 +134,198 @@ export default {
       ></v-pagination>
    </div>
 </template>
+
+<script lang="ts">
+import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import Search from './Search.vue';
+
+export default {
+   components: {
+      Search
+   },
+
+   data() {
+      return {
+         dialog: false,
+         headers: [
+            { text: "ID", value: "id" },
+            { text: "CNPJ_CPF", value: "cnpj_cpf" },
+            { text: "RG", value: "RG" },
+            { text: "Nascimento", value: "nascimento" },
+            { text: "Nome", value: "nome" },
+            { text: "Email", value: "email" },
+            { text: "CEP", value: "cep" },
+            { text: "Ações", value: "actions", sortable: false },
+         ],
+         empresas: [],
+         editedIndex: -1,
+         editedItem: {
+            id: '',
+            cnpj_cpf: '',
+            rg: '',
+            nascimento: '',
+            nome: '',
+            email: '',
+            cep: '',
+            e_pf: false,
+         },
+         defaultItem: {
+            id: '',
+            cnpj_cpf: '',
+            rg: '',
+            nascimento: '',
+            nome: '',
+            email: '',
+            cep: '',
+            e_pf: false,
+         },
+         page: 1,
+         size: 10,
+         totalPaginas: 0,
+         totalEmpresas: 0,
+         snackbarSuccess: false,
+         snackbarError: false,
+         errorMessage: '',
+         dateString: ''
+      };
+   },
+
+   computed: {
+      formTitle() {
+         return this.editedIndex === -1 ? 'Novo Fornecedor' : 'Editar Fornecedor';
+      },
+  },
+
+   watch: {
+      dialog(val) {
+         val || this.close();
+      },
+  },
+
+   async mounted() {
+      await this.fetchFornecedores();
+      this.empresas.forEach(element => {
+         if (Array.isArray(element.nascimento)) {
+            const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
+               .toLocaleDateString('pt-BR');
+            element.nascimento = dataFormatada;
+         }
+      });
+   },
+
+   methods: {
+      async fetchFornecedores(name = '', cnpj_cpf = ''): Promise<void> {
+         try {
+            const response = await fetch(
+               `http://localhost:8080/api/fornecedor?page=${this.page - 1}&size=${this.size}&nome=${name}&cnpj_cpf=${cnpj_cpf}`,
+               { method: 'GET' }
+            );
+            const data = await response.json();
+            this.empresas = data.dados;
+            this.totalPaginas = data.totalPaginas;
+            this.totalEmpresas = data.dados.length;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+         }
+      },
+
+      async fetchRegister(item): Promise<void> {
+         try {
+            const response = await fetch('http://localhost:8080/api/fornecedor/registrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify(item),
+            });
+            if (response.status == 201) {
+               this.fetchFornecedores();
+               this.close();
+               this.snackbarSuccess = true;
+               return;
+            }
+            this.errorMessage = 'status diferente de 201, checar requisição'
+            this.snackbarError = true;
+            return;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+            return;
+         }
+      },
+
+      async fetchEdit(id: string): Promise<void> {
+         try {
+            const url: string = `http://localhost:8080/api/fornecedor/atualizar/${id}`;
+            const response: Response = await fetch(url, {
+               method: 'PATCH',
+               headers: { 'Content-Type': 'application/json', },
+               body: JSON.stringify(this.editedItem)
+            });
+            if (response.ok) {
+               this.fetchFornecedores();
+               this.close();
+               this.snackbarSuccess = true;
+               return;
+            }
+            this.errorMessage = 'status diferente de 200, checar requisição';
+            this.snackbarError = true;
+            this.close();
+            return;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+            return;
+         }
+      },
+
+      async deleteItem(item): Promise<void> {
+         if (!item) return;
+         if (!confirm('Deseja apagar realmente?')) return;
+         try {
+            const url: string = `http://localhost:8080/api/fornecedor/deletar/${item.id}`;
+            const response = await fetch(url, {
+               method: 'DELETE',
+               headers: { 'Content-Type': 'application/json', },
+            });
+            if (response.status === 200) {
+               this.fetchFornecedores();
+               this.snackbarSuccess = true;
+               return
+            } 
+            this.errorMessage = 'status diferente de 200, checar requisição'
+            this.snackbarError = true;
+         } catch (error) {
+            this.errorMessage = error.message
+            this.snackbarError = true;
+         }
+      },
+
+      async save() {
+         if (this.editedItem.nascimento) {
+            this.editedItem.nascimento = new Date(this.editedItem.nascimento);
+         }
+         this.editedItem.e_pf = Boolean(this.editedItem.e_pf);
+         if (this.editedIndex > -1) {
+            this.fetchEdit(this.editedItem.id);
+            return
+         }
+         this.fetchRegister(this.editedItem);
+         return
+      },
+
+      close() {
+         this.dialog = false;
+         this.$nextTick(() => {
+         this.editedItem = Object.assign({}, this.defaultItem);
+         this.editedIndex = -1;
+         });
+      },
+
+      editItem(item) {
+         this.editedIndex = this.empresas.indexOf(item);
+         this.editedItem = Object.assign({}, item);
+         this.dialog = true;
+      },
+   },
+};
+</script>

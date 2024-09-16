@@ -16,7 +16,7 @@ Além disso, a API está documentada com Swagger API para facilitar o compreendi
 Também foi designada uma rota para fornecer o consumo da API dos correios.
 
 ## Modelagem das entidades
-![accenture drawio](https://github.com/user-attachments/assets/6ff3b979-cace-40f3-a26e-2beb56fac1f4)
+![accenture drawio](https://github.com/user-attachments/assets/cf961050-1a82-48c4-a097-8b1cbdc9e09d)
 
 ## Tecnologias Utilizadas
 

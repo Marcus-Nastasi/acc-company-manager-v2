@@ -9,6 +9,7 @@ import com.accenture.test.Repository.Empresa.EmpresaRepo;
 import com.accenture.test.Repository.Fornecedor.FornecedorRepo;
 import com.accenture.test.Service.Cep.CepService;
 import com.accenture.test.Service.Empresa.EmpresaService;
+import com.accenture.test.Service.Fornecedor.FornecedorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,6 +42,8 @@ public class EmpresaTest {
     private FornecedorRepo fornecedorRepo;
     @Mock
     private CepService cepService;
+    @Mock
+    private FornecedorService fornecedorService;
     @InjectMocks
     private EmpresaService empresaService;
 
@@ -62,8 +65,12 @@ public class EmpresaTest {
     void buscar_tudo_test() {
         when(empresaRepo.filtrarEmpresa(anyString(), anyString(), anyString(), any(Pageable.class)))
             .thenReturn(empresaPage);
-        empresa1.setFornecedores(List.of(fornecedor1, fornecedor2));
-        empresa2.setFornecedores(List.of(fornecedor1, fornecedor2));
+        empresa1.setFornecedores(new ArrayList<>(List.of(fornecedor1, fornecedor2)));
+        empresa2.setFornecedores(new ArrayList<>(List.of(fornecedor1, fornecedor2)));
+        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa1)));
+        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa2)));
+        fornecedor2.setEmpresas(new ArrayList<>(List.of(empresa1)));
+        fornecedor2.setEmpresas(new ArrayList<>(List.of(empresa2)));
         EmpPagResponseDTO<EmpresaFornResponseDTO> result = empresaService
             .buscar_tudo(1, 1, "nome", "cnpjCpf", "cep");
         assertDoesNotThrow(() -> result);

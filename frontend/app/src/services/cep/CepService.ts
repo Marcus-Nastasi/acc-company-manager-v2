@@ -1,5 +1,6 @@
 export class CepService {
    public static async isPr(cep: string): Promise<boolean> {
+      cep = cep.replace('.', '').replace('-', '')
       const url: string = `https://viacep.com.br/ws/${cep}/json`;
       const response: Response = await fetch(url, {
          method: 'GET',

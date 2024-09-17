@@ -14,7 +14,7 @@ public class CepService {
 
     public Mono<ResponseEntity<CepResponseDTO>> buscarCep(String cep) {
         try {
-            cep = cep.replace("-", "");
+            cep = cep.replace(".", "").replace("-", "");
             if (cep.length() > 8) throw new AppException("Cep inválido");
             String url = "https://viacep.com.br/ws/" + cep + "/json/";
             return webClient

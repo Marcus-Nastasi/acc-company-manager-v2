@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import { EmpresaFornResponseDTO } from '@/interfaces/Empresa/EmpresaDTO';
 import { CepService } from '@/services/cep/CepService';
 import { DateUtil } from '@/util/DateUtil';
 
@@ -144,16 +144,19 @@ export default {
             if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep) && DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
                throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná'); 
             }
+
             const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
             const response: Response = await fetch(url, {
                method: 'PATCH',
                headers: { 'Content-Type': 'application/json' }
             });
             if (response.status != 200) throw new Error("Status diferente de 200");
-            const data = await response.json();
+            const data: EmpresaFornResponseDTO = await response.json();
+
             this.snackbarSuccess = true;
+            this.empresa.fornecedores.push(await this.buscaFornecedor(this.editedItem.id_fornecedor));
+            this.parseToDateString();
             this.close();
-            await this.fetchEmpresa(this.editedItem.id_empresa);
          } catch(error) {
             this.errorMessage = error.message;
             this.snackbarError = true;

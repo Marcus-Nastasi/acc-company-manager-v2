@@ -1,25 +1,3 @@
-<script>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiHome } from '@mdi/js';
-
-   export default {
-      components: {
-         SvgIcon
-      },
-
-      data: () => ({
-            drawer: false,
-            group: null
-      }),
-
-      watch: {
-         group () {
-            this.drawer = false
-         },
-      },
-   }
-</script>
-
 <template>
    <v-card class=" min-h-screen max-h-fit">
      <v-layout>
@@ -67,3 +45,25 @@ import { mdiHome } from '@mdi/js';
      </v-layout>
    </v-card>
 </template>
+
+<script>
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiHome } from '@mdi/js';
+
+export default {
+   components: {
+      SvgIcon
+   },
+
+   data: () => ({
+         drawer: false,
+         group: null
+   }),
+
+   watch: {
+      group () {
+         this.drawer = false
+      },
+   },
+}
+</script>

@@ -67,7 +67,7 @@
 </template>
  
 <script lang="ts">
- export default {
+export default {
    props: {
      fetchEmpresas: {
        type: Function,
@@ -137,5 +137,5 @@
          this.$emit('update:cep', newVal);
       },
    },
- };
+};
 </script>

@@ -1,20 +1,3 @@
-<script>
-import FornecedorTable from './FornecedorTable.vue';
-
-   export default {
-      data: () => ({
-         drawer: false,
-         group: null
-      }),
-
-      watch: {
-         group () {
-            this.drawer = false
-         },
-      },
-   }
-</script>
-
 <template>
    <v-card class=" min-h-screen max-h-fit">
      <v-layout>
@@ -62,3 +45,20 @@ import FornecedorTable from './FornecedorTable.vue';
      </v-layout>
    </v-card>
 </template>
+
+<script>
+import FornecedorTable from './FornecedorTable.vue';
+
+export default {
+   data: () => ({
+      drawer: false,
+      group: null
+   }),
+
+   watch: {
+      group () {
+         this.drawer = false
+      },
+   },
+}
+</script>

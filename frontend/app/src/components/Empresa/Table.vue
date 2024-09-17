@@ -114,10 +114,12 @@
 </template>
 
 <script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+// import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO, EmpresaRequestDTO } from '@/interfaces/Empresa/EmpresaDTO';
 import SearchEmp from './SearchEmp.vue';
+import { EmpresaService } from '@/services/empresas/EmpresaService';
 
- export default {
+export default {
    components: {
       SearchEmp
    },
@@ -178,12 +180,8 @@ import SearchEmp from './SearchEmp.vue';
    methods: {
       async fetchEmpresas() {
          try {
-            const url: string = `http://localhost:8080/api/empresa?page=${this.page - 1}&size=${this.size}&nome=${encodeURIComponent(this.name)}&cnpj=${this.cnpj}&cep=${this.cep}`;
-            const response: Response = await fetch(url, { 
-               method: 'GET',
-               headers: { 'Content-Type': 'application/json' } 
-            });
-            const data: EmpresaPagFornResponseDTO = await response.json();
+            const data: EmpresaPagFornResponseDTO = await EmpresaService
+               .fetchEmpresas(this.page, this.size, this.name, this.cnpj, this.cep);
             this.empresas = data.dados;
             this.totalPaginas = data.totalPaginas;
             this.totalEmpresas = data.dados.length;
@@ -201,22 +199,15 @@ import SearchEmp from './SearchEmp.vue';
       },
  
       async deleteItem(item) {
-         if (!item) return;
          try {
-            const url: string = `http://localhost:8080/api/empresa/deletar/${item.id}`;
-            const response: Response = await fetch(url, {
-               method: 'DELETE',
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-            });
-            if (response.status != 200) throw new Error();
+            const empresaDeletada: EmpresaFornResponseDTO = await EmpresaService.deleteEmpresa(item);
+            if (empresaDeletada === null) throw new Error('Não foi possível concluir a operação');
             await this.fetchEmpresas();
             this.snackbarSuccess = true;
          } catch (error) {
             this.errorMessage = error.message
             this.snackbarErro = true;
-            console.error('Erro na requisição de atualização:', error);
+            console.error('Erro na requisição de deletar:', error);
          }
       },
  
@@ -224,14 +215,8 @@ import SearchEmp from './SearchEmp.vue';
          if (this.editedIndex > -1) {
             try {
                this.validaCamposForm(this.editedItem);
-               const response = await fetch(`http://localhost:8080/api/empresa/atualizar/${this.editedItem.id}`, {
-                  method: 'PATCH',
-                  headers: {
-                     'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(this.editedItem),
-               });
-               if (response.status != 200) throw new Error();
+               const empresaAtualizada: EmpresaFornResponseDTO = await EmpresaService
+                  .atualizarEmpresa(this.editedItem);
                await this.fetchEmpresas();
                this.snackbarSuccess = true;
                this.close();
@@ -244,14 +229,8 @@ import SearchEmp from './SearchEmp.vue';
 
          try {
             this.validaCamposForm(this.editedItem);
-            const response: Response = await fetch('http://localhost:8080/api/empresa/registrar', {
-               method: 'POST',
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-               body: JSON.stringify(this.editedItem),
-            });
-            if (response.status != 201) throw new Error();
+            const empresaRegistrada: EmpresaFornResponseDTO = await EmpresaService
+               .registrarEmpresa(this.editedItem);
             await this.fetchEmpresas();
             this.snackbarSuccess = true;
             this.close();
@@ -264,7 +243,7 @@ import SearchEmp from './SearchEmp.vue';
          }
       },
 
-      validaCamposForm(item): void {
+      validaCamposForm(item: EmpresaRequestDTO): void {
          if (!item.nome_fantasia) throw new Error('Nome é obrigatório');
          if (!item.cep) throw new Error('CEP é obrigatório');
          if (!item.cnpj) throw new Error('CNPJ é obrigatório');
@@ -278,9 +257,9 @@ import SearchEmp from './SearchEmp.vue';
          });
       },
 
-      verDetalhes(item): void {
+      verDetalhes(item: EmpresaRequestDTO): void {
          window.open(`/empresas/${item.id}`, '_self')
       },
    },
- };
+};
 </script>

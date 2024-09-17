@@ -136,8 +136,8 @@
 </template>
 
 <script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
 import Search from './Search.vue';
+import { FornecedoresService } from '@/services/fornecedores/FornecedoresService';
 
 export default {
    components: {
@@ -208,11 +208,7 @@ export default {
    methods: {
       async fetchFornecedores(name = '', cnpj_cpf = ''): Promise<void> {
          try {
-            const response: Response = await fetch(
-               `http://localhost:8080/api/fornecedor?page=${this.page - 1}&size=${this.size}&nome=${name}&cnpj_cpf=${cnpj_cpf}`,
-               { method: 'GET' }
-            );
-            const data = await response.json();
+            const data = await FornecedoresService.fetchFornecedores(this.page, this.size, name, cnpj_cpf);
             this.empresas = data.dados;
             this.parseToDateString();
             this.totalPaginas = data.totalPaginas;
@@ -226,19 +222,10 @@ export default {
       async fetchRegister(item): Promise<void> {
          try {
             this.validaCamposForm(item);
-            const response: Response = await fetch('http://localhost:8080/api/fornecedor/registrar', {
-               method: 'POST',
-               headers: { 'Content-Type': 'application/json', },
-               body: JSON.stringify(item),
-            });
-            if (response.status == 201) {
-               this.fetchFornecedores();
-               this.close();
-               this.snackbarSuccess = true;
-               return;
-            }
-            this.errorMessage = 'status diferente de 201, checar requisição'
-            this.snackbarError = true;
+            const data = await FornecedoresService.registraFornecedor(item);
+            this.fetchFornecedores();
+            this.close();
+            this.snackbarSuccess = true;
             return;
          } catch (error) {
             this.errorMessage = error.message
@@ -250,22 +237,11 @@ export default {
       async fetchEdit(id: string): Promise<void> {
          try {
             this.validaCamposForm(this.editedItem);
-            const url: string = `http://localhost:8080/api/fornecedor/atualizar/${id}`;
-            const response: Response = await fetch(url, {
-               method: 'PATCH',
-               headers: { 'Content-Type': 'application/json', },
-               body: JSON.stringify(this.editedItem)
-            });
-            if (response.ok) {
-               this.fetchFornecedores();
-               this.close();
-               this.snackbarSuccess = true;
-               return;
-            }
-            this.errorMessage = 'status diferente de 200, checar requisição';
-            this.snackbarError = true;
+            const data = await FornecedoresService.atualizarFornecedor(id, this.editedItem);  
+            this.fetchFornecedores();
             this.close();
-            return;
+            this.snackbarSuccess = true;
+            return data;
          } catch (error) {
             this.errorMessage = error.message
             this.snackbarError = true;
@@ -277,18 +253,10 @@ export default {
          if (!item) throw new Error('Item não existe, checar logs');
          if (!confirm('Deseja apagar realmente?')) return;
          try {
-            const url: string = `http://localhost:8080/api/fornecedor/deletar/${item.id}`;
-            const response: Response = await fetch(url, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json', },
-            });
-            if (response.status === 200) {
-               this.fetchFornecedores();
-               this.snackbarSuccess = true;
-               return
-            } 
-            this.errorMessage = 'status diferente de 200, checar requisição'
-            this.snackbarError = true;
+            const data = await FornecedoresService.deletarFornecedor(item.id);
+            this.fetchFornecedores();
+            this.snackbarSuccess = true;
+            return
          } catch (error) {
             this.errorMessage = error.message
             this.snackbarError = true;
@@ -330,9 +298,7 @@ export default {
          if (!item.email) throw new Error('Email é obrigatório');
 
          if (item.e_pf) if (!item.rg || !item.nascimento) {
-            throw new Error(
-               'RG e data de nascimento são obrigatórios para pessoas físicas'
-            );
+            throw new Error('RG e data de nascimento são obrigatórios para pessoas físicas');
          }
       },
 

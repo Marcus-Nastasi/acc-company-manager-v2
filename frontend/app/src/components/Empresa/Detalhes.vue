@@ -67,8 +67,9 @@
 </template>
 
 <script lang="ts">
-import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
+import { EmpresaFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
 import DetalheTable from './DetalheTable.vue';
+import { EmpresaService } from '@/services/empresas/EmpresaService';
 
 export default {
    components: {

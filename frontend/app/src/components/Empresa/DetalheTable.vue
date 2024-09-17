@@ -80,7 +80,7 @@ export default {
          type: {} as EmpresaFornResponseDTO,
          required: true
       },
-      fetchEmpresas: {
+      fetchEmpresa: {
          type: () => {},
          required: true
       }
@@ -141,10 +141,8 @@ export default {
       
             const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
 
-            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep)) {
-               if (DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
-                  throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná');
-               }
+            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep) && DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
+               throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná'); 
             }
             const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
             const response: Response = await fetch(url, {
@@ -155,7 +153,7 @@ export default {
             const data = await response.json();
             this.snackbarSuccess = true;
             this.close();
-            this.fetchEmpresas()
+            await this.fetchEmpresa(this.editedItem.id_empresa);
          } catch(error) {
             this.errorMessage = error.message;
             this.snackbarError = true;

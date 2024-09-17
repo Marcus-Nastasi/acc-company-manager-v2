@@ -78,7 +78,7 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
 
 6. **Você pode acessar a documentação da API feita com o Swagger pela rota:**
    ```bash
-    http://localhost:8080/swagger-ui/index.html/
+    http://localhost:8080/swagger-ui/index.html
 
 
 ## Testes unitários

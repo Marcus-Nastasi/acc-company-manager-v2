@@ -114,7 +114,6 @@
 </template>
 
 <script lang="ts">
-// import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO } from '@/interfaces/Empresa/EmpresaFornResponseDTO';
 import { EmpresaFornResponseDTO, EmpresaPagFornResponseDTO, EmpresaRequestDTO } from '@/interfaces/Empresa/EmpresaDTO';
 import SearchEmp from './SearchEmp.vue';
 import { EmpresaService } from '@/services/empresas/EmpresaService';
@@ -244,9 +243,9 @@ export default {
       },
 
       validaCamposForm(item: EmpresaRequestDTO): void {
+         if (!item.cnpj) throw new Error('CNPJ é obrigatório');
          if (!item.nome_fantasia) throw new Error('Nome é obrigatório');
          if (!item.cep) throw new Error('CEP é obrigatório');
-         if (!item.cnpj) throw new Error('CNPJ é obrigatório');
       },
  
       close() {

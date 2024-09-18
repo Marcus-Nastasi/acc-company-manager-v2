@@ -11,8 +11,7 @@ export class EmpresaService {
       });
       if (response.status != 200) 
          throw new Error('Não foi possível buscar as empresas');
-      const data: EmpresaPagFornResponseDTO = await response.json();
-      return data;
+      return await response.json();
    }
 
    public static async fetchEmpresa(id: string): Promise<EmpresaFornResponseDTO> {
@@ -22,8 +21,7 @@ export class EmpresaService {
       });
       if (response.status != 200) 
          throw new Error('Erro ao buscar a empresa');
-      const data: EmpresaFornResponseDTO = await response.json();
-      return data;
+      return await response.json();
    }
 
    public static async deleteEmpresa(item: EmpresaResponseDTO): Promise<EmpresaFornResponseDTO> {

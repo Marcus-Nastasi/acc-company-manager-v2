@@ -10,8 +10,7 @@ export class FornecedoresService {
       );
       if (response.status != 200) 
          throw new Error('Não foi possível buscar fornecedores');
-      const data: FornecedorPagEmpResponseDTO = await response.json();
-      return data;
+      return await response.json();
    }
 
    public static async registraFornecedor(fornecedor: FornecedorRequestDTO): Promise<FornecedorEmpResponseDTO> {
@@ -22,8 +21,7 @@ export class FornecedoresService {
       });
       if (response.status != 201) 
          throw new Error('Não foi possível registrar o fornecedor');
-      const data: FornecedorEmpResponseDTO = await response.json();
-      return data;
+      return await response.json();
    }
 
    public static async atualizarFornecedor(id: string, fornecedor: FornecedorRequestDTO): Promise<FornecedorEmpResponseDTO> {

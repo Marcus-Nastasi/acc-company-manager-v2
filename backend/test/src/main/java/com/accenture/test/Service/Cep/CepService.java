@@ -23,7 +23,7 @@ public class CepService {
                 .retrieve()
                 .toEntity(CepResponseDTO.class);
         } catch (RuntimeException e) {
-            throw new AppException("Erro ao buscar CEP");
+            throw new AppException("Erro ao buscar CEP: " + e.getMessage());
         }
     }
 }

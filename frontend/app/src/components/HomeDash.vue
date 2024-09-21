@@ -43,10 +43,10 @@
 export default {
    methods: {
       goToEmpresa() {
-      window.open('/empresas', '_self');
+        window.open('/empresas', '_self');
       },
       goToFornecedor() {
-      window.open('/fornecedores', '_self');
+        window.open('/fornecedores', '_self');
       }
    }
 }

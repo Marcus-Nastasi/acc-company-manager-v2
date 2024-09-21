@@ -51,7 +51,7 @@ export default {
 
    watch: {
       group () {
-      this.drawer = false
+        this.drawer = false
       },
    },
 }

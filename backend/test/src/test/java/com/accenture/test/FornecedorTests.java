@@ -1,6 +1,5 @@
 package com.accenture.test;
 
-import com.accenture.test.Domain.Empresa.DTO.EmpresaResponseDTO;
 import com.accenture.test.Domain.Empresa.Empresa;
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorEmpResponseDTO;
 import com.accenture.test.Domain.Fornecedor.DTO.FornecedorPagResponseDTO;
@@ -44,17 +43,10 @@ public class FornecedorTests {
     // entidades de empresa
     Empresa empresa1 = new Empresa();
     Empresa empresa2 = new Empresa();
-    EmpresaResponseDTO empresaResponseDTO = new EmpresaResponseDTO(
-        UUID.randomUUID(), "cnpj", "nome_fantasia", "cep"
-    );
 
     // entidades de fornecedor
     Fornecedor fornecedor1 = new Fornecedor();
     Fornecedor fornecedor2 = new Fornecedor();
-    FornecedorEmpResponseDTO fornecedorEmpResponseDTO = new FornecedorEmpResponseDTO(
-        UUID.fromString("3ad8aadf-183d-4a9c-bcd5-0d75f1ec2b0a"), "cnpj_cpf", "rg",
-        LocalDate.now(), "nome", "email", "cep", true, List.of(empresaResponseDTO)
-    );
 
     List<Fornecedor> fornecedores = List.of(fornecedor1, fornecedor2);
     Page<Fornecedor> fornecedorPage = new PageImpl<>(fornecedores);
@@ -138,7 +130,7 @@ public class FornecedorTests {
         assertFalse(fornecedorService.validaFornecedorMenor(LocalDate.of(1996, 10, 28)));
         assertThrows(
             DateTimeParseException.class,
-            () -> fornecedorService.validaFornecedorMenor(LocalDate.parse("aksmxkmaskxa"))
+            () -> fornecedorService.validaFornecedorMenor(LocalDate.parse("string"))
         );
     }
 }

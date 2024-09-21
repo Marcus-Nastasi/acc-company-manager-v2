@@ -83,7 +83,7 @@ public class EmpresaService {
         Empresa empresa = empresaRepo
             .findById(id)
             .orElseThrow(() -> new AppException("Empresa não encontrada"));
-        empresa.getFornecedores().forEach((f) -> {
+        empresa.getFornecedores().forEach(f -> {
             f.getEmpresas().remove(empresa);
             fornecedorRepo.save(f);
         });

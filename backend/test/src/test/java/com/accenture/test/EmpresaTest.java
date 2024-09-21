@@ -95,8 +95,7 @@ public class EmpresaTest {
         RegistrarEmpresaDTO registrarEmpresaDTO = new RegistrarEmpresaDTO("cnpj_cpf", "rg", "nome_fantasia");
         when(empresaRepo.save(any(Empresa.class))).thenReturn(null);
         assertDoesNotThrow(() -> empresaService.registrar(registrarEmpresaDTO));
-        assertDoesNotThrow(() -> empresaService.registrar(registrarEmpresaDTO));
-        verify(empresaRepo, times(2)).save(any(Empresa.class));
+        verify(empresaRepo, times(1)).save(any(Empresa.class));
     }
 
     @Test
@@ -110,11 +109,8 @@ public class EmpresaTest {
         assertDoesNotThrow(() -> {
             empresaService.atualizar(UUID.randomUUID(), atualizarEmpresaDTO);
         });
-        assertDoesNotThrow(() -> {
-            empresaService.atualizar(UUID.randomUUID(), atualizarEmpresaDTO);
-        });
-        verify(empresaRepo, times(2)).findById(any(UUID.class));
-        verify(empresaRepo, times(2)).save(any(Empresa.class));
+        verify(empresaRepo, times(1)).findById(any(UUID.class));
+        verify(empresaRepo, times(1)).save(any(Empresa.class));
     }
 
     @Test
@@ -163,7 +159,9 @@ public class EmpresaTest {
         fornecedor.setCep("80000-000");
         Empresa empresa = new Empresa(UUID.randomUUID(), "cnpj", "nome", "80000-000", new ArrayList<>(List.of(fornecedor)));
         fornecedor.setEmpresas(new ArrayList<>(List.of(empresa)));
-        assertThrows(AppException.class, () -> empresaService.associarFornecedor(fornecedor.getId(), empresa.getId()));
+        assertThrows(AppException.class, () -> {
+            empresaService.associarFornecedor(fornecedor.getId(), empresa.getId());
+        });
     }
 
     @Test
@@ -198,5 +196,7 @@ public class EmpresaTest {
         assertDoesNotThrow(() -> {
             empresaService.vincularEmpresaFornecedor(empresa1, fornecedor1);
         });
+        verify(empresaRepo, times(1)).save(any(Empresa.class));
+        verify(fornecedorRepo, times(1)).save(any(Fornecedor.class));
     }
 }

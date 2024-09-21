@@ -35,8 +35,8 @@ public class FornecedorService {
         Page<Fornecedor> fornecedorPage = fornecedorRepo
             .filtrarFornecedores(nome, cnpj_cpf, PageRequest.of(page, size));
         List<FornecedorEmpResponseDTO> fornEmpresasList = fornecedorPage
-                .map(this::mapToFornecedorEmpResponseDTO)
-                .toList();
+            .map(this::mapToFornecedorEmpResponseDTO)
+            .toList();
         return new FornecedorPagResponseDTO<>(
             fornEmpresasList,
             fornecedorPage.getNumber(),

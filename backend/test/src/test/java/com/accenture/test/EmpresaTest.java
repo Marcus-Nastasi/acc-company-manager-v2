@@ -163,6 +163,29 @@ public class EmpresaTest {
     }
 
     @Test
+    void desassocia_fornecedor_test() {
+        empresa1.setFornecedores(new ArrayList<>(List.of(fornecedor1, fornecedor2)));
+        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa1, empresa2)));
+        when(empresaRepo.findById(any(UUID.class)))
+                .thenReturn(Optional.of(empresa1));
+        when(fornecedorRepo.findById(any(UUID.class)))
+                .thenReturn(Optional.of(fornecedor1));
+        when(empresaRepo.save(any(Empresa.class)))
+                .thenReturn(empresa1);
+        when(fornecedorRepo.save(any(Fornecedor.class)))
+                .thenReturn(fornecedor1);
+
+        EmpresaFornResponseDTO result = empresaService.desassociarFornecedor(UUID.randomUUID(), UUID.randomUUID());
+        verify(empresaRepo, times(1)).findById(any(UUID.class));
+        verify(fornecedorRepo, times(1)).findById(any(UUID.class));
+        assertFalse(empresa1.getFornecedores().contains(fornecedor1));
+        assertFalse(fornecedor1.getEmpresas().contains(empresa1));
+        verify(fornecedorRepo, times(1)).save(any(Fornecedor.class));
+        verify(empresaRepo, times(1)).save(any(Empresa.class));
+        assertNotNull(result);
+    }
+
+    @Test
     void isPr_test() {
         String cepSp = "05999-999";
         CepResponseDTO spResponse = new CepResponseDTO(

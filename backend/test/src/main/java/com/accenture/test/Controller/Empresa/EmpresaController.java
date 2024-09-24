@@ -105,12 +105,28 @@ public class EmpresaController {
         description = "Nessa rota você pode associar um fornecedor com uma empresa"
     )
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa associada à um novo fornecedor")
-    public ResponseEntity<EmpresaFornResponseDTO> atualizar(
+    public ResponseEntity<EmpresaFornResponseDTO> associar(
             @PathVariable("id_empresa") UUID id_empresa,
             @PathVariable("id_fornecedor") UUID id_fornecedor
     ) {
         EmpresaFornResponseDTO empresa = empresaService
             .associarFornecedor(id_fornecedor, id_empresa);
+        return ResponseEntity.ok(empresa);
+    }
+
+    @PatchMapping(value = "/desassociar/{id_empresa}/{id_fornecedor}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Desassociar empresa e fornecedor",
+            description = "Nessa rota você pode desassociar um fornecedor e uma empresa"
+    )
+    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa desvinculada de um fornecedor")
+    public ResponseEntity<EmpresaFornResponseDTO> desassociar(
+            @PathVariable("id_empresa") UUID id_empresa,
+            @PathVariable("id_fornecedor") UUID id_fornecedor
+    ) {
+        EmpresaFornResponseDTO empresa = empresaService
+                .desassociarFornecedor(id_fornecedor, id_empresa);
         return ResponseEntity.ok(empresa);
     }
 }

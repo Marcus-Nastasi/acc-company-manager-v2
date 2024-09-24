@@ -107,6 +107,17 @@ public class EmpresaService {
         return mapToEmpresaFornResponseDTO(empresa);
     }
 
+    public EmpresaFornResponseDTO desassociarFornecedor(UUID id_fornecedor, UUID id) {
+        Empresa empresa = empresaRepo
+            .findById(id)
+            .orElseThrow(() -> new AppException("Empresa não encontrada"));
+    Fornecedor fornecedor = fornecedorRepo
+            .findById(id_fornecedor)
+            .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
+        desvincularEmpresaFornecedor(empresa, fornecedor);
+        return mapToEmpresaFornResponseDTO(empresa);
+    }
+
     public boolean isPr(String cep) {
         Mono<ResponseEntity<CepResponseDTO>> response = cepService.buscarCep(cep);
         if (response == null) throw new AppException("Erro ao buscar o CEP");
@@ -118,6 +129,13 @@ public class EmpresaService {
     public void vincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
         empresa.getFornecedores().add(fornecedor);
         fornecedor.getEmpresas().add(empresa);
+        empresaRepo.save(empresa);
+        fornecedorRepo.save(fornecedor);
+    }
+
+    public void desvincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
+        empresa.getFornecedores().remove(fornecedor);
+        fornecedor.getEmpresas().remove(empresa);
         empresaRepo.save(empresa);
         fornecedorRepo.save(fornecedor);
     }

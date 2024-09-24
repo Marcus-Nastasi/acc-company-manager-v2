@@ -65,12 +65,20 @@
            </v-dialog>
          </v-toolbar>
        </template>
+       <template v-slot:item.actions="{ item }">
+         <div class=" w-full flex justify-around items-center">
+            <v-btn size="small" @click="desassociarFornecedor(item)" color="red" variant="text">
+               Desassociar
+            </v-btn>
+         </div>
+       </template>
      </v-data-table>
    </div>
 </template>
 
 <script lang="ts">
 import { EmpresaFornResponseDTO } from '@/interfaces/Empresa/EmpresaDTO';
+import { FornecedorResponseDTO } from '@/interfaces/Fornecedor/FornecedorDTO';
 import { CepService } from '@/services/cep/CepService';
 import { DateUtil } from '@/util/DateUtil';
 
@@ -135,16 +143,11 @@ export default {
       
       async save() {
          try {
-            if (!this.editedItem.id_fornecedor || this.editedItem.id_fornecedor.length < 1) {
+            if (!this.editedItem.id_fornecedor || this.editedItem.id_fornecedor.length < 1) 
                throw new Error('Id do fornecedor é obrigatório');
-            }
-      
             const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
-
-            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep) && DateUtil.isUnderAge(new Date(fornecedor.nascimento))) {
+            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep) && DateUtil.isUnderAge(new Date(fornecedor.nascimento))) 
                throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná'); 
-            }
-
             const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
             const response: Response = await fetch(url, {
                method: 'PATCH',
@@ -152,11 +155,30 @@ export default {
             });
             if (response.status != 200) throw new Error("Status diferente de 200");
             const data: EmpresaFornResponseDTO = await response.json();
-
             this.snackbarSuccess = true;
             this.empresa.fornecedores.push(await this.buscaFornecedor(this.editedItem.id_fornecedor));
             this.parseToDateString();
             this.close();
+         } catch(error) {
+            this.errorMessage = error.message;
+            this.snackbarError = true;
+            console.error(error.message);
+         }
+      },
+
+      async desassociarFornecedor(item: FornecedorResponseDTO): Promise<EmpresaFornResponseDTO> {
+         if (!confirm("Você tem certeza que deseja desassociar esse fornecedor dessa empresa?")) return;
+         try {
+            const url: string = `http://localhost:8080/api/empresa/desassociar/${this.empresa.id}/${item.id}`;
+            const response: Response = await fetch(url, {
+               method: 'PATCH',
+               headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status != 200) throw new Error("Status diferente de 200");
+            const index = this.empresa.fornecedores.indexOf(item);
+            if (index > -1) this.empresa.fornecedores.splice(index, 1);
+            const data: EmpresaFornResponseDTO = await response.json();
+            return data;
          } catch(error) {
             this.errorMessage = error.message;
             this.snackbarError = true;

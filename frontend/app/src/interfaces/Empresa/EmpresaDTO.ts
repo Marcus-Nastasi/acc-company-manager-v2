@@ -1,6 +1,5 @@
 import FornecedorEmpResponseDTO from "../Fornecedor/FornecedorDTO";
 
-
 export interface EmpresaFornResponseDTO {
    id: string;
    cnpj: string;

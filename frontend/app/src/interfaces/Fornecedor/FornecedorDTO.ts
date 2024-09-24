@@ -1,4 +1,4 @@
-import { EmpresaResponseDTO } from "../Empresa/EmpresaResponseDTO";
+import { EmpresaResponseDTO } from "../Empresa/EmpresaDTO"
 
 export default interface FornecedorEmpResponseDTO {
    id: string,

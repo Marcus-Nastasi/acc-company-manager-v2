@@ -67,10 +67,8 @@ public class EmpresaTest {
             .thenReturn(empresaPage);
         empresa1.setFornecedores(new ArrayList<>(List.of(fornecedor1, fornecedor2)));
         empresa2.setFornecedores(new ArrayList<>(List.of(fornecedor1, fornecedor2)));
-        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa1)));
-        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa2)));
-        fornecedor2.setEmpresas(new ArrayList<>(List.of(empresa1)));
-        fornecedor2.setEmpresas(new ArrayList<>(List.of(empresa2)));
+        fornecedor1.setEmpresas(new ArrayList<>(List.of(empresa1, empresa2)));
+        fornecedor2.setEmpresas(new ArrayList<>(List.of(empresa1, empresa2)));
         EmpPagResponseDTO<EmpresaFornResponseDTO> result = empresaService
             .buscar_tudo(1, 1, "nome", "cnpjCpf", "cep");
         assertDoesNotThrow(() -> result);

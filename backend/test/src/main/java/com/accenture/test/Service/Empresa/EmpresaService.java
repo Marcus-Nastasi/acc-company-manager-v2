@@ -41,8 +41,8 @@ public class EmpresaService {
         Page<Empresa> empresaPage = empresaRepo
             .filtrarEmpresa(nome_fantasia, cnpj, cep, PageRequest.of(page, size));
         List<EmpresaFornResponseDTO> empresaFornList = empresaPage
-                .map(this::mapToEmpresaFornResponseDTO)
-                .toList();
+            .map(this::mapToEmpresaFornResponseDTO)
+            .toList();
         return new EmpPagResponseDTO<>(
             empresaFornList,
             empresaPage.getNumber(),
@@ -111,7 +111,7 @@ public class EmpresaService {
         Empresa empresa = empresaRepo
             .findById(id)
             .orElseThrow(() -> new AppException("Empresa não encontrada"));
-    Fornecedor fornecedor = fornecedorRepo
+        Fornecedor fornecedor = fornecedorRepo
             .findById(id_fornecedor)
             .orElseThrow(() -> new AppException("Fornecedor não encontrado"));
         desvincularEmpresaFornecedor(empresa, fornecedor);
@@ -122,7 +122,7 @@ public class EmpresaService {
         Mono<ResponseEntity<CepResponseDTO>> response = cepService.buscarCep(cep);
         if (response == null) throw new AppException("Erro ao buscar o CEP");
         CepResponseDTO c = response.map(ResponseEntity::getBody).block();
-        if (c == null) throw new AppException("Erro ao resolver resposta de CEP");
+        if (c == null) throw new AppException("Erro ao resolver resposta do CEP");
         return c.uf().equalsIgnoreCase("PR");
     }
 

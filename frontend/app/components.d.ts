@@ -10,6 +10,7 @@ declare module 'vue' {
     Detalhes: typeof import('./src/components/Empresa/Detalhes.vue')['default']
     DetalheTable: typeof import('./src/components/Empresa/DetalheTable.vue')['default']
     Empresa: typeof import('./src/components/Empresa/Empresa.vue')['default']
+    EmpresaTable: typeof import('./src/components/Empresa/EmpresaTable.vue')['default']
     Fornecedor: typeof import('./src/components/Fornecedor/Fornecedor.vue')['default']
     FornecedorTable: typeof import('./src/components/Fornecedor/FornecedorTable.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
@@ -21,6 +22,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/Fornecedor/Search.vue')['default']
     SearchEmp: typeof import('./src/components/Empresa/SearchEmp.vue')['default']
+    SearchForn: typeof import('./src/components/Fornecedor/SearchForn.vue')['default']
     Table: typeof import('./src/components/Empresa/Table.vue')['default']
   }
 }

@@ -1,6 +1,6 @@
 import { EmpresaResponseDTO } from "../Empresa/EmpresaDTO"
 
-export default interface FornecedorEmpResponseDTO {
+export interface FornecedorEmpResponseDTO {
    id: string,
    cnpj_cpf: string,
    rg: string,

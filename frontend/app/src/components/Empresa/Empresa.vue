@@ -35,7 +35,7 @@
  
       <v-main class=" min-h-screen max-h-fit mt-5">
          <v-container>
-            <Table
+            <EmpresaTable
                :empresas="empresas"
                :page="page"
                :size="size"
@@ -49,6 +49,7 @@
 <script>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHome } from '@mdi/js';
+import EmpresaTable from './EmpresaTable.vue';
 
 export default {
    components: {

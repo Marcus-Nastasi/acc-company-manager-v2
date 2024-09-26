@@ -18,7 +18,7 @@
       >
          {{ errorMessage }}
       </v-snackbar>
-      <Search 
+      <SearchForn
          :fetchFornecedores="fetchFornecedores" 
          style="margin-bottom: 2rem;" 
       />
@@ -136,7 +136,9 @@
 </template>
 
 <script lang="ts">
-import Search from './Search.vue';
+import { FornecedorEmpResponseDTO } from '@/interfaces/Fornecedor/FornecedorDTO';
+import SearchForn from './SearchForn.vue';
+import Search from './SearchForn.vue';
 import { FornecedoresService } from '@/services/fornecedores/FornecedoresService';
 
 export default {
@@ -234,7 +236,7 @@ export default {
          }
       },
 
-      async fetchEdit(id: string): Promise<void> {
+      async fetchEdit(id: string): Promise<FornecedorEmpResponseDTO> {
          try {
             this.validaCamposForm(this.editedItem);
             const data = await FornecedoresService.atualizarFornecedor(id, this.editedItem);  
@@ -292,21 +294,23 @@ export default {
       },
 
       validaCamposForm(item): void {
+         if (!item.cnpj_cpf) throw new Error('CNPJ ou CPF é obrigatório');
          if (!item.nome) throw new Error('Nome é obrigatório');
-         if (!item.cep) throw new Error('CEP é obrigatório');
-         if (!item.cnpj_cpf) throw new Error('CNPJ/CPF é obrigatório');
          if (!item.email) throw new Error('Email é obrigatório');
+         if (!item.cep) throw new Error('CEP é obrigatório');
 
-         if (item.e_pf) if (!item.rg || !item.nascimento) {
+         if (item.e_pf) if (!item.rg || !item.nascimento) 
             throw new Error('RG e data de nascimento são obrigatórios para pessoas físicas');
-         }
       },
 
       parseToDateString(): void {
          this.empresas.forEach(element => {
             if (Array.isArray(element.nascimento)) {
-               const dataFormatada = new Date(element.nascimento[0], element.nascimento[1] - 1, element.nascimento[2])
-                  .toLocaleDateString('pt-BR');
+               const dataFormatada = new Date(
+                  element.nascimento[0], 
+                  element.nascimento[1] - 1, 
+                  element.nascimento[2]
+               ).toLocaleDateString('pt-BR');
                element.nascimento = dataFormatada;
             }
          });

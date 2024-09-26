@@ -141,13 +141,15 @@ export default {
          }
       },
       
-      async save() {
+      async save(): Promise<EmpresaFornResponseDTO> {
          try {
             if (!this.editedItem.id_fornecedor || this.editedItem.id_fornecedor.length < 1) 
                throw new Error('Id do fornecedor é obrigatório');
-            const fornecedor = await this.buscaFornecedor(this.editedItem.id_fornecedor);
-            if (fornecedor.e_pf && await CepService.isPr(this.empresa.cep) && DateUtil.isUnderAge(new Date(fornecedor.nascimento))) 
-               throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná'); 
+            const fornecedor: FornecedorResponseDTO = await this.buscaFornecedor(this.editedItem.id_fornecedor);
+            if (fornecedor.e_pf 
+               && await CepService.isPr(this.empresa.cep) 
+               && DateUtil.isUnderAge(new Date(fornecedor.nascimento))
+            ) throw new Error('Não é permitido cadastrar um fornecedor menor de idade no Paraná');
             const url: string = `http://localhost:8080/api/empresa/associar/${this.empresa.id}/${fornecedor.id}`
             const response: Response = await fetch(url, {
                method: 'PATCH',
@@ -159,6 +161,7 @@ export default {
             this.empresa.fornecedores.push(await this.buscaFornecedor(this.editedItem.id_fornecedor));
             this.parseToDateString();
             this.close();
+            return data;
          } catch(error) {
             this.errorMessage = error.message;
             this.snackbarError = true;

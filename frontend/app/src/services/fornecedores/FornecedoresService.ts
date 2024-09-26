@@ -1,4 +1,4 @@
-import FornecedorEmpResponseDTO, { FornecedorPagEmpResponseDTO, FornecedorRequestDTO } from "@/interfaces/Fornecedor/FornecedorDTO";
+import { FornecedorEmpResponseDTO, FornecedorPagEmpResponseDTO, FornecedorRequestDTO } from "@/interfaces/Fornecedor/FornecedorDTO";
 
 export class FornecedoresService {
    public static async fetchFornecedores(

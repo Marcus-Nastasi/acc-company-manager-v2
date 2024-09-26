@@ -197,7 +197,7 @@ public class EmpresaTest {
         // simulando resposta para um CEP do Paraná (PR)
         String cepPr = "80000-000";
         CepResponseDTO prResponse = new CepResponseDTO(
-            "80000-000", "Curitiba", "PR", "", "", "", "PR", "", "", "", "", "", ""
+            "80000-000", "", "Curitiba", "", "", "", "PR", "", "", "", "", "", ""
         );
         when(cepService.buscarCep(cepPr))
             .thenReturn(Mono.just(ResponseEntity.ok(prResponse)));

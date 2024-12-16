@@ -1,6 +1,6 @@
 package com.accenture.test;
 
-import com.accenture.test.Service.Cep.CepService;
+import com.accenture.test.application.usecase.cep.CepService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

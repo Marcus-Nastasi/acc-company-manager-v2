@@ -1,15 +1,13 @@
 package com.accenture.test.infrastructure.mapper;
 
+import com.accenture.test.domain.empresa.Empresa;
 import com.accenture.test.domain.fornecedor.Fornecedor;
+import com.accenture.test.infrastructure.entity.EmpresaEntity;
 import com.accenture.test.infrastructure.entity.FornecedorEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
 public class FornecedorEntityMapper {
-
-    @Autowired
-    private EmpresaEntityMapper empresaEntityMapper;
 
     public Fornecedor mapFromEntity(FornecedorEntity fornecedor) {
         return new Fornecedor(
@@ -21,7 +19,7 @@ public class FornecedorEntityMapper {
             fornecedor.getEmail(),
             fornecedor.getCep(),
             fornecedor.isE_pf(),
-            new ArrayList<>(fornecedor.getEmpresas().stream().map(empresaEntityMapper::mapFromEntity).toList())
+            new ArrayList<>(fornecedor.getEmpresas().stream().map(this::mapEmpresaWithoutFornecedores).toList())
         );
     }
 
@@ -35,7 +33,27 @@ public class FornecedorEntityMapper {
             fornecedor.getEmail(),
             fornecedor.getCep(),
             fornecedor.isE_pf(),
-            new ArrayList<>(fornecedor.getEmpresas().stream().map(empresaEntityMapper::mapToEntity).toList())
+            new ArrayList<>(fornecedor.getEmpresas().stream().map(this::mapEmpresaEntityWithoutFornecedores).toList())
+        );
+    }
+
+    private EmpresaEntity mapEmpresaEntityWithoutFornecedores(Empresa empresa) {
+        return new EmpresaEntity(
+            empresa.getId(),
+            empresa.getCnpj(),
+            empresa.getNome_fantasia(),
+            empresa.getCep(),
+            null
+        );
+    }
+
+    private Empresa mapEmpresaWithoutFornecedores(EmpresaEntity empresa) {
+        return new Empresa(
+            empresa.getId(),
+            empresa.getCnpj(),
+            empresa.getNome_fantasia(),
+            empresa.getCep(),
+            null
         );
     }
 }

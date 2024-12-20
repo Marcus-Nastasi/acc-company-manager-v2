@@ -13,6 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Object> handleAppException(AppException exception, WebRequest request) {
+        exception.printStackTrace();
         return ResponseEntity
             .badRequest()
             .body(Map.of("error", exception.getMessage()));
@@ -20,6 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleUnknownRuntime(RuntimeException exception, WebRequest request) {
+        exception.printStackTrace();
         return ResponseEntity
             .internalServerError()
             .body(Map.of("error", exception.getMessage()));
@@ -27,6 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnknownError(Exception exception, WebRequest request) {
+        exception.printStackTrace();
         return ResponseEntity
             .internalServerError()
             .body(Map.of("error", exception.getMessage()));

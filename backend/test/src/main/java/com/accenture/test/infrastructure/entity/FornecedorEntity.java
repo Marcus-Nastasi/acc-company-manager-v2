@@ -35,7 +35,6 @@ public class FornecedorEntity {
     private String cep;
     @Column
     private boolean e_pf;
-    //@ManyToMany(fetch = FetchType.LAZY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "fornecedor_empresa",

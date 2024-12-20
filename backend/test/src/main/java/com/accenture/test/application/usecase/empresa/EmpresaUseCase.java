@@ -1,6 +1,5 @@
 package com.accenture.test.application.usecase.empresa;
 
-import com.accenture.test.application.gateways.empresa.EmpresaGateway;
 import com.accenture.test.domain.cep.Cep;
 import com.accenture.test.domain.empresa.Empresa;
 import com.accenture.test.domain.empresa.EmpresaPag;
@@ -8,6 +7,7 @@ import com.accenture.test.domain.fornecedor.Fornecedor;
 import com.accenture.test.application.exception.AppException;
 import com.accenture.test.application.usecase.cep.CepUseCase;
 import com.accenture.test.application.usecase.fornecedor.FornecedorUseCase;
+import com.accenture.test.application.gateways.empresa.EmpresaGateway;
 
 import java.util.UUID;
 
@@ -78,11 +78,9 @@ public class EmpresaUseCase {
     }
 
     public void desvincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
-        Empresa empresaManaged = buscar_um(empresa.getId());
-        Fornecedor fornecedorManaged = fornecedorUseCase.buscar_um(fornecedor.getId());
-        empresaManaged.getFornecedores().remove(fornecedor);
-        fornecedorManaged.getEmpresas().remove(empresa);
-        fornecedorUseCase.save(fornecedorManaged);
-        empresaGateway.save(empresaManaged);
+        fornecedor.getEmpresas().removeIf(e -> e.getId().equals(empresa.getId()));
+        empresa.getFornecedores().removeIf(f -> f.getId().equals(fornecedor.getId()));
+        fornecedorUseCase.save(fornecedor);
+        empresaGateway.save(empresa);
     }
 }

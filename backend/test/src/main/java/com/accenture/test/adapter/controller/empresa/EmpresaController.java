@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ public class EmpresaController {
     private EmpresaDtoMapper empresaDtoMapper;
 
     @GetMapping()
+    @Cacheable("empresa")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Buscar todas as empresas", description = "Nessa rota você pode consultar dados de todas as empresas, com paginação e filtro por nome, cnpj e cep")
     @ApiResponse(responseCode = "200", description = "Retornando dados das empresas")
@@ -51,6 +54,7 @@ public class EmpresaController {
     }
 
     @GetMapping(value = "/{id}")
+    @Cacheable("empresa")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Buscar uma única empresa", description = "Nessa rota você pode consultar dados detalhados de uma única empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa única")
@@ -59,6 +63,7 @@ public class EmpresaController {
     }
 
     @PostMapping(value = "/registrar")
+    @CacheEvict(value = "empresa", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Cadastrar nova empresa", description = "Nessa rota você pode cadastrar uma nova empresa")
     @ApiResponse(responseCode = "201", description = "Retornando dados da empresa criada")
@@ -68,6 +73,7 @@ public class EmpresaController {
     }
 
     @PatchMapping(value = "/atualizar/{id}")
+    @CacheEvict(value = "empresa", allEntries = true)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Atualizar dados de uma empresa", description = "Nessa rota você pode atualizar os dados de uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa atualizada")
@@ -77,6 +83,7 @@ public class EmpresaController {
     }
 
     @DeleteMapping(value = "/deletar/{id}")
+    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Deletar uma empresa", description = "Nessa rota você pode deletar os dados de uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa deletada")
@@ -86,6 +93,7 @@ public class EmpresaController {
     }
 
     @PatchMapping(value = "/associar/{id_empresa}/{id_fornecedor}")
+    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Associar empresa e fornecedor", description = "Nessa rota você pode associar um fornecedor com uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa associada à um novo fornecedor")
@@ -95,6 +103,7 @@ public class EmpresaController {
     }
 
     @PatchMapping(value = "/desassociar/{id_empresa}/{id_fornecedor}")
+    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Desassociar empresa e fornecedor", description = "Nessa rota você pode desassociar um fornecedor e uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa desvinculada de um fornecedor")

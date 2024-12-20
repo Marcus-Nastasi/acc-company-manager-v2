@@ -1,6 +1,6 @@
 package com.accenture.test;
 
-import com.accenture.test.application.usecase.cep.CepService;
+import com.accenture.test.application.usecase.cep.CepUseCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class CepTest {
 
     @Autowired
-    private CepService cepService;
+    private CepUseCase cepUseCase;
 
     @Test
     void cepTest() {
         Assertions.assertDoesNotThrow(() -> {
-            cepService.buscarCep("04632-011");
+            cepUseCase.buscarCep("04632-011");
         });
     }
 }

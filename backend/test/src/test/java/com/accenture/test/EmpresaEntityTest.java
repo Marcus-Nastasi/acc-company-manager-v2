@@ -9,7 +9,7 @@ import com.accenture.test.infrastructure.entity.FornecedorEntity;
 import com.accenture.test.application.exception.AppException;
 import com.accenture.test.infrastructure.persistence.EmpresaRepo;
 import com.accenture.test.infrastructure.persistence.FornecedorRepo;
-import com.accenture.test.application.usecase.cep.CepService;
+import com.accenture.test.application.usecase.cep.CepUseCase;
 import com.accenture.test.application.usecase.empresa.EmpresaUseCase;
 import com.accenture.test.application.usecase.fornecedor.FornecedorUseCase;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class EmpresaEntityTest {
     @Mock
     private FornecedorRepo fornecedorRepo;
     @Mock
-    private CepService cepService;
+    private CepUseCase cepUseCase;
     @Mock
     private FornecedorUseCase fornecedorUseCase;
     @InjectMocks
@@ -193,7 +193,7 @@ public class EmpresaEntityTest {
         CepResponseDTO spResponse = new CepResponseDTO(
             "05999-999", "", "São Paulo", "", "", "", "SP", "", "", "", "", "", ""
         );
-        when(cepService.buscarCep(cepSp))
+        when(cepUseCase.buscarCep(cepSp))
             .thenReturn(Mono.just(ResponseEntity.ok(spResponse)));
 
         // simulando resposta para um CEP do Paraná (PR)
@@ -201,13 +201,13 @@ public class EmpresaEntityTest {
         CepResponseDTO prResponse = new CepResponseDTO(
             "80000-000", "", "Curitiba", "", "", "", "PR", "", "", "", "", "", ""
         );
-        when(cepService.buscarCep(cepPr))
+        when(cepUseCase.buscarCep(cepPr))
             .thenReturn(Mono.just(ResponseEntity.ok(prResponse)));
 
         assertFalse(empresaUseCase.isPr(cepSp));
         assertTrue(empresaUseCase.isPr(cepPr));
-        verify(cepService, times(1)).buscarCep(cepSp);
-        verify(cepService, times(1)).buscarCep(cepPr);
+        verify(cepUseCase, times(1)).buscarCep(cepSp);
+        verify(cepUseCase, times(1)).buscarCep(cepPr);
     }
 
     @Test

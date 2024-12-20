@@ -1,31 +1,26 @@
 package com.accenture.test.application.usecase.empresa;
 
-import com.accenture.test.adapter.output.cep.CepResponseDTO;
 import com.accenture.test.application.gateways.empresa.EmpresaGateway;
-import com.accenture.test.application.gateways.fornecedor.FornecedorGateway;
+import com.accenture.test.domain.cep.Cep;
 import com.accenture.test.domain.empresa.Empresa;
 import com.accenture.test.domain.empresa.EmpresaPag;
 import com.accenture.test.domain.fornecedor.Fornecedor;
 import com.accenture.test.application.exception.AppException;
-import com.accenture.test.application.usecase.cep.CepService;
+import com.accenture.test.application.usecase.cep.CepUseCase;
 import com.accenture.test.application.usecase.fornecedor.FornecedorUseCase;
-import org.springframework.http.ResponseEntity;
-import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 public class EmpresaUseCase {
 
     private final EmpresaGateway empresaGateway;
-    private final FornecedorGateway fornecedorGateway;
     private final FornecedorUseCase fornecedorUseCase;
-    private final CepService cepService;
+    private final CepUseCase cepUseCase;
 
-    public EmpresaUseCase(EmpresaGateway empresaGateway, FornecedorGateway fornecedorGateway, FornecedorUseCase fornecedorUseCase, CepService cepService) {
+    public EmpresaUseCase(EmpresaGateway empresaGateway, FornecedorUseCase fornecedorUseCase, CepUseCase cepUseCase) {
         this.empresaGateway = empresaGateway;
-        this.fornecedorGateway = fornecedorGateway;
         this.fornecedorUseCase = fornecedorUseCase;
-        this.cepService = cepService;
+        this.cepUseCase = cepUseCase;
     }
 
     public EmpresaPag buscar_tudo(int page, int size, String nome_fantasia, String cnpj, String cep) {
@@ -70,24 +65,24 @@ public class EmpresaUseCase {
     }
 
     public boolean isPr(String cep) {
-        Mono<ResponseEntity<CepResponseDTO>> response = cepService.buscarCep(cep);
+        Cep response = cepUseCase.buscarCep(cep);
         if (response == null) throw new AppException("Erro ao buscar o CEP");
-        CepResponseDTO c = response.map(ResponseEntity::getBody).block();
-        if (c == null) throw new AppException("Erro ao resolver resposta do CEP");
-        return c.uf().equalsIgnoreCase("PR");
+        return response.getUf().equalsIgnoreCase("PR");
     }
 
     public void vincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
         empresa.getFornecedores().add(fornecedor);
         fornecedor.getEmpresas().add(empresa);
         empresaGateway.save(empresa);
-        fornecedorGateway.save(fornecedor);
+        fornecedorUseCase.save(fornecedor);
     }
 
     public void desvincularEmpresaFornecedor(Empresa empresa, Fornecedor fornecedor) {
-        empresa.getFornecedores().remove(fornecedor);
-        fornecedor.getEmpresas().remove(empresa);
-        empresaGateway.save(empresa);
-        fornecedorGateway.save(fornecedor);
+        Empresa empresaManaged = buscar_um(empresa.getId());
+        Fornecedor fornecedorManaged = fornecedorUseCase.buscar_um(fornecedor.getId());
+        empresaManaged.getFornecedores().remove(fornecedor);
+        fornecedorManaged.getEmpresas().remove(empresa);
+        empresaGateway.save(empresaManaged);
+        fornecedorUseCase.save(fornecedorManaged);
     }
 }

@@ -2,8 +2,7 @@ package com.accenture.test.infrastructure.configuration.empresa;
 
 import com.accenture.test.adapter.mapper.empresa.EmpresaDtoMapper;
 import com.accenture.test.application.gateways.empresa.EmpresaGateway;
-import com.accenture.test.application.gateways.fornecedor.FornecedorGateway;
-import com.accenture.test.application.usecase.cep.CepService;
+import com.accenture.test.application.usecase.cep.CepUseCase;
 import com.accenture.test.application.usecase.empresa.EmpresaUseCase;
 import com.accenture.test.application.usecase.fornecedor.FornecedorUseCase;
 import com.accenture.test.infrastructure.gateway.empresa.EmpresaRepoGateway;
@@ -20,8 +19,8 @@ public class EmpresaConfiguration {
     }
 
     @Bean
-    public EmpresaUseCase empresaUseCase(EmpresaGateway empresaGateway, FornecedorGateway fornecedorGateway, FornecedorUseCase fornecedorUseCase, CepService cepService) {
-        return new EmpresaUseCase(empresaGateway, fornecedorGateway, fornecedorUseCase, cepService);
+    public EmpresaUseCase empresaUseCase(EmpresaGateway empresaGateway, FornecedorUseCase fornecedorUseCase, CepUseCase cepUseCase) {
+        return new EmpresaUseCase(empresaGateway, fornecedorUseCase, cepUseCase);
     }
 
     @Bean

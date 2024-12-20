@@ -1,5 +1,7 @@
 package com.accenture.test.adapter.output.cep;
 
+import java.io.Serializable;
+
 public record CepResponseDTO(
         String cep,
         String logradouro,
@@ -14,4 +16,4 @@ public record CepResponseDTO(
         String gia,
         String ddd,
         String siafi
-) {}
+) implements Serializable {}

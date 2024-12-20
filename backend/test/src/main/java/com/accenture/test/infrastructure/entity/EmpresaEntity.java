@@ -26,6 +26,6 @@ public class EmpresaEntity {
     private String nome_fantasia;
     @Column(name = "cep")
     private String cep;
-    @ManyToMany(mappedBy = "empresas", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "empresas", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<FornecedorEntity> fornecedores = new ArrayList<>();
 }

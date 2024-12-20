@@ -25,6 +25,10 @@ public class FornecedorUseCase {
         return fornecedorGateway.get(id);
     }
 
+    public Fornecedor save(Fornecedor fornecedor) {
+        return fornecedorGateway.save(fornecedor);
+    }
+
     public Fornecedor registrar(Fornecedor data) {
         if (data.isE_pf()) {
             if (data.getRg() == null || data.getNascimento() == null) throw new AppException(
@@ -32,7 +36,7 @@ public class FornecedorUseCase {
                 "nascimento para cadastro de fornecedor pessoa física"
             );
         }
-        return fornecedorGateway.save(data);
+        return save(data);
     }
 
     public Fornecedor atualizar(UUID id, Fornecedor data) {
@@ -50,7 +54,7 @@ public class FornecedorUseCase {
             fornecedor.setRg(data.getRg());
             fornecedor.setNascimento(data.getNascimento());
         }
-        return fornecedorGateway.save(fornecedor);
+        return save(fornecedor);
     }
 
     public Fornecedor deletar(UUID id) {

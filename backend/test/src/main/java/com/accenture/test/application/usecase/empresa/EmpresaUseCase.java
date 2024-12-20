@@ -82,7 +82,7 @@ public class EmpresaUseCase {
         Fornecedor fornecedorManaged = fornecedorUseCase.buscar_um(fornecedor.getId());
         empresaManaged.getFornecedores().remove(fornecedor);
         fornecedorManaged.getEmpresas().remove(empresa);
-        empresaGateway.save(empresaManaged);
         fornecedorUseCase.save(fornecedorManaged);
+        empresaGateway.save(empresaManaged);
     }
 }

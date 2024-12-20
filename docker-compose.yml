@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
+    container_name: postgres-accenture
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123
@@ -11,22 +12,46 @@ services:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - accenture-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-accenture
+    command: ["redis-server", "--bind", "0.0.0.0", "--protected-mode", "no", "--loglevel", "debug"]
+    ports:
+      - "6379:6379"
+    networks:
+      - accenture-network
 
   backend:
     build: ./backend/test
+    container_name: backend-accenture
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/accenture
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     depends_on:
       - postgres
+      - redis
     ports:
       - "8080:8080"
+    networks:
+      - accenture-network
 
   frontend:
     build: ./frontend
+    container_name: frontend-accenture
     ports:
       - "3000:3000"
+    networks:
+      - accenture-network
+
+networks:
+  accenture-network: 
+    driver: bridge
 
 volumes:
   postgres-data:

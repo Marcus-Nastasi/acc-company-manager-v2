@@ -1,5 +1,7 @@
 package com.accenture.test;
 
+import com.accenture.test.domain.fornecedor.Fornecedor;
+import com.accenture.test.domain.fornecedor.FornecedorPag;
 import com.accenture.test.infrastructure.entity.EmpresaEntity;
 import com.accenture.test.adapter.output.fornecedor.FornecedorPagResponseDto;
 import com.accenture.test.adapter.input.fornecedor.FornecedorRequestDto;
@@ -47,48 +49,48 @@ public class FornecedorEntityEntityTests {
     FornecedorEntity fornecedorEntity1 = new FornecedorEntity();
     FornecedorEntity fornecedorEntity2 = new FornecedorEntity();
 
+    Fornecedor fornecedor1 = new Fornecedor(
+        UUID.randomUUID(),
+        "",
+        "",
+        LocalDate.now(),
+        "",
+        "",
+        "",
+        false,
+        List.of()
+    );
+
     List<FornecedorEntity> fornecedores = List.of(fornecedorEntity1, fornecedorEntity2);
     Page<FornecedorEntity> fornecedorPage = new PageImpl<>(fornecedores);
 
     @Test
     void buscar_tudo_test() {
-        when(fornecedorRepo.filtrarFornecedores(anyString(), anyString(), any(Pageable.class)))
-            .thenReturn(fornecedorPage);
-        fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        fornecedorEntity2.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        FornecedorPagResponseDto<FornecedorEmpResponseDTO> result = fornecedorUseCase
-            .buscar_tudo(1, 1, "nome", "cnpjCpf");
+        when(fornecedorRepo.filtrarFornecedores(anyString(), anyString(), any(Pageable.class))).thenReturn(fornecedorPage);
+        fornecedorEntity1.setEmpresas(List.of(empresaEntity1, empresaEntity2));
+        fornecedorEntity2.setEmpresas(List.of(empresaEntity1, empresaEntity2));
+        FornecedorPag<Fornecedor> result = fornecedorUseCase.buscar_tudo(1, 1, "nome", "cnpjCpf");
         assertDoesNotThrow(() -> result);
-        verify(fornecedorRepo, times(1))
-            .filtrarFornecedores("nome", "cnpjCpf", PageRequest.of(1, 1));
+        verify(fornecedorRepo, times(1)).filtrarFornecedores("nome", "cnpjCpf", PageRequest.of(1, 1));
     }
 
     @Test
     void buscar_um_test() {
-        fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        FornecedorEmpResponseDTO f = fornecedorUseCase
-            .mapToFornecedorEmpResponseDTO(fornecedorEntity1);
-        when(fornecedorRepo.findById(any(UUID.class)))
-            .thenReturn(Optional.of(fornecedorEntity1));
+        fornecedorEntity1.setEmpresas(List.of(empresaEntity1, empresaEntity2));
+        Fornecedor f = fornecedorUseCase.buscar_um(fornecedorEntity1.getId());
+        when(fornecedorRepo.findById(any(UUID.class))).thenReturn(Optional.of(fornecedorEntity1));
         assertDoesNotThrow(() -> fornecedorUseCase.buscar_um(UUID.randomUUID()));
         assertEquals(fornecedorUseCase.buscar_um(UUID.randomUUID()), f);
-        verify(fornecedorRepo, times(2))
-            .findById(any(UUID.class));
+        verify(fornecedorRepo, times(2)).findById(any(UUID.class));
     }
 
     @Test
     void registrar_test() {
-        FornecedorRequestDto fornecedorRequestDto = new FornecedorRequestDto(
-            "cnpj_cpf", "rg", LocalDate.now(), "nome", "email", "04632011", true
-        );
-        FornecedorRequestDto registrarFornecedorPFDTO = new FornecedorRequestDto(
-                "cnpj_cpf", null, null, "nome", "email", "04632011", true
-        );
         when(fornecedorRepo.save(any(FornecedorEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> fornecedorUseCase.registrar(fornecedorRequestDto));
+        assertDoesNotThrow(() -> fornecedorUseCase.registrar(fornecedor1));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
-            fornecedorUseCase.registrar(registrarFornecedorPFDTO);
+            fornecedorUseCase.registrar(fornecedor1);
         });
         verify(fornecedorRepo, times(1)).save(any(FornecedorEntity.class));
     }
@@ -101,14 +103,13 @@ public class FornecedorEntityEntityTests {
         FornecedorRequestDto registrarFornecedorPFDTO = new FornecedorRequestDto(
                 "cnpj_cpf", null, null, "nome", "email", "04632011", true
         );
-        fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        when(fornecedorRepo.findById(any(UUID.class)))
-                .thenReturn(Optional.of(fornecedorEntity1));
+        fornecedorEntity1.setEmpresas(List.of(empresaEntity1, empresaEntity2));
+        when(fornecedorRepo.findById(any(UUID.class))).thenReturn(Optional.of(fornecedorEntity1));
         when(fornecedorRepo.save(any(FornecedorEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> fornecedorUseCase.atualizar(UUID.randomUUID(), fornecedorRequestDto));
+        assertDoesNotThrow(() -> fornecedorUseCase.atualizar(UUID.randomUUID(), fornecedor1));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
-            fornecedorUseCase.atualizar(UUID.randomUUID(), registrarFornecedorPFDTO);
+            fornecedorUseCase.atualizar(UUID.randomUUID(), fornecedor1);
         });
         verify(fornecedorRepo, times(2)).findById(any(UUID.class));
         verify(fornecedorRepo, times(1)).save(any(FornecedorEntity.class));
@@ -116,9 +117,8 @@ public class FornecedorEntityEntityTests {
 
     @Test
     void deletar_test() {
-        fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        when(fornecedorRepo.findById(any(UUID.class)))
-            .thenReturn(Optional.of(fornecedorEntity1));
+        fornecedorEntity1.setEmpresas(List.of(empresaEntity1, empresaEntity2));
+        when(fornecedorRepo.findById(any(UUID.class))).thenReturn(Optional.of(fornecedorEntity1));
         assertDoesNotThrow(() -> fornecedorUseCase.deletar(UUID.randomUUID()));
         verify(fornecedorRepo, times(1)).deleteById(any(UUID.class));
     }

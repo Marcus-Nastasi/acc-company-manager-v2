@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,11 +35,11 @@ public class FornecedorEntity {
     private String cep;
     @Column
     private boolean e_pf;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "fornecedor_empresa",
         joinColumns = @JoinColumn(name = "fornecedor_id"),
         inverseJoinColumns = @JoinColumn(name = "empresa_id")
     )
-    private List<EmpresaEntity> empresaEntityEntities;
+    private List<EmpresaEntity> empresas = new ArrayList<>();
 }

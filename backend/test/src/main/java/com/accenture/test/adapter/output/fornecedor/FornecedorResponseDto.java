@@ -1,12 +1,13 @@
 package com.accenture.test.adapter.output.fornecedor;
 
-import com.accenture.test.adapter.output.empresa.EmpresaResponseDTO;
+import com.accenture.test.adapter.output.empresa.EmpresaCleanDto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public record FornecedorEmpResponseDTO(
+public record FornecedorResponseDto(
         UUID id,
         String cnpj_cpf,
         String rg,
@@ -15,5 +16,5 @@ public record FornecedorEmpResponseDTO(
         String email,
         String cep,
         boolean e_pf,
-        List<EmpresaResponseDTO> empresas
-) {}
+        List<EmpresaCleanDto> empresas
+) implements Serializable {}

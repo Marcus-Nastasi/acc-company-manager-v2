@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,6 @@ public class EmpresaEntity {
     private String nome_fantasia;
     @Column(name = "cep")
     private String cep;
-    @ManyToMany(mappedBy = "empresas", fetch = FetchType.EAGER)
-    private List<FornecedorEntity> fornecedores;
+    @ManyToMany(mappedBy = "empresas", fetch = FetchType.LAZY)
+    private List<FornecedorEntity> fornecedores = new ArrayList<>();
 }

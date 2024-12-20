@@ -1,10 +1,8 @@
-package com.accenture.test.adapter.output.fornecedor;
+package com.accenture.test.adapter.input.fornecedor;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public record FornecedorResponseDTO(
-        UUID id,
+public record FornecedorRequestDto(
         String cnpj_cpf,
         String rg,
         LocalDate nascimento,

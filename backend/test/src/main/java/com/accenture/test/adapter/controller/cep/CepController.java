@@ -1,4 +1,4 @@
-package com.accenture.test.adapter.controller.Cep;
+package com.accenture.test.adapter.controller.cep;
 
 import com.accenture.test.adapter.output.cep.CepResponseDTO;
 import com.accenture.test.application.usecase.cep.CepService;

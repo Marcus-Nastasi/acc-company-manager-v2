@@ -1,59 +1,55 @@
 package com.accenture.test.adapter.mapper.fornecedor;
 
-import com.accenture.test.adapter.input.fornecedor.RegistrarFornecedorDTO;
-import com.accenture.test.adapter.output.fornecedor.FornecedorEmpResponseDTO;
-import com.accenture.test.adapter.output.fornecedor.FornecedorResponseDTO;
-import com.accenture.test.application.usecase.empresa.EmpresaService;
-import com.accenture.test.domain.fornecedor.FornecedorEmpresa;
-import com.accenture.test.infrastructure.entity.FornecedorEntity;
-import com.accenture.test.infrastructure.mapper.EmpresaEntityMapper;
+import com.accenture.test.adapter.input.fornecedor.FornecedorRequestDto;
+import com.accenture.test.adapter.mapper.empresa.EmpresaDtoMapper;
+import com.accenture.test.adapter.output.fornecedor.FornecedorCleanDto;
+import com.accenture.test.adapter.output.fornecedor.FornecedorResponseDto;
+import com.accenture.test.domain.fornecedor.Fornecedor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class FornecedorDtoMapper {
 
     @Autowired
-    private EmpresaService empresaService;
-    @Autowired
-    private EmpresaEntityMapper empresaEntityMapper;
+    private EmpresaDtoMapper empresaDtoMapper;
 
-    public FornecedorResponseDTO mapToFornecedorResponseDTO(FornecedorEntity fornecedorEntity) {
-        return new FornecedorResponseDTO(
-                fornecedorEntity.getId(),
-                fornecedorEntity.getCnpj_cpf(),
-                fornecedorEntity.getRg(),
-                fornecedorEntity.getNascimento(),
-                fornecedorEntity.getNome(),
-                fornecedorEntity.getEmail(),
-                fornecedorEntity.getCep(),
-                fornecedorEntity.isE_pf()
+    public FornecedorResponseDto mapToResponse(Fornecedor fornecedor) {
+        return new FornecedorResponseDto(
+                fornecedor.getId(),
+                fornecedor.getCnpj_cpf(),
+                fornecedor.getRg(),
+                fornecedor.getNascimento(),
+                fornecedor.getNome(),
+                fornecedor.getEmail(),
+                fornecedor.getCep(),
+                fornecedor.isE_pf(),
+                fornecedor.getEmpresas().stream().map(empresaDtoMapper::mapToClean).toList()
         );
     }
 
-    public FornecedorEmpResponseDTO mapToFornecedorEmpResponseDTO(FornecedorEmpresa fornecedorEntity) {
-        return new FornecedorEmpResponseDTO(
-                fornecedorEntity.getId(),
-                fornecedorEntity.getCnpj_cpf(),
-                fornecedorEntity.getRg(),
-                fornecedorEntity.getNascimento(),
-                fornecedorEntity.getNome(),
-                fornecedorEntity.getEmail(),
-                fornecedorEntity.getCep(),
-                fornecedorEntity.isE_pf(),
-                fornecedorEntity.getEmpresaEntities().stream().map(e -> empresaEntityMapper.mapFromEntity(e)).toList()
+    public Fornecedor mapFromRequest(FornecedorRequestDto fornecedorRequestDto) {
+        return new Fornecedor(
+                null,
+                fornecedorRequestDto.cnpj_cpf(),
+                fornecedorRequestDto.rg(),
+                fornecedorRequestDto.nascimento(),
+                fornecedorRequestDto.nome(),
+                fornecedorRequestDto.email(),
+                fornecedorRequestDto.cep(),
+                fornecedorRequestDto.e_pf(),
+                null
         );
     }
 
-    public FornecedorEmpresa mapFromRequestToFornecedorEmpresa(RegistrarFornecedorDTO fornecedorEntity) {
-        return new FornecedorEmpresa(
-            null,
-            fornecedorEntity.cnpj_cpf(),
-            fornecedorEntity.rg(),
-            fornecedorEntity.nascimento(),
-            fornecedorEntity.nome(),
-            fornecedorEntity.email(),
-            fornecedorEntity.cep(),
-            fornecedorEntity.e_pf(),
-            null
+    public FornecedorCleanDto mapToClean(Fornecedor fornecedor) {
+        return new FornecedorCleanDto(
+                fornecedor.getId(),
+                fornecedor.getCnpj_cpf(),
+                fornecedor.getRg(),
+                fornecedor.getNascimento(),
+                fornecedor.getNome(),
+                fornecedor.getEmail(),
+                fornecedor.getCep(),
+                fornecedor.isE_pf()
         );
     }
 }

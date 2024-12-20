@@ -4,6 +4,7 @@ import com.accenture.test.domain.fornecedor.Fornecedor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class Empresa implements Serializable {
         this.cnpj = cnpj;
         this.nome_fantasia = nome_fantasia;
         this.cep = cep;
-        this.fornecedores = fornecedores;
+        this.fornecedores = fornecedores != null ? new ArrayList<>(fornecedores) : new ArrayList<>();
     }
 
     public UUID getId() {
@@ -59,10 +60,11 @@ public class Empresa implements Serializable {
     }
 
     public List<Fornecedor> getFornecedores() {
-        return fornecedores;
+        if (this.fornecedores == null) this.fornecedores = new ArrayList<>();
+        return this.fornecedores;
     }
 
     public void setFornecedores(List<Fornecedor> fornecedores) {
-        this.fornecedores = fornecedores;
+        this.fornecedores = fornecedores != null ? new ArrayList<>(fornecedores) : new ArrayList<>();
     }
 }

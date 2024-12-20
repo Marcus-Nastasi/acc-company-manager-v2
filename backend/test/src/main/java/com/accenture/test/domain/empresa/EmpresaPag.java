@@ -1,31 +1,31 @@
-package com.accenture.test.domain.fornecedor;
+package com.accenture.test.domain.empresa;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-public class FornecedorPagResponse<T> implements Serializable {
+public class EmpresaPag implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private List<T> dados;
+    private List<Empresa> dados;
     private int paginaAtual;
     private int totalPaginas;
     private int paginasRestantes;
 
-    public FornecedorPagResponse(List<T> dados, int paginaAtual, int totalPaginas, int paginasRestantes) {
+    public EmpresaPag(List<Empresa> dados, int paginaAtual, int totalPaginas, int paginasRestantes) {
         this.dados = dados;
         this.paginaAtual = paginaAtual;
         this.totalPaginas = totalPaginas;
         this.paginasRestantes = paginasRestantes;
     }
 
-    public List<T> getDados() {
+    public List<Empresa> getDados() {
         return dados;
     }
 
-    public void setDados(List<T> dados) {
+    public void setDados(List<Empresa> dados) {
         this.dados = dados;
     }
 

@@ -1,8 +1,12 @@
 package com.accenture.test.domain.fornecedor;
 
+import com.accenture.test.domain.empresa.Empresa;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Fornecedor implements Serializable {
@@ -18,8 +22,9 @@ public class Fornecedor implements Serializable {
     private String email;
     private String cep;
     private boolean e_pf;
+    private List<Empresa> empresas;
 
-    public Fornecedor(UUID id, String cnpj_cpf, String rg, LocalDate nascimento, String nome, String email, String cep, boolean e_pf) {
+    public Fornecedor(UUID id, String cnpj_cpf, String rg, LocalDate nascimento, String nome, String email, String cep, boolean e_pf, List<Empresa> empresas) {
         this.id = id;
         this.cnpj_cpf = cnpj_cpf;
         this.rg = rg;
@@ -28,6 +33,7 @@ public class Fornecedor implements Serializable {
         this.email = email;
         this.cep = cep;
         this.e_pf = e_pf;
+        this.empresas = empresas != null ? new ArrayList<>(empresas) : new ArrayList<>();
     }
 
     public UUID getId() {
@@ -92,5 +98,14 @@ public class Fornecedor implements Serializable {
 
     public void setE_pf(boolean e_pf) {
         this.e_pf = e_pf;
+    }
+
+    public List<Empresa> getEmpresas() {
+        if (this.empresas == null) this.empresas = new ArrayList<>();
+        return this.empresas;
+    }
+
+    public void setEmpresas(List<Empresa> empresas) {
+        this.empresas = empresas != null ? new ArrayList<>(empresas) : new ArrayList<>();
     }
 }

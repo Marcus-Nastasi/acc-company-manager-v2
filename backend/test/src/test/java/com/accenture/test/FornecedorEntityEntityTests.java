@@ -1,13 +1,12 @@
 package com.accenture.test;
 
 import com.accenture.test.infrastructure.entity.EmpresaEntity;
-import com.accenture.test.adapter.output.fornecedor.FornecedorEmpResponseDTO;
-import com.accenture.test.adapter.output.fornecedor.FornecedorPagResponseDTO;
-import com.accenture.test.adapter.input.fornecedor.RegistrarFornecedorDTO;
+import com.accenture.test.adapter.output.fornecedor.FornecedorPagResponseDto;
+import com.accenture.test.adapter.input.fornecedor.FornecedorRequestDto;
 import com.accenture.test.infrastructure.entity.FornecedorEntity;
 import com.accenture.test.application.exception.AppException;
 import com.accenture.test.infrastructure.persistence.FornecedorRepo;
-import com.accenture.test.application.usecase.empresa.EmpresaService;
+import com.accenture.test.application.usecase.empresa.EmpresaUseCase;
 import com.accenture.test.application.usecase.fornecedor.FornecedorUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +35,7 @@ public class FornecedorEntityEntityTests {
     @Mock
     private FornecedorRepo fornecedorRepo;
     @Mock
-    private EmpresaService empresaService;
+    private EmpresaUseCase empresaUseCase;
     @InjectMocks
     private FornecedorUseCase fornecedorUseCase;
 
@@ -57,7 +56,7 @@ public class FornecedorEntityEntityTests {
             .thenReturn(fornecedorPage);
         fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
         fornecedorEntity2.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
-        FornecedorPagResponseDTO<FornecedorEmpResponseDTO> result = fornecedorUseCase
+        FornecedorPagResponseDto<FornecedorEmpResponseDTO> result = fornecedorUseCase
             .buscar_tudo(1, 1, "nome", "cnpjCpf");
         assertDoesNotThrow(() -> result);
         verify(fornecedorRepo, times(1))
@@ -79,14 +78,14 @@ public class FornecedorEntityEntityTests {
 
     @Test
     void registrar_test() {
-        RegistrarFornecedorDTO registrarFornecedorDTO = new RegistrarFornecedorDTO(
+        FornecedorRequestDto fornecedorRequestDto = new FornecedorRequestDto(
             "cnpj_cpf", "rg", LocalDate.now(), "nome", "email", "04632011", true
         );
-        RegistrarFornecedorDTO registrarFornecedorPFDTO = new RegistrarFornecedorDTO(
+        FornecedorRequestDto registrarFornecedorPFDTO = new FornecedorRequestDto(
                 "cnpj_cpf", null, null, "nome", "email", "04632011", true
         );
         when(fornecedorRepo.save(any(FornecedorEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> fornecedorUseCase.registrar(registrarFornecedorDTO));
+        assertDoesNotThrow(() -> fornecedorUseCase.registrar(fornecedorRequestDto));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
             fornecedorUseCase.registrar(registrarFornecedorPFDTO);
@@ -96,17 +95,17 @@ public class FornecedorEntityEntityTests {
 
     @Test
     void atualizar_test() {
-        RegistrarFornecedorDTO registrarFornecedorDTO = new RegistrarFornecedorDTO(
+        FornecedorRequestDto fornecedorRequestDto = new FornecedorRequestDto(
                 "cnpj_cpf", "rg", LocalDate.now(), "nome", "email", "04632011", true
         );
-        RegistrarFornecedorDTO registrarFornecedorPFDTO = new RegistrarFornecedorDTO(
+        FornecedorRequestDto registrarFornecedorPFDTO = new FornecedorRequestDto(
                 "cnpj_cpf", null, null, "nome", "email", "04632011", true
         );
         fornecedorEntity1.setEmpresaEntityEntities(List.of(empresaEntity1, empresaEntity2));
         when(fornecedorRepo.findById(any(UUID.class)))
                 .thenReturn(Optional.of(fornecedorEntity1));
         when(fornecedorRepo.save(any(FornecedorEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> fornecedorUseCase.atualizar(UUID.randomUUID(), registrarFornecedorDTO));
+        assertDoesNotThrow(() -> fornecedorUseCase.atualizar(UUID.randomUUID(), fornecedorRequestDto));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
             fornecedorUseCase.atualizar(UUID.randomUUID(), registrarFornecedorPFDTO);

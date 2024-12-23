@@ -17,12 +17,12 @@ public class SupplierDtoMapper {
                 supplier.getId(),
                 supplier.getCnpj_cpf(),
                 supplier.getRg(),
-                supplier.getNascimento(),
-                supplier.getNome(),
+                supplier.getBirth(),
+                supplier.getName(),
                 supplier.getEmail(),
                 supplier.getCep(),
                 supplier.isE_pf(),
-                supplier.getEmpresas().stream().map(companyDtoMapper::mapToClean).toList()
+                supplier.getCompanies().stream().map(companyDtoMapper::mapToClean).toList()
         );
     }
 
@@ -45,8 +45,8 @@ public class SupplierDtoMapper {
                 supplier.getId(),
                 supplier.getCnpj_cpf(),
                 supplier.getRg(),
-                supplier.getNascimento(),
-                supplier.getNome(),
+                supplier.getBirth(),
+                supplier.getName(),
                 supplier.getEmail(),
                 supplier.getCep(),
                 supplier.isE_pf()

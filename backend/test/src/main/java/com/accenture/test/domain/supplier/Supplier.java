@@ -17,19 +17,19 @@ public class Supplier implements Serializable {
     private UUID id;
     private String cnpj_cpf;
     private String rg;
-    private LocalDate nascimento;
-    private String nome;
+    private LocalDate birth;
+    private String name;
     private String email;
     private String cep;
     private boolean e_pf;
     private List<Company> companies;
 
-    public Supplier(UUID id, String cnpj_cpf, String rg, LocalDate nascimento, String nome, String email, String cep, boolean e_pf, List<Company> companies) {
+    public Supplier(UUID id, String cnpj_cpf, String rg, LocalDate birth, String name, String email, String cep, boolean e_pf, List<Company> companies) {
         this.id = id;
         this.cnpj_cpf = cnpj_cpf;
         this.rg = rg;
-        this.nascimento = nascimento;
-        this.nome = nome;
+        this.birth = birth;
+        this.name = name;
         this.email = email;
         this.cep = cep;
         this.e_pf = e_pf;
@@ -60,20 +60,20 @@ public class Supplier implements Serializable {
         this.rg = rg;
     }
 
-    public LocalDate getNascimento() {
-        return nascimento;
+    public LocalDate getBirth() {
+        return birth;
     }
 
-    public void setNascimento(LocalDate nascimento) {
-        this.nascimento = nascimento;
+    public void setBirth(LocalDate birth) {
+        this.birth = birth;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -100,12 +100,12 @@ public class Supplier implements Serializable {
         this.e_pf = e_pf;
     }
 
-    public List<Company> getEmpresas() {
+    public List<Company> getCompanies() {
         if (this.companies == null) this.companies = new ArrayList<>();
         return this.companies;
     }
 
-    public void setEmpresas(List<Company> companies) {
+    public void setCompanies(List<Company> companies) {
         this.companies = companies != null ? new ArrayList<>(companies) : new ArrayList<>();
     }
 }

@@ -13,11 +13,11 @@ import java.util.UUID;
 @Repository
 public interface SupplierRepo extends JpaRepository<SupplierEntity, UUID> {
 
-    @Query(nativeQuery = true, value = "SELECT f.* FROM fornecedor f " +
-            "WHERE (:nome IS NULL OR LOWER(f.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) " +
-            "AND (:cnpj_cpf IS NULL OR f.cnpj_cpf LIKE CONCAT('%', :cnpj_cpf, '%'));")
-    Page<SupplierEntity> filtrarFornecedores(
-            @Param("nome") String nome,
+    @Query(nativeQuery = true, value = "SELECT s.* FROM supplier s " +
+            "WHERE (:name IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:cnpj_cpf IS NULL OR s.cnpj_cpf LIKE CONCAT('%', :cnpj_cpf, '%'));")
+    Page<SupplierEntity> filter(
+            @Param("name") String name,
             @Param("cnpj_cpf") String cnpj_cpf,
             Pageable pageable
     );

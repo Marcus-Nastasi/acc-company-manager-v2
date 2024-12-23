@@ -15,7 +15,7 @@ public class CepConfigurationTest {
     @Test
     void cepTest() {
         Assertions.assertDoesNotThrow(() -> {
-            cepUseCase.buscarCep("04632-011");
+            cepUseCase.getCep("04632-011");
         });
     }
 }

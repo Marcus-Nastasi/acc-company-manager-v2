@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface CompanyGateway {
 
-    CompanyPag getAll(int page, int size, String nome_fantasia, String cnpj, String cep);
+    CompanyPag getAll(int page, int size, String name, String cnpj, String cep);
 
     Company get(UUID id);
 

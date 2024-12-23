@@ -9,47 +9,47 @@ public class SupplierPag<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private List<T> dados;
-    private int paginaAtual;
-    private int totalPaginas;
-    private int paginasRestantes;
+    private List<T> data;
+    private int page;
+    private int total;
+    private int remainingPages;
 
-    public SupplierPag(List<T> dados, int paginaAtual, int totalPaginas, int paginasRestantes) {
-        this.dados = dados;
-        this.paginaAtual = paginaAtual;
-        this.totalPaginas = totalPaginas;
-        this.paginasRestantes = paginasRestantes;
+    public SupplierPag(List<T> data, int page, int total, int remainingPages) {
+        this.data = data;
+        this.page = page;
+        this.total = total;
+        this.remainingPages = remainingPages;
     }
 
-    public List<T> getDados() {
-        return dados;
+    public List<T> getData() {
+        return data;
     }
 
-    public void setDados(List<T> dados) {
-        this.dados = dados;
+    public void setData(List<T> data) {
+        this.data = data;
     }
 
-    public int getPaginaAtual() {
-        return paginaAtual;
+    public int getPage() {
+        return page;
     }
 
-    public void setPaginaAtual(int paginaAtual) {
-        this.paginaAtual = paginaAtual;
+    public void setPage(int page) {
+        this.page = page;
     }
 
-    public int getTotalPaginas() {
-        return totalPaginas;
+    public int getTotal() {
+        return total;
     }
 
-    public void setTotalPaginas(int totalPaginas) {
-        this.totalPaginas = totalPaginas;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
-    public int getPaginasRestantes() {
-        return paginasRestantes;
+    public int getRemainingPages() {
+        return remainingPages;
     }
 
-    public void setPaginasRestantes(int paginasRestantes) {
-        this.paginasRestantes = paginasRestantes;
+    public void setRemainingPages(int remainingPages) {
+        this.remainingPages = remainingPages;
     }
 }

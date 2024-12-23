@@ -22,7 +22,7 @@ public class SupplierRepoGateway implements SupplierGateway {
 
     @Override
     public SupplierPag<Supplier> getAll(int page, int size, String nome, String cnpj_cpf) {
-        Page<SupplierEntity> entityPage = supplierRepo.filtrarFornecedores(nome, cnpj_cpf, PageRequest.of(page, size));
+        Page<SupplierEntity> entityPage = supplierRepo.filter(nome, cnpj_cpf, PageRequest.of(page, size));
         return new SupplierPag<>(
             entityPage.getContent().stream().map(supplierEntityMapper::mapFromEntity).toList(),
             entityPage.getNumber(),
@@ -33,19 +33,19 @@ public class SupplierRepoGateway implements SupplierGateway {
 
     @Override
     public Supplier get(UUID id) {
-        return supplierEntityMapper.mapFromEntity(supplierRepo.findById(id).orElseThrow(() -> new InfraException("Not able to get Fornecedor")));
+        return supplierEntityMapper.mapFromEntity(supplierRepo.findById(id).orElseThrow(() -> new InfraException("Not able to get supplier")));
     }
 
     @Override
     public Supplier save(Supplier supplier) {
-        return supplierEntityMapper.mapFromEntity(supplierRepo.save(supplierEntityMapper.mapFromFornecedorToEntity(supplier)));
+        return supplierEntityMapper.mapFromEntity(supplierRepo.save(supplierEntityMapper.mapFromSupplierToEntity(supplier)));
     }
 
     @Override
     public Supplier delete(UUID id) {
-        Supplier supplierEmpresa = get(id);
-        if (supplierEmpresa == null) throw new InfraException("Fornecedor not found");
+        Supplier supplierCompanies = get(id);
+        if (supplierCompanies == null) throw new InfraException("Supplier not found");
         supplierRepo.deleteById(id);
-        return supplierEmpresa;
+        return supplierCompanies;
     }
 }

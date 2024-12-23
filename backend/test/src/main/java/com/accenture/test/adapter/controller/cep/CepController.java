@@ -23,7 +23,7 @@ public class CepController {
     @Operation(summary = "Buscar dados de endereço baseado no CEP", description = "Nessa rota você pode consultar dados detalhados de endereço baseado em um CEP")
     @ApiResponse(responseCode = "200", description = "Retornando dados da API dos correios")
     public ResponseEntity<Cep> buscar_cep(@PathVariable("cep") String cep) {
-        Cep cr = cepUseCase.buscarCep(cep);
+        Cep cr = cepUseCase.getCep(cep);
         if (cr == null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(cr);
     }

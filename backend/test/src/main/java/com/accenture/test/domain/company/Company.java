@@ -15,16 +15,16 @@ public class Company implements Serializable {
 
     private UUID id;
     private String cnpj;
-    private String nome_fantasia;
+    private String name;
     private String cep;
-    private List<Supplier> fornecedores;
+    private List<Supplier> suppliers;
 
-    public Company(UUID id, String cnpj, String nome_fantasia, String cep, List<Supplier> fornecedores) {
+    public Company(UUID id, String cnpj, String name, String cep, List<Supplier> suppliers) {
         this.id = id;
         this.cnpj = cnpj;
-        this.nome_fantasia = nome_fantasia;
+        this.name = name;
         this.cep = cep;
-        this.fornecedores = fornecedores != null ? new ArrayList<>(fornecedores) : new ArrayList<>();
+        this.suppliers = suppliers != null ? new ArrayList<>(suppliers) : new ArrayList<>();
     }
 
     public UUID getId() {
@@ -43,12 +43,12 @@ public class Company implements Serializable {
         this.cnpj = cnpj;
     }
 
-    public String getNome_fantasia() {
-        return nome_fantasia;
+    public String getName() {
+        return name;
     }
 
-    public void setNome_fantasia(String nome_fantasia) {
-        this.nome_fantasia = nome_fantasia;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCep() {
@@ -59,12 +59,12 @@ public class Company implements Serializable {
         this.cep = cep;
     }
 
-    public List<Supplier> getFornecedores() {
-        if (this.fornecedores == null) this.fornecedores = new ArrayList<>();
-        return this.fornecedores;
+    public List<Supplier> getSuppliers() {
+        if (this.suppliers == null) this.suppliers = new ArrayList<>();
+        return this.suppliers;
     }
 
-    public void setFornecedores(List<Supplier> fornecedores) {
-        this.fornecedores = fornecedores != null ? new ArrayList<>(fornecedores) : new ArrayList<>();
+    public void setSuppliers(List<Supplier> suppliers) {
+        this.suppliers = suppliers != null ? new ArrayList<>(suppliers) : new ArrayList<>();
     }
 }

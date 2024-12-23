@@ -13,12 +13,12 @@ import java.util.UUID;
 @Repository
 public interface CompanyRepo extends JpaRepository<CompanyEntity, UUID> {
 
-    @Query(nativeQuery = true, value = "SELECT e.* FROM Empresa e " +
-            "WHERE(:nome_fantasia IS NULL OR LOWER(e.nome_fantasia) LIKE LOWER(CONCAT('%', :nome_fantasia, '%'))) " +
-            "AND (:cnpj IS NULL OR e.cnpj LIKE CONCAT('%', :cnpj, '%')) " +
-            "AND (:cep IS NULL OR e.cep LIKE CONCAT('%', :cep, '%'));")
-    Page<CompanyEntity> filtrarEmpresa(
-            @Param("nome_fantasia") String nome_fantasia,
+    @Query(nativeQuery = true, value = "SELECT c.* FROM company c " +
+            "WHERE(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:cnpj IS NULL OR c.cnpj LIKE CONCAT('%', :cnpj, '%')) " +
+            "AND (:cep IS NULL OR c.cep LIKE CONCAT('%', :cep, '%'));")
+    Page<CompanyEntity> filter(
+            @Param("name") String name,
             @Param("cnpj") String cnpj,
             @Param("cep") String cep,
             Pageable pageable

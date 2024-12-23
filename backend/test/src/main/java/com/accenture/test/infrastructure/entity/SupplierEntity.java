@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "fornecedor")
+@Table(name = "supplier")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -26,9 +26,9 @@ public class SupplierEntity {
     @Column
     private String rg;
     @Column
-    private LocalDate nascimento;
+    private LocalDate birth;
     @Column
-    private String nome;
+    private String name;
     @Column
     private String email;
     @Column
@@ -37,9 +37,9 @@ public class SupplierEntity {
     private boolean e_pf;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "fornecedor_empresa",
-        joinColumns = @JoinColumn(name = "fornecedor_id"),
-        inverseJoinColumns = @JoinColumn(name = "empresa_id")
+        name = "supplier_company",
+        joinColumns = @JoinColumn(name = "supplier_id"),
+        inverseJoinColumns = @JoinColumn(name = "company_id")
     )
-    private List<CompanyEntity> empresas = new ArrayList<>();
+    private List<CompanyEntity> companies = new ArrayList<>();
 }

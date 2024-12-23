@@ -79,40 +79,40 @@ public class CompanyEntityTest {
 
     @Test
     void buscar_tudo_test() {
-        when(companyRepo.filtrarEmpresa(anyString(), anyString(), anyString(), any(Pageable.class))).thenReturn(empresaPage);
-        companyEntity1.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        companyEntity2.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        supplierEntity2.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        CompanyPag result = companyUseCase.buscar_tudo(1, 1, "nome", "cnpjCpf", "cep");
+        when(companyRepo.filter(anyString(), anyString(), anyString(), any(Pageable.class))).thenReturn(empresaPage);
+        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        companyEntity2.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        supplierEntity2.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        CompanyPag result = companyUseCase.getAll(1, 1, "nome", "cnpjCpf", "cep");
         assertDoesNotThrow(() -> result);
-        verify(companyRepo, times(1)).filtrarEmpresa("nome", "cnpjCpf", "cep", PageRequest.of(1, 1));
+        verify(companyRepo, times(1)).filter("nome", "cnpjCpf", "cep", PageRequest.of(1, 1));
     }
 
     @Test
     void buscar_um_test() {
-        companyEntity1.setFornecedores(List.of(supplierEntity1, supplierEntity2));
-        Company e = companyUseCase.buscar_um(company1.getId());
+        companyEntity1.setSuppliers(List.of(supplierEntity1, supplierEntity2));
+        Company e = companyUseCase.get(company1.getId());
         when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
-        assertDoesNotThrow(() -> companyUseCase.buscar_um(UUID.randomUUID()));
-        assertEquals(companyUseCase.buscar_um(UUID.randomUUID()), e);
+        assertDoesNotThrow(() -> companyUseCase.get(UUID.randomUUID()));
+        assertEquals(companyUseCase.get(UUID.randomUUID()), e);
         verify(companyRepo, times(2)).findById(any(UUID.class));
     }
 
     @Test
     void registrar_test() {
         when(companyRepo.save(any(CompanyEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> companyUseCase.registrar(company1));
+        assertDoesNotThrow(() -> companyUseCase.register(company1));
         verify(companyRepo, times(1)).save(any(CompanyEntity.class));
     }
 
     @Test
     void atualizar_test() {
-        companyEntity1.setFornecedores(List.of(supplierEntity1, supplierEntity2));
+        companyEntity1.setSuppliers(List.of(supplierEntity1, supplierEntity2));
         when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
         when(companyRepo.save(any(CompanyEntity.class))).thenReturn(null);
         assertDoesNotThrow(() -> {
-            companyUseCase.atualizar(UUID.randomUUID(), company1);
+            companyUseCase.update(UUID.randomUUID(), company1);
         });
         verify(companyRepo, times(1)).findById(any(UUID.class));
         verify(companyRepo, times(1)).save(any(CompanyEntity.class));
@@ -120,14 +120,14 @@ public class CompanyEntityTest {
 
     @Test
     void deletar_test() {
-        supplierEntity1.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        supplierEntity2.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        companyEntity1.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        supplierEntity2.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
         when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
         when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(supplierEntity1);
         verify(companyRepo, times(1)).findById(any(UUID.class));
-        assertFalse(supplierEntity1.getEmpresas().contains(companyEntity1));
-        assertFalse(supplierEntity2.getEmpresas().contains(companyEntity1));
+        assertFalse(supplierEntity1.getCompanies().contains(companyEntity1));
+        assertFalse(supplierEntity2.getCompanies().contains(companyEntity1));
         verify(supplierRepo, times(2)).save(any(SupplierEntity.class));
         verify(companyRepo, times(1)).deleteById(any(UUID.class));
 //        assertNotNull(result);
@@ -135,8 +135,8 @@ public class CompanyEntityTest {
 
     @Test
     void associa_fornecedor_test() {
-        companyEntity1.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
         when(companyRepo.findById(any(UUID.class)))
             .thenReturn(Optional.of(companyEntity1));
         when(supplierRepo.findById(any(UUID.class)))
@@ -146,10 +146,10 @@ public class CompanyEntityTest {
         when(supplierRepo.save(any(SupplierEntity.class)))
             .thenReturn(supplierEntity1);
 
-        Company result = companyUseCase.associarFornecedor(UUID.randomUUID(), UUID.randomUUID());
+        Company result = companyUseCase.associateSupplier(UUID.randomUUID(), UUID.randomUUID());
         verify(companyRepo, times(1)).findById(any(UUID.class));
         verify(supplierRepo, times(1)).findById(any(UUID.class));
-        assertTrue(supplierEntity1.getEmpresas().contains(companyEntity1));
+        assertTrue(supplierEntity1.getCompanies().contains(companyEntity1));
         verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
         verify(companyRepo, times(1)).save(any(CompanyEntity.class));
         assertNotNull(result);
@@ -160,16 +160,16 @@ public class CompanyEntityTest {
         supplierEntity.setNascimento(LocalDate.now());
         supplierEntity.setCep("80000-000");
         CompanyEntity companyEntity = new CompanyEntity(UUID.randomUUID(), "cnpj", "nome", "80000-000", new ArrayList<>(List.of(supplierEntity)));
-        supplierEntity.setEmpresas(new ArrayList<>(List.of(companyEntity)));
+        supplierEntity.setCompanies(new ArrayList<>(List.of(companyEntity)));
         assertThrows(AppException.class, () -> {
-            companyUseCase.associarFornecedor(supplierEntity.getId(), companyEntity.getId());
+            companyUseCase.associateSupplier(supplierEntity.getId(), companyEntity.getId());
         });
     }
 
     @Test
     void desassocia_fornecedor_test() {
-        companyEntity1.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setEmpresas(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
+        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
         when(companyRepo.findById(any(UUID.class)))
                 .thenReturn(Optional.of(companyEntity1));
         when(supplierRepo.findById(any(UUID.class)))
@@ -179,11 +179,11 @@ public class CompanyEntityTest {
         when(supplierRepo.save(any(SupplierEntity.class)))
                 .thenReturn(supplierEntity1);
 
-        Company result = companyUseCase.desassociarFornecedor(UUID.randomUUID(), UUID.randomUUID());
+        Company result = companyUseCase.disassociateSupplier(UUID.randomUUID(), UUID.randomUUID());
         verify(companyRepo, times(1)).findById(any(UUID.class));
         verify(supplierRepo, times(1)).findById(any(UUID.class));
-        assertFalse(companyEntity1.getFornecedores().contains(supplierEntity1));
-        assertFalse(supplierEntity1.getEmpresas().contains(companyEntity1));
+        assertFalse(companyEntity1.getSuppliers().contains(supplierEntity1));
+        assertFalse(supplierEntity1.getCompanies().contains(companyEntity1));
         verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
         verify(companyRepo, times(1)).save(any(CompanyEntity.class));
         assertNotNull(result);
@@ -213,12 +213,12 @@ public class CompanyEntityTest {
 
     @Test
     void vincula_empresa_fornecedor_test() {
-        companyEntity1.setFornecedores(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setEmpresas(new ArrayList<>(List.of(companyEntity1)));
+        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
+        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1)));
         when(companyRepo.save(any(CompanyEntity.class))).thenReturn(companyEntity1);
         when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(supplierEntity1);
         assertDoesNotThrow(() -> {
-            companyUseCase.vincularEmpresaFornecedor(company1, supplier1);
+            companyUseCase.linkCompanySupplier(company1, supplier1);
         });
         verify(companyRepo, times(1)).save(any(CompanyEntity.class));
         verify(supplierRepo, times(1)).save(any(SupplierEntity.class));

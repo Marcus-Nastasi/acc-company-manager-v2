@@ -26,9 +26,9 @@ public class CompanyDtoMapper {
         return new CompanyResponseDto(
                 company.getId(),
                 company.getCnpj(),
-                company.getNome_fantasia(),
+                company.getName(),
                 company.getCep(),
-                company.getFornecedores().stream().map(supplierDtoMapper::mapToClean).toList()
+                company.getSuppliers().stream().map(supplierDtoMapper::mapToClean).toList()
         );
     }
 
@@ -36,7 +36,7 @@ public class CompanyDtoMapper {
         return new CompanyCleanDto(
                 company.getId(),
                 company.getCnpj(),
-                company.getNome_fantasia(),
+                company.getName(),
                 company.getCep()
         );
     }

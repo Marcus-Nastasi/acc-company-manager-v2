@@ -65,31 +65,31 @@ public class SupplierEntityEntityTests {
 
     @Test
     void buscar_tudo_test() {
-        when(supplierRepo.filtrarFornecedores(anyString(), anyString(), any(Pageable.class))).thenReturn(fornecedorPage);
-        supplierEntity1.setEmpresas(List.of(companyEntity1, companyEntity2));
-        supplierEntity2.setEmpresas(List.of(companyEntity1, companyEntity2));
-        SupplierPag<Supplier> result = supplierUseCase.buscar_tudo(1, 1, "nome", "cnpjCpf");
+        when(supplierRepo.filter(anyString(), anyString(), any(Pageable.class))).thenReturn(fornecedorPage);
+        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
+        supplierEntity2.setCompanies(List.of(companyEntity1, companyEntity2));
+        SupplierPag<Supplier> result = supplierUseCase.getAll(1, 1, "nome", "cnpjCpf");
         assertDoesNotThrow(() -> result);
-        verify(supplierRepo, times(1)).filtrarFornecedores("nome", "cnpjCpf", PageRequest.of(1, 1));
+        verify(supplierRepo, times(1)).filter("nome", "cnpjCpf", PageRequest.of(1, 1));
     }
 
     @Test
     void buscar_um_test() {
-        supplierEntity1.setEmpresas(List.of(companyEntity1, companyEntity2));
-        Supplier f = supplierUseCase.buscar_um(supplierEntity1.getId());
+        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
+        Supplier f = supplierUseCase.get(supplierEntity1.getId());
         when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
-        assertDoesNotThrow(() -> supplierUseCase.buscar_um(UUID.randomUUID()));
-        assertEquals(supplierUseCase.buscar_um(UUID.randomUUID()), f);
+        assertDoesNotThrow(() -> supplierUseCase.get(UUID.randomUUID()));
+        assertEquals(supplierUseCase.get(UUID.randomUUID()), f);
         verify(supplierRepo, times(2)).findById(any(UUID.class));
     }
 
     @Test
     void registrar_test() {
         when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> supplierUseCase.registrar(supplier1));
+        assertDoesNotThrow(() -> supplierUseCase.register(supplier1));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
-            supplierUseCase.registrar(supplier1);
+            supplierUseCase.register(supplier1);
         });
         verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
     }
@@ -102,13 +102,13 @@ public class SupplierEntityEntityTests {
         SupplierRequestDto registrarFornecedorPFDTO = new SupplierRequestDto(
                 "cnpj_cpf", null, null, "nome", "email", "04632011", true
         );
-        supplierEntity1.setEmpresas(List.of(companyEntity1, companyEntity2));
+        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
         when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
         when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(null);
-        assertDoesNotThrow(() -> supplierUseCase.atualizar(UUID.randomUUID(), supplier1));
+        assertDoesNotThrow(() -> supplierUseCase.update(UUID.randomUUID(), supplier1));
         // teste para registro de pessoa física que deve lançar exceção
         assertThrows(AppException.class, () -> {
-            supplierUseCase.atualizar(UUID.randomUUID(), supplier1);
+            supplierUseCase.update(UUID.randomUUID(), supplier1);
         });
         verify(supplierRepo, times(2)).findById(any(UUID.class));
         verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
@@ -116,19 +116,19 @@ public class SupplierEntityEntityTests {
 
     @Test
     void deletar_test() {
-        supplierEntity1.setEmpresas(List.of(companyEntity1, companyEntity2));
+        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
         when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
-        assertDoesNotThrow(() -> supplierUseCase.deletar(UUID.randomUUID()));
+        assertDoesNotThrow(() -> supplierUseCase.delete(UUID.randomUUID()));
         verify(supplierRepo, times(1)).deleteById(any(UUID.class));
     }
 
     @Test
     void valida_menor_test() {
-        assertTrue(supplierUseCase.validaFornecedorMenor(LocalDate.now()));
-        assertFalse(supplierUseCase.validaFornecedorMenor(LocalDate.of(1996, 10, 28)));
+        assertTrue(supplierUseCase.validatesUnderageSuppliers(LocalDate.now()));
+        assertFalse(supplierUseCase.validatesUnderageSuppliers(LocalDate.of(1996, 10, 28)));
         assertThrows(
             DateTimeParseException.class,
-            () -> supplierUseCase.validaFornecedorMenor(LocalDate.parse("string"))
+            () -> supplierUseCase.validatesUnderageSuppliers(LocalDate.parse("string"))
         );
     }
 }

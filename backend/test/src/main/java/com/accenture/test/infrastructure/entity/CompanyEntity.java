@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "empresa")
+@Table(name = "company")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -22,10 +22,10 @@ public class CompanyEntity {
     private UUID id;
     @Column(unique = true)
     private String cnpj;
-    @Column(name = "nome_fantasia")
-    private String nome_fantasia;
+    @Column(name = "name")
+    private String name;
     @Column(name = "cep")
     private String cep;
-    @ManyToMany(mappedBy = "empresas", fetch = FetchType.LAZY)
-    private List<SupplierEntity> fornecedores = new ArrayList<>();
+    @ManyToMany(mappedBy = "companies", fetch = FetchType.LAZY)
+    private List<SupplierEntity> suppliers = new ArrayList<>();
 }

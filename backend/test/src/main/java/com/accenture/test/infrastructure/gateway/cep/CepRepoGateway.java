@@ -15,7 +15,7 @@ public class CepRepoGateway implements CepGateway {
     public Cep getCep(String cep) {
         try {
             cep = cep.replace(".", "").replace("-", "");
-            if (cep.length() > 8) throw new InfraException("Cep inválido");
+            if (cep.length() > 8) throw new InfraException("Invalid cep");
             String url = "https://viacep.com.br/ws/" + cep + "/json/";
             return Objects.requireNonNull(webClient
                 .get()
@@ -25,7 +25,7 @@ public class CepRepoGateway implements CepGateway {
                 .block()
             ).getBody();
         } catch (RuntimeException e) {
-            throw new InfraException("Erro ao buscar CEP: " + e.getMessage());
+            throw new InfraException("Error getting CEP: " + e.getMessage());
         }
     }
 }

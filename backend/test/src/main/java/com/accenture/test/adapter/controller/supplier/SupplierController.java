@@ -40,12 +40,12 @@ public class SupplierController {
             @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
         if (size < 1) size = 10;
-        SupplierPag<Supplier> supplierPag = supplierUseCase.buscar_tudo(page, size, nome, cnpj_cpf);
+        SupplierPag<Supplier> supplierPag = supplierUseCase.getAll(page, size, nome, cnpj_cpf);
         return new SupplierPagResponseDto(
-            supplierPag.getDados().stream().map(supplierDtoMapper::mapToClean).toList(),
-            supplierPag.getPaginaAtual(),
-            supplierPag.getTotalPaginas(),
-            supplierPag.getPaginasRestantes() - 1
+            supplierPag.getData().stream().map(supplierDtoMapper::mapToClean).toList(),
+            supplierPag.getPage(),
+            supplierPag.getTotal(),
+            supplierPag.getRemainingPages() - 1
         );
     }
 
@@ -55,7 +55,7 @@ public class SupplierController {
     @Operation(summary = "Buscar um único fornecedor", description = "Nessa rota você pode consultar dados detalhados de um único fornecedor")
     @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor único")
     public SupplierResponseDto buscar_um(@PathVariable("id") UUID id) {
-        return supplierDtoMapper.mapToResponse(supplierUseCase.buscar_um(id));
+        return supplierDtoMapper.mapToResponse(supplierUseCase.get(id));
     }
 
     @PostMapping(value = "/registrar")
@@ -64,7 +64,7 @@ public class SupplierController {
     @Operation(summary = "Cadastrar novo fornecedor", description = "Nessa rota você pode cadastrar um novo fornecedor")
     @ApiResponse(responseCode = "201", description = "Retornando dados do fornecedor criado")
     public ResponseEntity<SupplierResponseDto> registrar(@RequestBody @Valid SupplierRequestDto data) {
-        Supplier supplier = supplierUseCase.registrar(supplierDtoMapper.mapFromRequest(data));
+        Supplier supplier = supplierUseCase.register(supplierDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.CREATED).body(supplierDtoMapper.mapToResponse(supplier));
     }
 
@@ -74,7 +74,7 @@ public class SupplierController {
     @Operation(summary = "Atualizar dados de um fornecedor", description = "Nessa rota você pode atualizar os dados de um fornecedor")
     @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor atualizado")
     public ResponseEntity<SupplierResponseDto> atualizar(@PathVariable("id") UUID id, @RequestBody @Valid SupplierRequestDto data) {
-        Supplier supplier = supplierUseCase.atualizar(id, supplierDtoMapper.mapFromRequest(data));
+        Supplier supplier = supplierUseCase.update(id, supplierDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.OK).body(supplierDtoMapper.mapToResponse(supplier));
     }
 
@@ -84,7 +84,7 @@ public class SupplierController {
     @Operation(summary = "Deletar um fornecedor", description = "Nessa rota você pode deletar os dados de um fornecedor")
     @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor deletado")
     public ResponseEntity<SupplierResponseDto> deletar(@PathVariable("id") UUID id)  {
-        Supplier supplier = supplierUseCase.deletar(id);
+        Supplier supplier = supplierUseCase.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(supplierDtoMapper.mapToResponse(supplier));
     }
 }

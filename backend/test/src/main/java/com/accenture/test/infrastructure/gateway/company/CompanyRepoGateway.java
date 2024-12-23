@@ -22,18 +22,18 @@ public class CompanyRepoGateway implements CompanyGateway {
 
     @Override
     public CompanyPag getAll(int page, int size, String nome_fantasia, String cnpj, String cep) {
-        Page<CompanyEntity> empresaEntityPage = companyRepo.filtrarEmpresa(nome_fantasia, cnpj, cep, PageRequest.of(page, size));
+        Page<CompanyEntity> companyEntities = companyRepo.filter(nome_fantasia, cnpj, cep, PageRequest.of(page, size));
         return new CompanyPag(
-            empresaEntityPage.getContent().stream().map(companyEntityMapper::mapFromEntity).toList(),
-            empresaEntityPage.getNumber(),
-            empresaEntityPage.getTotalPages(),
-            empresaEntityPage.getTotalPages()
+            companyEntities.getContent().stream().map(companyEntityMapper::mapFromEntity).toList(),
+            companyEntities.getNumber(),
+            companyEntities.getTotalPages(),
+            companyEntities.getTotalPages()
         );
     }
 
     @Override
     public Company get(UUID id) {
-        return companyEntityMapper.mapFromEntity(companyRepo.findById(id).orElseThrow(() -> new InfraException("Not able to get empresa")));
+        return companyEntityMapper.mapFromEntity(companyRepo.findById(id).orElseThrow(() -> new InfraException("Not able to get company")));
     }
 
     @Override
@@ -43,9 +43,9 @@ public class CompanyRepoGateway implements CompanyGateway {
 
     @Override
     public Company delete(UUID id) {
-        Company companyFornecedor = get(id);
-        if (companyFornecedor == null) throw new InfraException("Not able to delete empresa");
+        Company companySupplier = get(id);
+        if (companySupplier == null) throw new InfraException("Not able to delete company");
         companyRepo.deleteById(id);
-        return companyFornecedor;
+        return companySupplier;
     }
 }

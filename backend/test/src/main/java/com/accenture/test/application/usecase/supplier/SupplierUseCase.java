@@ -17,11 +17,11 @@ public class SupplierUseCase {
         this.supplierGateway = supplierGateway;
     }
 
-    public SupplierPag<Supplier> buscar_tudo(int page, int size, String nome, String cnpj_cpf) {
+    public SupplierPag<Supplier> getAll(int page, int size, String nome, String cnpj_cpf) {
         return supplierGateway.getAll(page, size, nome, cnpj_cpf);
     }
 
-    public Supplier buscar_um(UUID id) {
+    public Supplier get(UUID id) {
         return supplierGateway.get(id);
     }
 
@@ -29,34 +29,34 @@ public class SupplierUseCase {
         return supplierGateway.save(supplier);
     }
 
-    public Supplier registrar(Supplier data) {
-        if (data.isE_pf()) if (data.getRg() == null || data.getNascimento() == null) {
+    public Supplier register(Supplier data) {
+        if (data.isE_pf()) if (data.getRg() == null || data.getBirth() == null) {
             throw new AppException("É necessário informar um RG e data de " + "nascimento para cadastro de fornecedor pessoa física");
         }
         return save(data);
     }
 
-    public Supplier atualizar(UUID id, Supplier data) {
-        Supplier supplier = buscar_um(id);
+    public Supplier update(UUID id, Supplier data) {
+        Supplier supplier = get(id);
         supplier.setCnpj_cpf(data.getCnpj_cpf());
-        supplier.setNome(data.getNome());
+        supplier.setName(data.getName());
         supplier.setEmail(data.getEmail());
         supplier.setCep(data.getCep());
         supplier.setE_pf(data.isE_pf());
         if (supplier.isE_pf()) {
-            if (data.getRg() == null || data.getNascimento() == null)
+            if (data.getRg() == null || data.getBirth() == null)
                 throw new AppException("É necessário informar um RG e data de nascimento para cadastro de fornecedor pessoa física");
             supplier.setRg(data.getRg());
-            supplier.setNascimento(data.getNascimento());
+            supplier.setBirth(data.getBirth());
         }
         return save(supplier);
     }
 
-    public Supplier deletar(UUID id) {
+    public Supplier delete(UUID id) {
         return supplierGateway.delete(id);
     }
 
-    public boolean validaFornecedorMenor(LocalDate nascimento) {
+    public boolean validatesUnderageSuppliers(LocalDate nascimento) {
         return Period.between(nascimento, LocalDate.now()).getYears() <= 18;
     }
 }

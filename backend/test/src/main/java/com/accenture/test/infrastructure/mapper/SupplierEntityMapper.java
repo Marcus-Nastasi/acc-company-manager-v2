@@ -9,50 +9,50 @@ import java.util.ArrayList;
 
 public class SupplierEntityMapper {
 
-    public Supplier mapFromEntity(SupplierEntity fornecedor) {
+    public Supplier mapFromEntity(SupplierEntity supplier) {
         return new Supplier(
-            fornecedor.getId(),
-            fornecedor.getCnpj_cpf(),
-            fornecedor.getRg(),
-            fornecedor.getNascimento(),
-            fornecedor.getNome(),
-            fornecedor.getEmail(),
-            fornecedor.getCep(),
-            fornecedor.isE_pf(),
-            new ArrayList<>(fornecedor.getEmpresas().stream().map(this::mapEmpresaWithoutFornecedores).toList())
+            supplier.getId(),
+            supplier.getCnpj_cpf(),
+            supplier.getRg(),
+            supplier.getBirth(),
+            supplier.getName(),
+            supplier.getEmail(),
+            supplier.getCep(),
+            supplier.isE_pf(),
+            new ArrayList<>(supplier.getCompanies().stream().map(this::mapCompanyWithoutSuppliers).toList())
         );
     }
 
-    public SupplierEntity mapFromFornecedorToEntity(Supplier supplier) {
+    public SupplierEntity mapFromSupplierToEntity(Supplier supplier) {
         return new SupplierEntity(
             supplier.getId(),
             supplier.getCnpj_cpf(),
             supplier.getRg(),
-            supplier.getNascimento(),
-            supplier.getNome(),
+            supplier.getBirth(),
+            supplier.getName(),
             supplier.getEmail(),
             supplier.getCep(),
             supplier.isE_pf(),
-            new ArrayList<>(supplier.getEmpresas().stream().map(this::mapEmpresaEntityWithoutFornecedores).toList())
+            new ArrayList<>(supplier.getCompanies().stream().map(this::mapCompanyEntityWithoutSuppliers).toList())
         );
     }
 
-    private CompanyEntity mapEmpresaEntityWithoutFornecedores(Company company) {
+    private CompanyEntity mapCompanyEntityWithoutSuppliers(Company company) {
         return new CompanyEntity(
             company.getId(),
             company.getCnpj(),
-            company.getNome_fantasia(),
+            company.getName(),
             company.getCep(),
             null
         );
     }
 
-    private Company mapEmpresaWithoutFornecedores(CompanyEntity empresa) {
+    private Company mapCompanyWithoutSuppliers(CompanyEntity company) {
         return new Company(
-            empresa.getId(),
-            empresa.getCnpj(),
-            empresa.getNome_fantasia(),
-            empresa.getCep(),
+            company.getId(),
+            company.getCnpj(),
+            company.getName(),
+            company.getCep(),
             null
         );
     }

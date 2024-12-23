@@ -44,12 +44,12 @@ public class CompanyController {
             @RequestParam(name = "cep", defaultValue = "", required = false) String cep
     ) {
         if (size < 1) size = 10;
-        CompanyPag companyPag = companyUseCase.buscar_tudo(page, size, nome_fantasia, cnpj, cep);
+        CompanyPag companyPag = companyUseCase.getAll(page, size, nome_fantasia, cnpj, cep);
         return new CompanyPagResponseDto(
-            companyPag.getDados().stream().map(companyDtoMapper::mapToClean).toList(),
-            companyPag.getPaginaAtual(),
-            companyPag.getTotalPaginas(),
-            companyPag.getPaginasRestantes() - 1
+            companyPag.getData().stream().map(companyDtoMapper::mapToClean).toList(),
+            companyPag.getPage(),
+            companyPag.getTotal(),
+            companyPag.getRemainingPages() - 1
         );
     }
 
@@ -59,7 +59,7 @@ public class CompanyController {
     @Operation(summary = "Buscar uma única empresa", description = "Nessa rota você pode consultar dados detalhados de uma única empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa única")
     public CompanyResponseDto buscar_um(@PathVariable("id") UUID id) {
-        return companyDtoMapper.mapToResponse(companyUseCase.buscar_um(id));
+        return companyDtoMapper.mapToResponse(companyUseCase.get(id));
     }
 
     @PostMapping(value = "/registrar")
@@ -68,7 +68,7 @@ public class CompanyController {
     @Operation(summary = "Cadastrar nova empresa", description = "Nessa rota você pode cadastrar uma nova empresa")
     @ApiResponse(responseCode = "201", description = "Retornando dados da empresa criada")
     public ResponseEntity<CompanyResponseDto> registrar(@RequestBody @Valid CompanyRequestDto data) {
-        Company company = companyUseCase.registrar(companyDtoMapper.mapFromRequest(data));
+        Company company = companyUseCase.register(companyDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyDtoMapper.mapToResponse(company));
     }
 
@@ -78,7 +78,7 @@ public class CompanyController {
     @Operation(summary = "Atualizar dados de uma empresa", description = "Nessa rota você pode atualizar os dados de uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa atualizada")
     public ResponseEntity<CompanyResponseDto> atualizar(@PathVariable("id") UUID id, @RequestBody @Valid CompanyRequestDto data) {
-        Company company = companyUseCase.atualizar(id, companyDtoMapper.mapFromRequest(data));
+        Company company = companyUseCase.update(id, companyDtoMapper.mapFromRequest(data));
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
@@ -88,7 +88,7 @@ public class CompanyController {
     @Operation(summary = "Deletar uma empresa", description = "Nessa rota você pode deletar os dados de uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa deletada")
     public ResponseEntity<CompanyResponseDto> deletar(@PathVariable("id") UUID id) {
-        Company company = companyUseCase.deletar(id);
+        Company company = companyUseCase.delete(id);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
@@ -98,7 +98,7 @@ public class CompanyController {
     @Operation(summary = "Associar empresa e fornecedor", description = "Nessa rota você pode associar um fornecedor com uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa associada à um novo fornecedor")
     public ResponseEntity<CompanyResponseDto> associar(@PathVariable("id_empresa") UUID id_empresa, @PathVariable("id_fornecedor") UUID id_fornecedor) {
-        Company company = companyUseCase.associarFornecedor(id_fornecedor, id_empresa);
+        Company company = companyUseCase.associateSupplier(id_fornecedor, id_empresa);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
@@ -108,7 +108,7 @@ public class CompanyController {
     @Operation(summary = "Desassociar empresa e fornecedor", description = "Nessa rota você pode desassociar um fornecedor e uma empresa")
     @ApiResponse(responseCode = "200", description = "Retornando dados de empresa desvinculada de um fornecedor")
     public ResponseEntity<CompanyResponseDto> desassociar(@PathVariable("id_empresa") UUID id_empresa, @PathVariable("id_fornecedor") UUID id_fornecedor) {
-        Company company = companyUseCase.desassociarFornecedor(id_fornecedor, id_empresa);
+        Company company = companyUseCase.disassociateSupplier(id_fornecedor, id_empresa);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 }

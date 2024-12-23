@@ -13,9 +13,9 @@ public class CompanyEntityMapper {
         return new Company(
             companyEntity.getId(),
             companyEntity.getCnpj(),
-            companyEntity.getNome_fantasia(),
+            companyEntity.getName(),
             companyEntity.getCep(),
-            new ArrayList<>(companyEntity.getFornecedores().stream().map(this::mapFornecedorWithoutEmpresas).toList())
+            new ArrayList<>(companyEntity.getSuppliers().stream().map(this::mapSupplierWithoutCompanies).toList())
         );
     }
 
@@ -23,18 +23,18 @@ public class CompanyEntityMapper {
         return new CompanyEntity(
             company.getId(),
             company.getCnpj(),
-            company.getNome_fantasia(),
+            company.getName(),
             company.getCep(),
-            new ArrayList<>(company.getFornecedores().stream().map(this::mapFornecedorEntityWithoutEmpresas).toList()));
+            new ArrayList<>(company.getSuppliers().stream().map(this::mapSupplierEntityWithoutCompanies).toList()));
     }
 
-    private SupplierEntity mapFornecedorEntityWithoutEmpresas(Supplier supplier) {
+    private SupplierEntity mapSupplierEntityWithoutCompanies(Supplier supplier) {
         return new SupplierEntity(
             supplier.getId(),
             supplier.getCnpj_cpf(),
             supplier.getRg(),
-            supplier.getNascimento(),
-            supplier.getNome(),
+            supplier.getBirth(),
+            supplier.getName(),
             supplier.getEmail(),
             supplier.getCep(),
             supplier.isE_pf(),
@@ -42,16 +42,16 @@ public class CompanyEntityMapper {
         );
     }
 
-    private Supplier mapFornecedorWithoutEmpresas(SupplierEntity fornecedor) {
+    private Supplier mapSupplierWithoutCompanies(SupplierEntity supplier) {
         return new Supplier(
-            fornecedor.getId(),
-            fornecedor.getCnpj_cpf(),
-            fornecedor.getRg(),
-            fornecedor.getNascimento(),
-            fornecedor.getNome(),
-            fornecedor.getEmail(),
-            fornecedor.getCep(),
-            fornecedor.isE_pf(),
+            supplier.getId(),
+            supplier.getCnpj_cpf(),
+            supplier.getRg(),
+            supplier.getBirth(),
+            supplier.getName(),
+            supplier.getEmail(),
+            supplier.getCep(),
+            supplier.isE_pf(),
             null
         );
     }

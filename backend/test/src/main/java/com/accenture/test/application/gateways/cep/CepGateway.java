@@ -4,5 +4,5 @@ import com.accenture.test.domain.cep.Cep;
 
 public interface CepGateway {
 
-    Cep buscarCep(String cep);
+    Cep getCep(String cep);
 }

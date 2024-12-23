@@ -12,6 +12,6 @@ public class CepUseCase {
     }
 
     public Cep buscarCep(String cep) {
-        return cepGateway.buscarCep(cep);
+        return cepGateway.getCep(cep);
     }
 }

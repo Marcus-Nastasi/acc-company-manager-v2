@@ -17,7 +17,7 @@ public class SupplierUseCase {
         this.supplierGateway = supplierGateway;
     }
 
-    public SupplierPag<Supplier> getAll(int page, int size, String nome, String cnpj_cpf) {
+    public SupplierPag getAll(int page, int size, String nome, String cnpj_cpf) {
         return supplierGateway.getAll(page, size, nome, cnpj_cpf);
     }
 

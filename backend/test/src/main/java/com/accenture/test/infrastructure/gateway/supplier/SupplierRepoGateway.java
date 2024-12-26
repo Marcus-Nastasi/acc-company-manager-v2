@@ -21,9 +21,9 @@ public class SupplierRepoGateway implements SupplierGateway {
     private SupplierEntityMapper supplierEntityMapper;
 
     @Override
-    public SupplierPag<Supplier> getAll(int page, int size, String nome, String cnpj_cpf) {
+    public SupplierPag getAll(int page, int size, String nome, String cnpj_cpf) {
         Page<SupplierEntity> entityPage = supplierRepo.filter(nome, cnpj_cpf, PageRequest.of(page, size));
-        return new SupplierPag<>(
+        return new SupplierPag(
             entityPage.getContent().stream().map(supplierEntityMapper::mapFromEntity).toList(),
             entityPage.getNumber(),
             entityPage.getTotalPages(),

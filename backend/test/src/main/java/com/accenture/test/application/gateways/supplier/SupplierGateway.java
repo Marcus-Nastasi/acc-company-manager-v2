@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface SupplierGateway {
 
-    SupplierPag<Supplier> getAll(int page, int size, String name, String cnpj_cpf);
+    SupplierPag getAll(int page, int size, String name, String cnpj_cpf);
 
     Supplier get(UUID id);
 

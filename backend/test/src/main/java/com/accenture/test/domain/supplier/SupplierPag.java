@@ -4,28 +4,28 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-public class SupplierPag<T> implements Serializable {
+public class SupplierPag implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private List<T> data;
+    private List<Supplier> data;
     private int page;
     private int total;
     private int remainingPages;
 
-    public SupplierPag(List<T> data, int page, int total, int remainingPages) {
+    public SupplierPag(List<Supplier> data, int page, int total, int remainingPages) {
         this.data = data;
         this.page = page;
         this.total = total;
         this.remainingPages = remainingPages;
     }
 
-    public List<T> getData() {
+    public List<Supplier> getData() {
         return data;
     }
 
-    public void setData(List<T> data) {
+    public void setData(List<Supplier> data) {
         this.data = data;
     }
 

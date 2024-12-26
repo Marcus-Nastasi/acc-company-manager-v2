@@ -40,7 +40,7 @@ public class SupplierController {
             @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
         if (size < 1) size = 10;
-        SupplierPag<Supplier> supplierPag = supplierUseCase.getAll(page, size, nome, cnpj_cpf);
+        SupplierPag supplierPag = supplierUseCase.getAll(page, size, nome, cnpj_cpf);
         return new SupplierPagResponseDto(
             supplierPag.getData().stream().map(supplierDtoMapper::mapToClean).toList(),
             supplierPag.getPage(),

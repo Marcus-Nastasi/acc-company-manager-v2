@@ -1,5 +1,7 @@
 package com.accenture.test;
 
+import com.accenture.test.application.gateways.supplier.SupplierGateway;
+import com.accenture.test.domain.company.Company;
 import com.accenture.test.domain.supplier.Supplier;
 import com.accenture.test.domain.supplier.SupplierPag;
 import com.accenture.test.infrastructure.entity.CompanyEntity;
@@ -14,11 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -29,14 +27,17 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+//@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class SupplierEntityEntityTests {
+public class SupplierTest {
 
     @Mock
     private SupplierRepo supplierRepo;
     @Mock
+    private SupplierGateway supplierGateway;
+    @Mock
     private CompanyUseCase companyUseCase;
+
     @InjectMocks
     private SupplierUseCase supplierUseCase;
 
@@ -47,6 +48,22 @@ public class SupplierEntityEntityTests {
     // entidades de fornecedor
     SupplierEntity supplierEntity1 = new SupplierEntity();
     SupplierEntity supplierEntity2 = new SupplierEntity();
+
+    Company company1 = new Company(
+            UUID.randomUUID(),
+            "",
+            "",
+            "",
+            List.of()
+    );
+
+    Company company2 = new Company(
+            UUID.randomUUID(),
+            "",
+            "",
+            "",
+            List.of()
+    );
 
     Supplier supplier1 = new Supplier(
         UUID.randomUUID(),
@@ -60,17 +77,32 @@ public class SupplierEntityEntityTests {
         List.of()
     );
 
-    List<SupplierEntity> fornecedores = List.of(supplierEntity1, supplierEntity2);
-    Page<SupplierEntity> fornecedorPage = new PageImpl<>(fornecedores);
+    Supplier supplier2 = new Supplier(
+            UUID.randomUUID(),
+            "",
+            "",
+            LocalDate.now(),
+            "",
+            "",
+            "",
+            false,
+            List.of()
+    );
+
+    List<Supplier> suppliers = List.of(supplier1, supplier2);
+    SupplierPag supplierPag = new SupplierPag(suppliers, 0, 10, 1);
 
     @Test
-    void buscar_tudo_test() {
-        when(supplierRepo.filter(anyString(), anyString(), any(Pageable.class))).thenReturn(fornecedorPage);
-        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
-        supplierEntity2.setCompanies(List.of(companyEntity1, companyEntity2));
-        SupplierPag<Supplier> result = supplierUseCase.getAll(1, 1, "nome", "cnpjCpf");
-        assertDoesNotThrow(() -> result);
-        verify(supplierRepo, times(1)).filter("nome", "cnpjCpf", PageRequest.of(1, 1));
+    void getAll() {
+        supplier1.setCompanies(List.of(company1, company2));
+        supplier2.setCompanies(List.of(company1, company2));
+
+        when(supplierGateway.getAll(0, 10, "nome", "cnpjCpf")).thenReturn(supplierPag);
+
+        assertDoesNotThrow(() -> supplierUseCase.getAll(0, 10, "nome", "cnpjCpf"));
+        assertEquals(0, supplierUseCase.getAll(0, 10, "nome", "cnpjCpf").getPage());
+
+        verify(supplierGateway, times(2)).getAll(0, 10, "nome", "cnpjCpf");
     }
 
     @Test

@@ -47,11 +47,11 @@ public class CompanyUseCase {
         return companyGateway.delete(id);
     }
 
-    public Company associateSupplier(UUID id_fornecedor, UUID id) {
+    public Company associateSupplier(UUID id_supplier, UUID id) {
         Company company = get(id);
-        Supplier supplier = supplierUseCase.get(id_fornecedor);
+        Supplier supplier = supplierUseCase.get(id_supplier);
         if (supplier.isE_pf() && isPr(company.getCep()) && supplierUseCase.validatesUnderageSuppliers(supplier.getBirth())) {
-            throw new AppException("Não é permitido cadastrar um fornecedor menor de idade no Paraná");
+            throw new AppException("It's not permitted to register an underage supplier in Paraná");
         }
         linkCompanySupplier(company, supplier);
         return company;

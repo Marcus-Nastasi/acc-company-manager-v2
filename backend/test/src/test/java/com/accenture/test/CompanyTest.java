@@ -1,5 +1,7 @@
 package com.accenture.test;
 
+import com.accenture.test.application.gateways.company.CompanyGateway;
+import com.accenture.test.domain.cep.Cep;
 import com.accenture.test.domain.company.Company;
 import com.accenture.test.domain.company.CompanyPag;
 import com.accenture.test.domain.supplier.Supplier;
@@ -16,11 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,12 +28,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+//@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class CompanyEntityTest {
 
     @Mock
     private CompanyRepo companyRepo;
+    @Mock
+    private CompanyGateway companyGateway;
     @Mock
     private SupplierRepo supplierRepo;
     @Mock
@@ -75,18 +74,18 @@ public class CompanyEntityTest {
     );
 
     List<CompanyEntity> companyEntityList = List.of(companyEntity1, companyEntity2);
-    Page<CompanyEntity> empresaPage = new PageImpl<>(companyEntityList);
+    CompanyPag companyPag = new CompanyPag(List.of(), 0, 10, 0);
 
     @Test
-    void buscar_tudo_test() {
-        when(companyRepo.filter(anyString(), anyString(), anyString(), any(Pageable.class))).thenReturn(empresaPage);
+    void getAll() {
+        when(companyGateway.getAll(anyInt(), anyInt(), anyString(), anyString(), anyString())).thenReturn(companyPag);
         companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
         companyEntity2.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
         supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
         supplierEntity2.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
         CompanyPag result = companyUseCase.getAll(1, 1, "nome", "cnpjCpf", "cep");
         assertDoesNotThrow(() -> result);
-        verify(companyRepo, times(1)).filter("nome", "cnpjCpf", "cep", PageRequest.of(1, 1));
+        verify(companyGateway, times(1)).getAll(1, 1, "nome", "cnpjCpf", "cep");
     }
 
     @Test
@@ -157,7 +156,7 @@ public class CompanyEntityTest {
         // não deve permitir a associação de fornecedores pessoa física e menores de idade em empresas de ceps do Paraná
         SupplierEntity supplierEntity = new SupplierEntity();
         supplierEntity.setRg("321321112");
-        supplierEntity.setNascimento(LocalDate.now());
+        supplierEntity.setBirth(LocalDate.now());
         supplierEntity.setCep("80000-000");
         CompanyEntity companyEntity = new CompanyEntity(UUID.randomUUID(), "cnpj", "nome", "80000-000", new ArrayList<>(List.of(supplierEntity)));
         supplierEntity.setCompanies(new ArrayList<>(List.of(companyEntity)));
@@ -189,27 +188,22 @@ public class CompanyEntityTest {
         assertNotNull(result);
     }
 
-//    @Test
-//    void isPr_test() {
-//        String cepSp = "05999-999";
-//        CepResponseDTO spResponse = new CepResponseDTO(
-//            "05999-999", "", "São Paulo", "", "", "", "SP", "", "", "", "", "", ""
-//        );
-//        when(cepUseCase.buscarCep(cepSp)).thenReturn(Mono.just(ResponseEntity.ok(spResponse)));
-//
-//        // simulando resposta para um CEP do Paraná (PR)
-//        String cepPr = "80000-000";
-//        CepResponseDTO prResponse = new CepResponseDTO(
-//            "80000-000", "", "Curitiba", "", "", "", "PR", "", "", "", "", "", ""
-//        );
-//        when(cepUseCase.buscarCep(cepPr))
-//            .thenReturn(Mono.just(ResponseEntity.ok(prResponse)));
-//
-//        assertFalse(empresaUseCase.isPr(cepSp));
-//        assertTrue(empresaUseCase.isPr(cepPr));
-//        verify(cepUseCase, times(1)).buscarCep(cepSp);
-//        verify(cepUseCase, times(1)).buscarCep(cepPr);
-//    }
+    @Test
+    void isPr_test() {
+        String cepSp = "05999-999";
+        Cep spResponse = new Cep("05999-999", "", "São Paulo", "", "", "", "SP", "", "", "", "", "", "");
+        when(cepUseCase.getCep(cepSp)).thenReturn(spResponse);
+
+        // simulando resposta para um CEP do Paraná (PR)
+        String cepPr = "80000-000";
+        Cep prResponse = new Cep("80000-000", "", "Curitiba", "", "", "", "PR", "", "", "", "", "", "");
+        when(cepUseCase.getCep(cepPr)).thenReturn(prResponse);
+
+        assertFalse(companyUseCase.isPr(cepSp));
+        assertTrue(companyUseCase.isPr(cepPr));
+        verify(cepUseCase, times(1)).getCep(cepSp);
+        verify(cepUseCase, times(1)).getCep(cepPr);
+    }
 
     @Test
     void vincula_empresa_fornecedor_test() {

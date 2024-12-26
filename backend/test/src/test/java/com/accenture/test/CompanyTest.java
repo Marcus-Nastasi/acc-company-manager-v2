@@ -224,4 +224,18 @@ public class CompanyTest {
         verify(companyGateway, times(1)).save(any(Company.class));
         verify(supplierUseCase, times(1)).save(any(Supplier.class));
     }
+
+    @Test
+    void unlinkCompanySupplier() {
+        company1.setSuppliers(new ArrayList<>(List.of(supplier1, supplier2)));
+        supplier1.setCompanies(new ArrayList<>(List.of(company1)));
+
+        when(companyGateway.save(any(Company.class))).thenReturn(company1);
+        when(supplierUseCase.save(any(Supplier.class))).thenReturn(supplier1);
+
+        assertDoesNotThrow(() -> companyUseCase.unlinkCompanySupplier(company1, supplier1));
+
+        verify(companyGateway, times(1)).save(any(Company.class));
+        verify(supplierUseCase, times(1)).save(any(Supplier.class));
+    }
 }

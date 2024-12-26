@@ -106,15 +106,15 @@ public class CompanyTest {
     }
 
     @Test
-    void atualizar_test() {
-        companyEntity1.setSuppliers(List.of(supplierEntity1, supplierEntity2));
-        when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
-        when(companyRepo.save(any(CompanyEntity.class))).thenReturn(null);
+    void update() {
+        company1.setSuppliers(List.of(supplier1));
+        when(companyGateway.get(any(UUID.class))).thenReturn(company1);
+        when(companyGateway.save(any(Company.class))).thenReturn(null);
         assertDoesNotThrow(() -> {
             companyUseCase.update(UUID.randomUUID(), company1);
         });
-        verify(companyRepo, times(1)).findById(any(UUID.class));
-        verify(companyRepo, times(1)).save(any(CompanyEntity.class));
+        verify(companyGateway, times(1)).get(any(UUID.class));
+        verify(companyGateway, times(1)).save(any(Company.class));
     }
 
     @Test
@@ -129,7 +129,6 @@ public class CompanyTest {
         assertFalse(supplierEntity2.getCompanies().contains(companyEntity1));
         verify(supplierRepo, times(2)).save(any(SupplierEntity.class));
         verify(companyRepo, times(1)).deleteById(any(UUID.class));
-//        assertNotNull(result);
     }
 
     @Test

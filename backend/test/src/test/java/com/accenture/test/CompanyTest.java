@@ -96,6 +96,9 @@ public class CompanyTest {
     List<CompanyEntity> companyEntityList = List.of(companyEntity1, companyEntity2);
     CompanyPag companyPag = new CompanyPag(List.of(), 0, 10, 0);
 
+    Cep cep = new Cep("000001", "", "", "", "", "", "SP", "", "", "", "", "", "");
+    Cep cepPr = new Cep("000008", "", "", "", "", "", "PR", "", "", "", "", "", "");
+
     @Test
     void getAll() {
         when(companyGateway.getAll(anyInt(), anyInt(), anyString(), anyString(), anyString())).thenReturn(companyPag);
@@ -145,36 +148,33 @@ public class CompanyTest {
     }
 
     @Test
-    void associa_fornecedor_test() {
-        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        when(companyRepo.findById(any(UUID.class)))
-            .thenReturn(Optional.of(companyEntity1));
-        when(supplierRepo.findById(any(UUID.class)))
-            .thenReturn(Optional.of(supplierEntity1));
-        when(companyRepo.save(any(CompanyEntity.class)))
-            .thenReturn(companyEntity1);
-        when(supplierRepo.save(any(SupplierEntity.class)))
-            .thenReturn(supplierEntity1);
+    void associateSupplier() {
+        company1.setSuppliers(new ArrayList<>(List.of(supplier1, supplier2)));
+        supplier1.setCompanies(new ArrayList<>(List.of(company1, company2)));
+        when(companyGateway.get(any(UUID.class))).thenReturn(company1);
+        when(supplierUseCase.get(any(UUID.class))).thenReturn(supplier1);
+        when(companyGateway.save(any(Company.class))).thenReturn(company1);
+        when(supplierUseCase.save(any(Supplier.class))).thenReturn(supplier1);
 
         Company result = companyUseCase.associateSupplier(UUID.randomUUID(), UUID.randomUUID());
-        verify(companyRepo, times(1)).findById(any(UUID.class));
-        verify(supplierRepo, times(1)).findById(any(UUID.class));
-        assertTrue(supplierEntity1.getCompanies().contains(companyEntity1));
-        verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
-        verify(companyRepo, times(1)).save(any(CompanyEntity.class));
         assertNotNull(result);
 
         // não deve permitir a associação de fornecedores pessoa física e menores de idade em empresas de ceps do Paraná
-        SupplierEntity supplierEntity = new SupplierEntity();
-        supplierEntity.setRg("321321112");
-        supplierEntity.setBirth(LocalDate.now());
-        supplierEntity.setCep("80000-000");
-        CompanyEntity companyEntity = new CompanyEntity(UUID.randomUUID(), "cnpj", "nome", "80000-000", new ArrayList<>(List.of(supplierEntity)));
-        supplierEntity.setCompanies(new ArrayList<>(List.of(companyEntity)));
-        assertThrows(AppException.class, () -> {
-            companyUseCase.associateSupplier(supplierEntity.getId(), companyEntity.getId());
-        });
+        supplier1.setE_pf(true);
+        supplier1.setRg("321321112");
+        supplier1.setBirth(LocalDate.now());
+        company1.setCep(cepPr.getCep());
+        supplier1.setCompanies(new ArrayList<>(List.of(company1)));
+
+        when(cepUseCase.getCep(cepPr.getCep())).thenReturn(cepPr);
+        when(supplierUseCase.validatesUnderageSuppliers(supplier1.getBirth())).thenReturn(true);
+
+        assertThrows(AppException.class, () -> companyUseCase.associateSupplier(company1.getId(), supplier1.getId()));
+
+        verify(companyGateway, times(2)).get(any(UUID.class));
+        verify(companyGateway, times(1)).save(any(Company.class));
+        verify(supplierUseCase, times(1)).validatesUnderageSuppliers(any(LocalDate.class));
+        verify(supplierUseCase, times(1)).save(any(Supplier.class));
     }
 
     @Test

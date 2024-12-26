@@ -57,11 +57,31 @@ public class CompanyTest {
         List.of()
     );
 
+    Company company2 = new Company(
+            UUID.randomUUID(),
+            "",
+            "",
+            "",
+            List.of()
+    );
+
     // entidades de fornecedor
     SupplierEntity supplierEntity1 = new SupplierEntity();
     SupplierEntity supplierEntity2 = new SupplierEntity();
 
     Supplier supplier1 = new Supplier(
+            UUID.randomUUID(),
+            "",
+            "",
+            LocalDate.now(),
+            "",
+            "",
+            "",
+            false,
+            List.of()
+    );
+
+    Supplier supplier2 = new Supplier(
             UUID.randomUUID(),
             "",
             "",
@@ -118,17 +138,10 @@ public class CompanyTest {
     }
 
     @Test
-    void deletar_test() {
-        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        supplierEntity2.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
-        when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(supplierEntity1);
-        verify(companyRepo, times(1)).findById(any(UUID.class));
-        assertFalse(supplierEntity1.getCompanies().contains(companyEntity1));
-        assertFalse(supplierEntity2.getCompanies().contains(companyEntity1));
-        verify(supplierRepo, times(2)).save(any(SupplierEntity.class));
-        verify(companyRepo, times(1)).deleteById(any(UUID.class));
+    void delete() {
+        when(companyGateway.delete(any(UUID.class))).thenReturn(company1);
+        assertDoesNotThrow(() -> companyUseCase.delete(company1.getId()));
+        verify(companyGateway, times(1)).delete(any(UUID.class));
     }
 
     @Test

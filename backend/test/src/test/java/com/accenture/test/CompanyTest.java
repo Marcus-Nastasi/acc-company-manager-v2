@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 //@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class CompanyEntityTest {
+public class CompanyTest {
 
     @Mock
     private CompanyRepo companyRepo;

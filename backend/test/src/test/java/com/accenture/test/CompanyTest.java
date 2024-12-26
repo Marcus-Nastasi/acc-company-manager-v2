@@ -99,10 +99,10 @@ public class CompanyTest {
     }
 
     @Test
-    void registrar_test() {
-        when(companyRepo.save(any(CompanyEntity.class))).thenReturn(null);
+    void register() {
+        when(companyGateway.save(any(Company.class))).thenReturn(null);
         assertDoesNotThrow(() -> companyUseCase.register(company1));
-        verify(companyRepo, times(1)).save(any(CompanyEntity.class));
+        verify(companyGateway, times(1)).save(any(Company.class));
     }
 
     @Test

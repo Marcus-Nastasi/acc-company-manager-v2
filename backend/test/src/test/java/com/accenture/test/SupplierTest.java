@@ -130,23 +130,23 @@ public class SupplierTest {
     }
 
     @Test
-    void atualizar_test() {
-        SupplierRequestDto supplierRequestDto = new SupplierRequestDto(
-                "cnpj_cpf", "rg", LocalDate.now(), "nome", "email", "04632011", true
-        );
-        SupplierRequestDto registrarFornecedorPFDTO = new SupplierRequestDto(
-                "cnpj_cpf", null, null, "nome", "email", "04632011", true
-        );
-        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
-        when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
-        when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(null);
+    void update() {
+        supplier1.setCompanies(List.of(company1, company2));
+        when(supplierGateway.get(any(UUID.class))).thenReturn(supplier1);
+        when(supplierGateway.save(any(Supplier.class))).thenReturn(null);
+
         assertDoesNotThrow(() -> supplierUseCase.update(UUID.randomUUID(), supplier1));
+
         // teste para registro de pessoa física que deve lançar exceção
+        supplier1.setE_pf(true);
+        supplier1.setRg(null);
+        supplier1.setBirth(null);
         assertThrows(AppException.class, () -> {
             supplierUseCase.update(UUID.randomUUID(), supplier1);
         });
-        verify(supplierRepo, times(2)).findById(any(UUID.class));
-        verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
+
+        verify(supplierGateway, times(2)).get(any(UUID.class));
+        verify(supplierGateway, times(1)).save(any(Supplier.class));
     }
 
     @Test

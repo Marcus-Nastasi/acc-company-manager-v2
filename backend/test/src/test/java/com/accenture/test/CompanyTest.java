@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -178,43 +177,38 @@ public class CompanyTest {
     }
 
     @Test
-    void desassocia_fornecedor_test() {
-        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1, companyEntity2)));
-        when(companyRepo.findById(any(UUID.class)))
-                .thenReturn(Optional.of(companyEntity1));
-        when(supplierRepo.findById(any(UUID.class)))
-                .thenReturn(Optional.of(supplierEntity1));
-        when(companyRepo.save(any(CompanyEntity.class)))
-                .thenReturn(companyEntity1);
-        when(supplierRepo.save(any(SupplierEntity.class)))
-                .thenReturn(supplierEntity1);
+    void disassociateSupplier() {
+        company1.setSuppliers(new ArrayList<>(List.of(supplier1, supplier2)));
+        supplier1.setCompanies(new ArrayList<>(List.of(company1, company2)));
+        when(companyGateway.get(any(UUID.class))).thenReturn(company1);
+        when(supplierUseCase.get(any(UUID.class))).thenReturn(supplier1);
+        when(companyGateway.save(any(Company.class))).thenReturn(company1);
+        when(supplierUseCase.save(any(Supplier.class))).thenReturn(supplier1);
 
         Company result = companyUseCase.disassociateSupplier(UUID.randomUUID(), UUID.randomUUID());
-        verify(companyRepo, times(1)).findById(any(UUID.class));
-        verify(supplierRepo, times(1)).findById(any(UUID.class));
-        assertFalse(companyEntity1.getSuppliers().contains(supplierEntity1));
-        assertFalse(supplierEntity1.getCompanies().contains(companyEntity1));
-        verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
-        verify(companyRepo, times(1)).save(any(CompanyEntity.class));
+
+        verify(companyGateway, times(1)).get(any(UUID.class));
+        verify(supplierUseCase, times(1)).get(any(UUID.class));
+
+        assertFalse(company1.getSuppliers().contains(supplier1));
+        assertFalse(supplier1.getCompanies().contains(company1));
+
+        verify(supplierUseCase, times(1)).save(any(Supplier.class));
+        verify(companyGateway, times(1)).save(any(Company.class));
+
         assertNotNull(result);
     }
 
     @Test
     void isPr_test() {
-        String cepSp = "05999-999";
-        Cep spResponse = new Cep("05999-999", "", "São Paulo", "", "", "", "SP", "", "", "", "", "", "");
-        when(cepUseCase.getCep(cepSp)).thenReturn(spResponse);
+        when(cepUseCase.getCep(cep.getCep())).thenReturn(cep);
+        when(cepUseCase.getCep(cepPr.getCep())).thenReturn(cepPr);
 
-        // simulando resposta para um CEP do Paraná (PR)
-        String cepPr = "80000-000";
-        Cep prResponse = new Cep("80000-000", "", "Curitiba", "", "", "", "PR", "", "", "", "", "", "");
-        when(cepUseCase.getCep(cepPr)).thenReturn(prResponse);
+        assertFalse(companyUseCase.isPr(cep.getCep()));
+        assertTrue(companyUseCase.isPr(cepPr.getCep()));
 
-        assertFalse(companyUseCase.isPr(cepSp));
-        assertTrue(companyUseCase.isPr(cepPr));
-        verify(cepUseCase, times(1)).getCep(cepSp);
-        verify(cepUseCase, times(1)).getCep(cepPr);
+        verify(cepUseCase, times(1)).getCep(cep.getCep());
+        verify(cepUseCase, times(1)).getCep(cepPr.getCep());
     }
 
     @Test

@@ -1,87 +1,83 @@
 # Company Manager
 
-## Sobre o Projeto
+## About
 
-Sistema de Gerenciamento de Associações entre Empresas e Fornecedores.
+System for Managing Associations Between Companies and Suppliers
 
-Esta é uma aplicação desenvolvida para facilitar o gerenciamento de associações entre empresas e seus fornecedores. 
+This application was developed to facilitate the management of associations between companies and their suppliers.
 
-A aplicação permite a visualização de empresas e fornecedores com paginação e pesquisa por nome, CNPJ e CEP para empresas, e pesquisa por nome e CNPJ/CPF para fornecedores.
+The application enables the viewing of companies and suppliers with pagination and search functionalities, allowing searches by name, CNPJ, and ZIP code for companies, and by name and CNPJ/CPF for suppliers.
 
-A aplicação permite o cadastro, edição e deleção de empresas e fornecedores, assim como a associação entre as empresas e os fornecedores, 
-oferecendo uma interface amigável no front-end e uma API robusta no back-end.
+It supports the creation, editing, and deletion of companies and suppliers, as well as the association between them, offering a user-friendly interface on the front end and a robust API on the back end.
 
-Além disso, a API está documentada com Swagger API para facilitar o compreendimento das rotas disponíveis, seus payloads e retornos. 
+Additionally, the API is documented with Swagger API to make it easier to understand the available routes, their payloads, and responses.
 
-Também foi designada uma rota para fornecer o consumo da API dos correios.
+A dedicated route was also designed to provide access to the Brazilian Postal Service API.
 
-Esse foi um projeto desafiador, onde pude ter contato com o framework Vue.js pela primeira vez.
+This was a challenging project where I had the opportunity to work with the Vue.js framework for the first time.
 
-## Modelagem das entidades
+## Entity modeling
 ![accenture drawio](https://github.com/user-attachments/assets/cf961050-1a82-48c4-a097-8b1cbdc9e09d)
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 ### Front-end
 - **Framework**: Vue.js
-- **Linguagem**: TypeScript
-- **Estilos**: Tailwind CSS e Vuetify
+- **Language**: TypeScript
+- **Styles**: Tailwind CSS and Vuetify
 
 ### Back-end
-- **Linguagem**: Java
 - **Framework**: Spring
-- **Testes**: JUnit e Mockito
+- **Language**: Java
+- **Tests**: JUnit and Mockito
 
-### Banco de Dados
-- **Banco**: PostgreSQL
+### Database
+- **DB**: PostgreSQL
 
-### Documentação da API
-- **Ferramenta**: Swagger API
+### Cache
+- **Cache tool**: Redis
 
-### Containerização
-- **Docker** e **Docker Compose**
+### Documentation
+- **Tool**: Swagger API
 
-## Como Rodar o Projeto
+### Containerization
+- **Docker** and **Docker Compose**
 
-Siga os passos abaixo para configurar e executar o projeto em sua máquina local.
+## How to run
 
-### Pré-requisitos
+Follow the steps below to configure and run the project on your local machine.
+
+### Prerequisites
 
 - Git
-- Node.js e npm (para o front-end)
-- java 21 (JDK) e Maven
-- Docker e Docker Compose
+- Node.js and npm (front-end)
+- java 21 (JDK) and Maven
+- Docker and Docker Compose
 
-### Passos
+### Steps
 
-1. **Clonar o repositório:**
+1. **Clone repo:**
    ```bash
    git clone https://github.com/Marcus-Nastasi/acc-company-manager
    
-2. **Importar dependencias do front-end:**
+2. **Import front-end dependencies:**
    ```bash
    cd frontend/app
    npm install
 
-3. **Build do Maven no Back-end:**
+3. **Maven's Build for back-end:**
    ```bash
    cd backend/test
-   mvn clean install -DskipTests
+   mvn clean install
 
-4. **Executar a aplicação com Docker: Certifique-se de estar na raiz do projeto e rode o Docker Compose para subir todos os serviços de forma automatizada:**
+4. **Run the application with Docker: Ensure you are in the root directory of the project and execute Docker Compose to bring up all services automatically:**
    ```bash
     [sudo] docker-compose up --build
 
-5. **Aguardar o build ser finalizado e acessar a aplicação: Após o build ser concluído, a aplicação estará disponível no navegador:**
+5. **Wait for the build to complete and access the application: Once the build is finished, the application will be available in your browser:**
    ```bash
     http://localhost:3000/
 
-6. **Você pode acessar a documentação da API feita com o Swagger pela rota:**
+6. **You can access the API documentation created with Swagger at the route:**
    ```bash
     http://localhost:8080/swagger-ui/index.html
-
-
-## Testes unitários
-
-### Execução e Build sem pular os testes unitários
-- **Para realizar a execução dos testes, ou o build (com o comando "mvn clean install", removendo o "-DskipTests" do exemplo acima), você deve ter em execução um banco de dados postgresql em seu localhost, expondo a porta 5432. Caso tenha um banco de dados postgres fora da máquina local ou em outra porta, será necessário alterar a url do banco no arquivo "application.properties". Apesar das chamadas para o banco nos testes estarem mockadas, o Spring testará a conexão com o banco de dados.** 

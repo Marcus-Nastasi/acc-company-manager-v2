@@ -4,11 +4,7 @@ import com.accenture.test.application.gateways.supplier.SupplierGateway;
 import com.accenture.test.domain.company.Company;
 import com.accenture.test.domain.supplier.Supplier;
 import com.accenture.test.domain.supplier.SupplierPag;
-import com.accenture.test.infrastructure.entity.CompanyEntity;
-import com.accenture.test.infrastructure.entity.SupplierEntity;
 import com.accenture.test.application.exception.AppException;
-import com.accenture.test.infrastructure.persistence.SupplierRepo;
-import com.accenture.test.application.usecase.company.CompanyUseCase;
 import com.accenture.test.application.usecase.supplier.SupplierUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,27 +20,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-//@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class SupplierTest {
 
     @Mock
-    private SupplierRepo supplierRepo;
-    @Mock
     private SupplierGateway supplierGateway;
-    @Mock
-    private CompanyUseCase companyUseCase;
 
     @InjectMocks
     private SupplierUseCase supplierUseCase;
-
-    // entidades de empresa
-    CompanyEntity companyEntity1 = new CompanyEntity();
-    CompanyEntity companyEntity2 = new CompanyEntity();
-
-    // entidades de fornecedor
-    SupplierEntity supplierEntity1 = new SupplierEntity();
-    SupplierEntity supplierEntity2 = new SupplierEntity();
 
     Company company1 = new Company(
             UUID.randomUUID(),

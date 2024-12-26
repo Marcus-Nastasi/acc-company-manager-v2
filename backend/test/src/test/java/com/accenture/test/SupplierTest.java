@@ -115,14 +115,18 @@ public class SupplierTest {
     }
 
     @Test
-    void registrar_test() {
-        when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(null);
+    void register() {
+        when(supplierGateway.save(any(Supplier.class))).thenReturn(null);
+
         assertDoesNotThrow(() -> supplierUseCase.register(supplier1));
+
         // teste para registro de pessoa física que deve lançar exceção
-        assertThrows(AppException.class, () -> {
-            supplierUseCase.register(supplier1);
-        });
-        verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
+        supplier1.setE_pf(true);
+        supplier1.setRg(null);
+        supplier1.setBirth(null);
+        assertThrows(AppException.class, () -> supplierUseCase.register(supplier1));
+
+        verify(supplierGateway, times(1)).save(any(Supplier.class));
     }
 
     @Test

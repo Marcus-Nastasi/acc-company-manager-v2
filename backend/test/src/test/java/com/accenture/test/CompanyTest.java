@@ -89,13 +89,13 @@ public class CompanyTest {
     }
 
     @Test
-    void buscar_um_test() {
-        companyEntity1.setSuppliers(List.of(supplierEntity1, supplierEntity2));
-        Company e = companyUseCase.get(company1.getId());
-        when(companyRepo.findById(any(UUID.class))).thenReturn(Optional.of(companyEntity1));
+    void getSingleCompany() {
+        company1.setSuppliers(List.of(supplier1));
+        when(companyGateway.get(any(UUID.class))).thenReturn(company1);
         assertDoesNotThrow(() -> companyUseCase.get(UUID.randomUUID()));
-        assertEquals(companyUseCase.get(UUID.randomUUID()), e);
-        verify(companyRepo, times(2)).findById(any(UUID.class));
+        assertEquals(companyUseCase.get(UUID.randomUUID()), company1);
+        assertEquals(companyUseCase.get(UUID.randomUUID()).getName(), company1.getName());
+        verify(companyGateway, times(3)).get(any(UUID.class));
     }
 
     @Test

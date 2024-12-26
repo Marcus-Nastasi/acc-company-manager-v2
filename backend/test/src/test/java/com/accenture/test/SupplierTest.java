@@ -5,7 +5,6 @@ import com.accenture.test.domain.company.Company;
 import com.accenture.test.domain.supplier.Supplier;
 import com.accenture.test.domain.supplier.SupplierPag;
 import com.accenture.test.infrastructure.entity.CompanyEntity;
-import com.accenture.test.adapter.input.supplier.SupplierRequestDto;
 import com.accenture.test.infrastructure.entity.SupplierEntity;
 import com.accenture.test.application.exception.AppException;
 import com.accenture.test.infrastructure.persistence.SupplierRepo;
@@ -20,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,15 +148,18 @@ public class SupplierTest {
     }
 
     @Test
-    void deletar_test() {
-        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
-        when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
+    void delete() {
+        supplier1.setCompanies(List.of(company1, company2));
+        when(supplierGateway.delete(any(UUID.class))).thenReturn(supplier1);
+
+        assertEquals(supplier1, supplierUseCase.delete(UUID.randomUUID()));
         assertDoesNotThrow(() -> supplierUseCase.delete(UUID.randomUUID()));
-        verify(supplierRepo, times(1)).deleteById(any(UUID.class));
+
+        verify(supplierGateway, times(2)).delete(any(UUID.class));
     }
 
     @Test
-    void valida_menor_test() {
+    void validatesUnderageSuppliers() {
         assertTrue(supplierUseCase.validatesUnderageSuppliers(LocalDate.now()));
         assertFalse(supplierUseCase.validatesUnderageSuppliers(LocalDate.of(1996, 10, 28)));
         assertThrows(

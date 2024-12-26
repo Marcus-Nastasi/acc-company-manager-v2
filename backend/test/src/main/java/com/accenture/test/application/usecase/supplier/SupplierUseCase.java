@@ -1,8 +1,8 @@
 package com.accenture.test.application.usecase.supplier;
 
-import com.accenture.test.application.gateways.supplier.SupplierGateway;
 import com.accenture.test.domain.supplier.Supplier;
 import com.accenture.test.domain.supplier.SupplierPag;
+import com.accenture.test.application.gateways.supplier.SupplierGateway;
 import com.accenture.test.application.exception.AppException;
 
 import java.time.LocalDate;
@@ -31,7 +31,7 @@ public class SupplierUseCase {
 
     public Supplier register(Supplier data) {
         if (data.isE_pf()) if (data.getRg() == null || data.getBirth() == null) {
-            throw new AppException("É necessário informar um RG e data de " + "nascimento para cadastro de fornecedor pessoa física");
+            throw new AppException("It is necessary to provide an ID and date of birth to register as an individual supplier");
         }
         return save(data);
     }
@@ -44,8 +44,9 @@ public class SupplierUseCase {
         supplier.setCep(data.getCep());
         supplier.setE_pf(data.isE_pf());
         if (supplier.isE_pf()) {
-            if (data.getRg() == null || data.getBirth() == null)
-                throw new AppException("É necessário informar um RG e data de nascimento para cadastro de fornecedor pessoa física");
+            if (data.getRg() == null || data.getBirth() == null) {
+                throw new AppException("It is necessary to provide an ID and date of birth to register as an individual supplier");
+            }
             supplier.setRg(data.getRg());
             supplier.setBirth(data.getBirth());
         }

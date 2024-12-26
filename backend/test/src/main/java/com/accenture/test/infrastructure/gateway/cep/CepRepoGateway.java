@@ -14,16 +14,10 @@ public class CepRepoGateway implements CepGateway {
     @Override
     public Cep getCep(String cep) {
         try {
-            cep = cep.replace(".", "").replace("-", "");
+            cep = cep.replaceAll("\\D", "").trim();
             if (cep.length() > 8) throw new InfraException("Invalid cep");
             String url = "https://viacep.com.br/ws/" + cep + "/json/";
-            return Objects.requireNonNull(webClient
-                .get()
-                .uri(url)
-                .retrieve()
-                .toEntity(Cep.class)
-                .block()
-            ).getBody();
+            return Objects.requireNonNull(webClient.get().uri(url).retrieve().toEntity(Cep.class).block()).getBody();
         } catch (RuntimeException e) {
             throw new InfraException("Error getting CEP: " + e.getMessage());
         }

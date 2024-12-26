@@ -200,7 +200,7 @@ public class CompanyTest {
     }
 
     @Test
-    void isPr_test() {
+    void isPr() {
         when(cepUseCase.getCep(cep.getCep())).thenReturn(cep);
         when(cepUseCase.getCep(cepPr.getCep())).thenReturn(cepPr);
 
@@ -212,15 +212,16 @@ public class CompanyTest {
     }
 
     @Test
-    void vincula_empresa_fornecedor_test() {
-        companyEntity1.setSuppliers(new ArrayList<>(List.of(supplierEntity1, supplierEntity2)));
-        supplierEntity1.setCompanies(new ArrayList<>(List.of(companyEntity1)));
-        when(companyRepo.save(any(CompanyEntity.class))).thenReturn(companyEntity1);
-        when(supplierRepo.save(any(SupplierEntity.class))).thenReturn(supplierEntity1);
-        assertDoesNotThrow(() -> {
-            companyUseCase.linkCompanySupplier(company1, supplier1);
-        });
-        verify(companyRepo, times(1)).save(any(CompanyEntity.class));
-        verify(supplierRepo, times(1)).save(any(SupplierEntity.class));
+    void linkCompanySupplier() {
+        company1.setSuppliers(new ArrayList<>(List.of(supplier1, supplier2)));
+        supplier1.setCompanies(new ArrayList<>(List.of(company1)));
+
+        when(companyGateway.save(any(Company.class))).thenReturn(company1);
+        when(supplierUseCase.save(any(Supplier.class))).thenReturn(supplier1);
+
+        assertDoesNotThrow(() -> companyUseCase.linkCompanySupplier(company1, supplier1));
+
+        verify(companyGateway, times(1)).save(any(Company.class));
+        verify(supplierUseCase, times(1)).save(any(Supplier.class));
     }
 }

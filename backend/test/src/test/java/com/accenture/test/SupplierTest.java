@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -96,7 +95,6 @@ public class SupplierTest {
     void getAll() {
         supplier1.setCompanies(List.of(company1, company2));
         supplier2.setCompanies(List.of(company1, company2));
-
         when(supplierGateway.getAll(0, 10, "nome", "cnpjCpf")).thenReturn(supplierPag);
 
         assertDoesNotThrow(() -> supplierUseCase.getAll(0, 10, "nome", "cnpjCpf"));
@@ -106,13 +104,14 @@ public class SupplierTest {
     }
 
     @Test
-    void buscar_um_test() {
-        supplierEntity1.setCompanies(List.of(companyEntity1, companyEntity2));
-        Supplier f = supplierUseCase.get(supplierEntity1.getId());
-        when(supplierRepo.findById(any(UUID.class))).thenReturn(Optional.of(supplierEntity1));
-        assertDoesNotThrow(() -> supplierUseCase.get(UUID.randomUUID()));
-        assertEquals(supplierUseCase.get(UUID.randomUUID()), f);
-        verify(supplierRepo, times(2)).findById(any(UUID.class));
+    void getSingleSupplier() {
+        supplier1.setCompanies(List.of(company1, company2));
+        when(supplierGateway.get(any(UUID.class))).thenReturn(supplier1);
+
+        assertDoesNotThrow(() -> supplierUseCase.get(supplier1.getId()));
+        assertEquals(supplierUseCase.get(supplier1.getId()), supplier1);
+
+        verify(supplierGateway, times(2)).get(any(UUID.class));
     }
 
     @Test

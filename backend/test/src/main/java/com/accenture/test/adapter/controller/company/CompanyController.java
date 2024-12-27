@@ -32,19 +32,19 @@ public class CompanyController {
     private CompanyDtoMapper companyDtoMapper;
 
     @GetMapping()
-    @Cacheable("empresa")
+    @Cacheable("company")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar todas as empresas", description = "Nessa rota você pode consultar dados de todas as empresas, com paginação e filtro por nome, cnpj e cep")
-    @ApiResponse(responseCode = "200", description = "Retornando dados das empresas")
-    public CompanyPagResponseDto buscar_tudo(
+    @Operation(summary = "Get all companies", description = "In this route you can consult data from all companies, with pagination and filter by name, cnpj and zip code")
+    @ApiResponse(responseCode = "200", description = "Returning data from companies")
+    public CompanyPagResponseDto getAll(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "nome", defaultValue = "", required = false) String nome_fantasia,
+            @RequestParam(name = "nome", defaultValue = "", required = false) String name,
             @RequestParam(name = "cnpj", defaultValue = "", required = false) String cnpj,
             @RequestParam(name = "cep", defaultValue = "", required = false) String cep
     ) {
         if (size < 1) size = 10;
-        CompanyPag companyPag = companyUseCase.getAll(page, size, nome_fantasia, cnpj, cep);
+        CompanyPag companyPag = companyUseCase.getAll(page, size, name, cnpj, cep);
         return new CompanyPagResponseDto(
             companyPag.getData().stream().map(companyDtoMapper::mapToClean).toList(),
             companyPag.getPage(),
@@ -54,61 +54,61 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/{id}")
-    @Cacheable("empresa")
+    @Cacheable("company")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar uma única empresa", description = "Nessa rota você pode consultar dados detalhados de uma única empresa")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa única")
-    public CompanyResponseDto buscar_um(@PathVariable("id") UUID id) {
+    @Operation(summary = "Get single company", description = "In this route you can consult detailed data for a single company")
+    @ApiResponse(responseCode = "200", description = "Returning single company data")
+    public CompanyResponseDto getSingle(@PathVariable("id") UUID id) {
         return companyDtoMapper.mapToResponse(companyUseCase.get(id));
     }
 
     @PostMapping(value = "/registrar")
-    @CacheEvict(value = "empresa", allEntries = true)
+    @CacheEvict(value = "company", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Cadastrar nova empresa", description = "Nessa rota você pode cadastrar uma nova empresa")
-    @ApiResponse(responseCode = "201", description = "Retornando dados da empresa criada")
-    public ResponseEntity<CompanyResponseDto> registrar(@RequestBody @Valid CompanyRequestDto data) {
+    @Operation(summary = "Register new company", description = "In this route you can register a new company")
+    @ApiResponse(responseCode = "201", description = "Returning data from the created company")
+    public ResponseEntity<CompanyResponseDto> register(@RequestBody @Valid CompanyRequestDto data) {
         Company company = companyUseCase.register(companyDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyDtoMapper.mapToResponse(company));
     }
 
     @PatchMapping(value = "/atualizar/{id}")
-    @CacheEvict(value = "empresa", allEntries = true)
+    @CacheEvict(value = "company", allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Atualizar dados de uma empresa", description = "Nessa rota você pode atualizar os dados de uma empresa")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa atualizada")
-    public ResponseEntity<CompanyResponseDto> atualizar(@PathVariable("id") UUID id, @RequestBody @Valid CompanyRequestDto data) {
+    @Operation(summary = "Update company data", description = "In this route you can update a company's data")
+    @ApiResponse(responseCode = "200", description = "Returning updated company data")
+    public ResponseEntity<CompanyResponseDto> update(@PathVariable("id") UUID id, @RequestBody @Valid CompanyRequestDto data) {
         Company company = companyUseCase.update(id, companyDtoMapper.mapFromRequest(data));
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
     @DeleteMapping(value = "/deletar/{id}")
-    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
+    @CacheEvict(value = {"company", "supplier"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Deletar uma empresa", description = "Nessa rota você pode deletar os dados de uma empresa")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa deletada")
-    public ResponseEntity<CompanyResponseDto> deletar(@PathVariable("id") UUID id) {
+    @Operation(summary = "Delete a company", description = "In this route you can delete a company's data")
+    @ApiResponse(responseCode = "200", description = "Returning deleted company data")
+    public ResponseEntity<CompanyResponseDto> delete(@PathVariable("id") UUID id) {
         Company company = companyUseCase.delete(id);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
     @PatchMapping(value = "/associar/{id_empresa}/{id_fornecedor}")
-    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
+    @CacheEvict(value = {"company", "supplier"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Associar empresa e fornecedor", description = "Nessa rota você pode associar um fornecedor com uma empresa")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa associada à um novo fornecedor")
-    public ResponseEntity<CompanyResponseDto> associar(@PathVariable("id_empresa") UUID id_empresa, @PathVariable("id_fornecedor") UUID id_fornecedor) {
-        Company company = companyUseCase.associateSupplier(id_fornecedor, id_empresa);
+    @Operation(summary = "Associate company and supplier", description = "In this route you can associate a supplier with a company")
+    @ApiResponse(responseCode = "200", description = "Returning data from a company associated with a new supplier")
+    public ResponseEntity<CompanyResponseDto> associate(@PathVariable("id_empresa") UUID company_id, @PathVariable("id_fornecedor") UUID supplier_id) {
+        Company company = companyUseCase.associateSupplier(supplier_id, company_id);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 
     @PatchMapping(value = "/desassociar/{id_empresa}/{id_fornecedor}")
-    @CacheEvict(value = {"empresa", "fornecedor"}, allEntries = true)
+    @CacheEvict(value = {"company", "supplier"}, allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Desassociar empresa e fornecedor", description = "Nessa rota você pode desassociar um fornecedor e uma empresa")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de empresa desvinculada de um fornecedor")
-    public ResponseEntity<CompanyResponseDto> desassociar(@PathVariable("id_empresa") UUID id_empresa, @PathVariable("id_fornecedor") UUID id_fornecedor) {
-        Company company = companyUseCase.disassociateSupplier(id_fornecedor, id_empresa);
+    @Operation(summary = "Disassociate company and supplier", description = "In this route you can disassociate a supplier and a company")
+    @ApiResponse(responseCode = "200", description = "Returning data from a company disconnected from a supplier")
+    public ResponseEntity<CompanyResponseDto> disassociate(@PathVariable("id_empresa") UUID company_id, @PathVariable("id_fornecedor") UUID supplier_id) {
+        Company company = companyUseCase.disassociateSupplier(supplier_id, company_id);
         return ResponseEntity.ok(companyDtoMapper.mapToResponse(company));
     }
 }

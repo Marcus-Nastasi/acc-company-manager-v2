@@ -27,7 +27,7 @@ public class SupplierRepoGateway implements SupplierGateway {
             entityPage.getContent().stream().map(supplierEntityMapper::mapFromEntity).toList(),
             entityPage.getNumber(),
             entityPage.getTotalPages(),
-            entityPage.getTotalPages() - entityPage.getNumber()
+            entityPage.getTotalPages()
         );
     }
 

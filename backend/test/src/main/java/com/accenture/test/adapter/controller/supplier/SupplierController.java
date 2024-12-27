@@ -29,18 +29,18 @@ public class SupplierController {
     private SupplierDtoMapper supplierDtoMapper;
 
     @GetMapping()
-    @Cacheable("fornecedor")
+    @Cacheable("supplier")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar todos os fornecedores", description = "Nessa rota você pode consultar dados de todos os fornecedores, com paginação e filtro por nome e cnpj/cpf")
-    @ApiResponse(responseCode = "200", description = "Retornando dados dos fornecedores")
-    public SupplierPagResponseDto buscar_tudo(
+    @Operation(summary = "Get all suppliers", description = "In this route you can consult data from all suppliers, with pagination and filter by name and cnpj/cpf")
+    @ApiResponse(responseCode = "200", description = "Returning data from suppliers")
+    public SupplierPagResponseDto getAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "nome", required = false) String name,
             @RequestParam(value = "cnpj_cpf", required = false) String cnpj_cpf
     ) {
         if (size < 1) size = 10;
-        SupplierPag supplierPag = supplierUseCase.getAll(page, size, nome, cnpj_cpf);
+        SupplierPag supplierPag = supplierUseCase.getAll(page, size, name, cnpj_cpf);
         return new SupplierPagResponseDto(
             supplierPag.getData().stream().map(supplierDtoMapper::mapToClean).toList(),
             supplierPag.getPage(),
@@ -50,40 +50,40 @@ public class SupplierController {
     }
 
     @GetMapping(value = "/{id}")
-    @Cacheable("fornecedor")
+    @Cacheable("supplier")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar um único fornecedor", description = "Nessa rota você pode consultar dados detalhados de um único fornecedor")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor único")
-    public SupplierResponseDto buscar_um(@PathVariable("id") UUID id) {
+    @Operation(summary = "Get single supplier", description = "In this route you can consult detailed data from a single supplier")
+    @ApiResponse(responseCode = "200", description = "Returning Single Supplier Data")
+    public SupplierResponseDto getSingle(@PathVariable("id") UUID id) {
         return supplierDtoMapper.mapToResponse(supplierUseCase.get(id));
     }
 
     @PostMapping(value = "/registrar")
-    @CacheEvict(value = "fornecedor", allEntries = true)
+    @CacheEvict(value = "supplier", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Cadastrar novo fornecedor", description = "Nessa rota você pode cadastrar um novo fornecedor")
-    @ApiResponse(responseCode = "201", description = "Retornando dados do fornecedor criado")
-    public ResponseEntity<SupplierResponseDto> registrar(@RequestBody @Valid SupplierRequestDto data) {
+    @Operation(summary = "Register new supplier", description = "In this route you can register a new supplier")
+    @ApiResponse(responseCode = "201", description = "Returning data from the created supplier")
+    public ResponseEntity<SupplierResponseDto> register(@RequestBody @Valid SupplierRequestDto data) {
         Supplier supplier = supplierUseCase.register(supplierDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.CREATED).body(supplierDtoMapper.mapToResponse(supplier));
     }
 
     @PatchMapping(value = "/atualizar/{id}")
-    @CacheEvict(value = "fornecedor", allEntries = true)
+    @CacheEvict(value = "supplier", allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Atualizar dados de um fornecedor", description = "Nessa rota você pode atualizar os dados de um fornecedor")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor atualizado")
-    public ResponseEntity<SupplierResponseDto> atualizar(@PathVariable("id") UUID id, @RequestBody @Valid SupplierRequestDto data) {
+    @Operation(summary = "Update supplier data", description = "In this route you can update a supplier's data")
+    @ApiResponse(responseCode = "200", description = "Returning updated supplier data")
+    public ResponseEntity<SupplierResponseDto> update(@PathVariable("id") UUID id, @RequestBody @Valid SupplierRequestDto data) {
         Supplier supplier = supplierUseCase.update(id, supplierDtoMapper.mapFromRequest(data));
         return ResponseEntity.status(HttpStatus.OK).body(supplierDtoMapper.mapToResponse(supplier));
     }
 
     @DeleteMapping(value = "/deletar/{id}")
-    @CacheEvict(value = "fornecedor", allEntries = true)
+    @CacheEvict(value = "supplier", allEntries = true)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Deletar um fornecedor", description = "Nessa rota você pode deletar os dados de um fornecedor")
-    @ApiResponse(responseCode = "200", description = "Retornando dados de fornecedor deletado")
-    public ResponseEntity<SupplierResponseDto> deletar(@PathVariable("id") UUID id)  {
+    @Operation(summary = "Delete a supplier", description = "In this route you can delete a supplier's data")
+    @ApiResponse(responseCode = "200", description = "Returning deleted supplier data")
+    public ResponseEntity<SupplierResponseDto> delete(@PathVariable("id") UUID id)  {
         Supplier supplier = supplierUseCase.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(supplierDtoMapper.mapToResponse(supplier));
     }
